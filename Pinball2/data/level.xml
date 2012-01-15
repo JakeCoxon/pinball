@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<level label="New Level">
+	
+	<!-- right -->
+	<wall path="480,0,480,1000" />
+	<wall path="450,800,450,1000" />
+	
+	<!-- top -->
+	<wall path="0,0,480,0" />
+	
+	<!-- left -->
+	<wall path="0,0,0,1000" />
+	
+	<wall path="0,300,90,370" />
+	
+	<wall path="450,800,480,770" name="toggleWall" />
+	
+	<bumper at="130,110" radius="50" name="bumpers-0" />
+	<bumper at="300,150" radius="50" name="bumpers-1" />
+	<bumper at="328,300" radius="64" name="bumpers-2" />
+	
+	<flipperLeft at="2,3" length="2" />
+	<flipperRight at="2,3" length="2" />
+	
+	<!-- <light at="4,5" name="lights-0" />
+	<light at="4,5" name="lights-1" />
+	<light at="4,5" name="lights-2" />
+	
+	<sensor at="4,5" name="sensors-0" />
+	<sensor at="4,5" name="sensors-1" />
+	<sensor at="4,5" name="sensors-2" />
+	
+	<rotator for="lights" name="rotator" />
+	
+	<event for="bumpers" when="collision" target="#self" action="disable" wait="1" />
+	<event for="sensors-#id" when="collision" target="lights-#id" action="toggle" />
+	<event for="level" when="flipLeft" target="rotator" action="rotateLeft" />-->
+</level>

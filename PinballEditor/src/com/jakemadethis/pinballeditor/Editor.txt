@@ -1,0 +1,312 @@
+package com.jakemadethis.pinballeditor;
+
+import java.util.ArrayList;
+
+import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Vector2;
+import com.jakemadethis.net.IServerProtocol;
+import com.jakemadethis.net.Server;
+import com.jakemadethis.pinball.Builder;
+
+public class Editor implements ApplicationListener, InputProcessor, IServerProtocol {
+
+	Layer layer;
+	private OrthographicCamera camera;
+	private ArrayList<WallPath> walls;
+	private float[] white = new float[] {1f,1f,1f,1f};
+	private float[] orange = new float[] {1f,0.6f,0f,1f};
+	private Selection dragSelection = new Selection(null, -1);
+	private Selection hoverSelection = new Selection(null, -1);
+	private Selection newPointSelection = new Selection(null, -1);
+	private Vector2 newPoint;
+	private EditorServer server;
+	private float width;
+	private float height;
+	private float zoom = 100f;
+	private float snap = 0.1f;
+
+	@Override
+	public void processInput(Server server, String input) {
+		System.out.println("Server recieved "+input);
+		if (input.startsWith("size ")) {
+			String s = input.substring(5);
+			String[] ss = s.split(",");
+			width = Float.valueOf(ss[0]);
+			height = Float.valueOf(ss[1]);
+			zoom = (camera.viewportHeight - 10) / height;
+		}
+		else if (input.startsWith("wall ")) {
+			String s = input.substring(5);
+			String[] ss = s.split(",");
+			WallPath path = new WallPath();
+			path.add(new Vector2(Float.valueOf(ss[0]), Float.valueOf(ss[1])));
+			path.add(new Vector2(Float.valueOf(ss[2]), Float.valueOf(ss[3])));
+			walls.add(path);
+		}
+	}
+	@Override
+	public void onConnect(Server server) {
+		server.sendMessage("get model");
+	}
+	
+	private float snap(float num) {
+		if (Gdx.input.isKeyPressed(Keys.CONTROL_LEFT)) return num;
+		return Math.round(num/snap)*snap;
+	}
+	
+	@Override
+	public void create() {
+		
+		server = new EditorServer(this);
+		
+		//FileHandle file = Gdx.files.internal("assets/level.xml");
+		//Builder.fromStream(model, file.read());
+		
+		walls = new ArrayList<WallPath>();
+		/*WallPath path = new WallPath();
+		path.add(0, new Vector2(10f, 10f));
+		path.add(1, new Vector2(100f, 200f));
+		path.add(1, new Vector2(200f, 100f));
+		walls.add(path);*/
+		
+		/*ShaderProgram shader = new ShaderProgram(
+				ImmediateModeRenderer20.createVertexShader(false, true, 0),
+				ImmediateModeRenderer20.createFragmentShader(false, true, 0));
+		layer = new Layer(shader, shader, null);*/
+		
+		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		camera.setToOrtho(true);
+		//camera.translate(-10f, -10f, 0);
+		camera.update();
+		
+		Gdx.input.setInputProcessor(this);
+	}
+
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void pause() {
+		// TODO Auto-generated method stub
+
+	}
+	
+	private boolean isHover(Vector2 point, float x, float y) {
+		final float hoverRadius = 10 / zoom;
+		return x > point.x - hoverRadius && x < point.x + hoverRadius &&
+			   y > point.y - hoverRadius && y < point.y + hoverRadius;
+	}
+	private boolean isHoverLine(Vector2 point1, Vector2 point2, float x, float y) {
+		final float radius = 10 / zoom;
+		float min_x = Math.min(point1.x, point2.x) - radius;
+		float min_y = Math.min(point1.y, point2.y) - radius;
+		float max_x = Math.max(point1.x, point2.x) + radius;
+		float max_y = Math.max(point1.y, point2.y) + radius;
+		if (x < min_x || x > max_x || y < min_y || y > max_y) return false;
+		
+		float a = Math.abs((point2.x-point1.x)*(point1.y-y)-(point1.x-x)*(point2.y-point1.y));
+		float b = (float) Math.sqrt((point2.x-point1.x)*(point2.x-point1.x) + (point2.y-point1.y)*(point2.y-point1.y));
+		float d = a/b;
+		return d < radius;
+	}
+	private Vector2 closestPoint(Vector2 a, Vector2 b, Vector2 p) {
+		/*Vector AP = P - A:
+		    Vector AB = B - A;
+		    float ab2 = AB.x*AB.x + AB.y*AB.y;
+		    float ap_ab = AP.x*AB.x + AP.y*AB.y;
+		    float t = ap_ab / ab2;
+		    if (segmentClamp)
+		    {
+		         if (t < 0.0f) t = 0.0f;
+		         else if (t > 1.0f) t = 1.0f;
+		    }
+		    Vector Closest = A + AB * t;
+		    return Closest;*/
+		a = a.cpy();
+		b = b.cpy();
+		Vector2 ap = p.sub(a);
+		Vector2 ab = b.sub(a);
+		float ab2 = ab.x*ab.x + ab.y*ab.y;
+		float ap_ab = ap.x*ab.x + ap.y*ab.y;
+		float t = ap_ab / ab2;
+		if (t < 0f) t = 0f;
+		else if (t > 1f) t = 1f;
+		return a.add(ab.mul(t));
+	}
+	private void updateHover() {
+		float mouse_x = Gdx.input.getX() / zoom;
+		float mouse_y = Gdx.input.getY() / zoom;
+		if (hoverSelection.valid() && isHover(hoverSelection.getPosition(), mouse_x, mouse_y)) return;
+		
+		for (WallPath path : walls) {
+			for (int i = 0; i < path.points.size(); i++) {
+				if (isHover(path.points.get(i), mouse_x, mouse_y)) {
+					hoverSelection.set(path, i);
+					newPointSelection.clear();
+					return;
+				}
+			}
+		}
+		hoverSelection.clear();
+		
+		for (WallPath path : walls) {
+			for (int i = 0; i < path.points.size()-1; i++) {
+				if (isHoverLine(path.points.get(i), path.points.get(i+1), mouse_x, mouse_y)) {
+					newPoint = closestPoint(path.points.get(i), path.points.get(i+1), new Vector2(mouse_x, mouse_y));
+					newPointSelection.set(path, i);
+					return;
+				}
+			}
+		}
+		newPointSelection.clear();
+	}
+
+	@Override
+	public void render() {
+		Gdx.gl20.glClearColor(0f, 0f, 0f, 1f);
+		Gdx.gl20.glClear(GL10.GL_COLOR_BUFFER_BIT);
+		
+		updateHover();
+		
+		for (WallPath path : walls) {
+			for (int i = 0; i < path.points.size(); i++) {
+				boolean hovered = hoverSelection.valid() && hoverSelection.equals(path, path.points.get(i));
+				if (newPointSelection.valid()) {
+					if (newPointSelection.getPath() == path) {
+						if (i == newPointSelection.getId() || i == newPointSelection.getId()+1) {
+							hovered = true;
+							layer.fillSquare(newPoint.x * zoom, newPoint.y * zoom, 6f, 6f, orange);
+						}
+					}
+				}
+				
+				if (i < path.points.size()-1)
+					layer.drawLine(path.points.get(i).x * zoom, path.points.get(i).y * zoom, 
+							path.points.get(i+1).x * zoom, path.points.get(i+1).y * zoom, 
+							white);
+				
+				layer.fillSquare(path.points.get(i).x * zoom, path.points.get(i).y * zoom, 6f, 6f, hovered ? orange : white);
+			}
+		}
+		layer.render(camera.combined);
+	}
+
+	@Override
+	public void resize(int arg0, int arg1) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void resume() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public boolean keyDown(int keycode) {
+		if (keycode == Input.Keys.FORWARD_DEL && dragSelection.valid()) {
+			WallPath path = dragSelection.getPath();
+			path.points.remove(dragSelection.getId());
+			if (path.points.size() == 1) {
+				walls.remove(path);
+			}
+			dragSelection.clear();
+			hoverSelection.clear();
+			return true;
+		}
+		else if (keycode == Keys.ENTER) {
+			for (WallPath path : walls) {
+				System.out.println(path.xmlString());
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean keyUp(int keycode) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean keyTyped(char character) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean touchDown(int x, int y, int pointer, int button) {
+		if (newPointSelection.valid()) {
+			int id = newPointSelection.getPath().add(newPointSelection.getId()+1, newPoint);
+			dragSelection.set(newPointSelection.getPath(), id);
+			return true;
+		}
+		if (hoverSelection.valid()) {
+			dragSelection.set(hoverSelection);
+			return true;
+		}
+		/*if (!lastClick.valid()) {
+			WallPath path = new WallPath();
+			path.add(0, new Vector2(x, y));
+			walls.add(path);
+			lastClick.set(path, 0);
+		}
+		else {
+			WallPath path = lastClick.getPath();
+			int id = path.add(new Vector2(x, y));
+			lastClick.set(path, id);
+		}*/
+		float mouse_x = snap(x / zoom);
+		float mouse_y = snap(y / zoom);
+		WallPath path = new WallPath();
+		walls.add(path);
+		path.add(new Vector2(mouse_x, mouse_y));
+		int id = path.add(new Vector2(mouse_x, mouse_y));
+		dragSelection.set(path, id);
+		return false;
+	}
+
+	@Override
+	public boolean touchUp(int x, int y, int pointer, int button) {
+		dragSelection.clear();
+		return true;
+	}
+
+	@Override
+	public boolean touchDragged(int x, int y, int pointer) {
+		if (dragSelection.valid()) {
+			float mouse_x = snap(x / zoom);
+			float mouse_y = snap(y / zoom);
+			dragSelection.getPosition().x = mouse_x;
+			dragSelection.getPosition().y = mouse_y;
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean touchMoved(int x, int y) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean scrolled(int amount) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+}

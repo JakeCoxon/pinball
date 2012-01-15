@@ -1,0 +1,39 @@
+package com.jakemadethis.pinball.io;
+
+import java.util.HashMap;
+
+public class OutputHandler {
+	private HashMap<String, Output> outputs;
+	private InputHandler inputHandler;
+	
+	public OutputHandler(String... names) {
+		outputs = new HashMap<String, Output>();
+		
+		for (String name : names) {
+			outputs.put(name, new Output(name));
+		}
+	}
+	public void invoke(String outputName) {
+		outputs.get(outputName).invoke();
+	}
+	/**
+	 * Gets an output from a name
+	 * @param outputName
+	 * @return
+	 */
+	public Output get(String outputName) {
+		return outputs.get(outputName);
+	}
+	
+	public InputHandler getRelatedInputHandler() {
+		return inputHandler;
+	}
+	
+	/**
+	 * IOManager sets this
+	 * @param inputHandler
+	 */
+	public void setRelatedInputHandler(InputHandler inputHandler) {
+		this.inputHandler = inputHandler;
+	}
+}
