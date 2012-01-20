@@ -1,0 +1,56 @@
+Notes
+-----
+
+Result = Source * BlendSource + Dest * BlendDest
+
+Todo
+----
+Convert levels to xml
+Finish IO system
+
+think about networked level editor ??
+
+Game ideas
+----------
+Sparks
+Paint splatter
++more particle effects
+shooting stars
+backgrounds - should have some pattern
+shouldnt feel static! things moving and buzzing and flashing etc
+magnets
+Award points for every ....
+Light up targets for player to get
+Mini games
+points that fall to pick up
+sounds increase pitch after more points
+blend colours
+challenges to unlock next level
+port hole - back to front??
+gems or something worth more than points to unlock next level
+penalties such as smaller flippers
+score updates with numbers popping up above it
+ball trails
+thing that shoots it out
+bumper colors with the lights
+BOMB
+cool startup logo
+pipes
+paralax
+
+Code
+---
+xml parser
+entity io like source
+ui slide animations
+timer class, sequence class
+
+
+Fun things
+----
+Tiny balls
+Huge balls
+Multi balls
+Rubber balls
+Slow motion
+Super speed
