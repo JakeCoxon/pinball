@@ -3,6 +3,9 @@ package com.jakemadethis.pinball;
 import java.util.LinkedList;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.VertexAttribute;
+import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -20,6 +23,7 @@ import com.jakemadethis.pinball.entities.Sensor;
 import com.jakemadethis.pinball.entities.Wall;
 import com.jakemadethis.pinball.entities.WallArc;
 import com.jakemadethis.pinball.entities.WallPath;
+import com.jakemadethis.pinball.entities.Flipper.Type;
 import com.jakemadethis.pinball.io.Connection;
 import com.jakemadethis.pinball.io.IOManager;
 import com.jakemadethis.pinball.io.OutputHandler;
@@ -62,6 +66,7 @@ public class GameModel extends BaseModel {
 		
 		width = 480f;
 		height = 1000f;
+		scale = 100f;
 
 		ioManager.add("level", null, outputs);
 		//addBox(100f, 100f, 100f, 100f);
@@ -83,19 +88,26 @@ public class GameModel extends BaseModel {
 		
 		setName("toggleWall", addWall(width-30f, height-200f, width, height-230f, rest));
 		
-		addWall(0, 0, width, 0, rest);
 		//addWall(15, height-15, width-15, height - 15, 0);
 
-		addWall(0, 0, 0, height, rest);
-		addWall(width, 0, width, height, rest);
 		
-		addWall(0, 300f, 90f, 370f, 1f);
+		addWall(0, 300f, 90f, 370f, rest);
+		
+		addWall(105.5f,915f,0.0f,864f, rest);
+		addWall(448f,864f,360.8f,911.6f, rest);
+		
+		addWall(0.0f,544f,89.2f,369.4f, rest);
 		
 		//add(new ParticleEmitter(width/100f/2f, height/100f/2f));
 		
 		float r = 100;
 		addWallArc(width-r, r, r, r, (float) (-Math.PI/2), 0, 8);
 		addWallArc(r, r, r, r, (float) (-Math.PI), (float) (-Math.PI/2), 8);
+
+		addWall(r, 0, width-r, 0, rest);
+
+		addWall(0, r, 0, 864f, rest);
+		addWall(width, r, width, height, rest);
 		
 		//Entity.addConnection(sensor, "onSense", toggleWall, "turnOn");
 		//Connection.add(outputs, "onReset", toggleWall.inputs, "turnOff");
@@ -105,13 +117,11 @@ public class GameModel extends BaseModel {
 		//ioManager.testAdd();
 		ioManager.debugPrint();
 		
-		float[] f = new float[] { 200f, 200f, 100f, 100f };
-		for (float a : f) {
-			System.out.print(Integer.toHexString(Float.floatToIntBits(a))+",");
-		}
+		
 		
 		reset();
 		
+		scale = 1f;
 		width /= 100f;
 		height /= 100f;
 	}

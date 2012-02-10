@@ -28,7 +28,7 @@ public class Bumper extends Entity implements IElement, EventListener<Input.Even
 	private float cy;
 	private float radius;
 	private int hits = 0;
-	private float kick = 2f;
+	private float kick = 1f;
 	
 	private static String INPUT_TOGGLE = "toggle";
 	
@@ -43,6 +43,15 @@ public class Bumper extends Entity implements IElement, EventListener<Input.Even
 		inputs = new InputHandler(this, INPUT_TOGGLE);
 	}
 	
+	public void setX(float x) {
+		this.cx = x;
+	}
+	public void setY(float y) {
+		this.cy = y;
+	}
+	public void setRadius(float radius) {
+		this.radius = radius;
+	}
 	public float getX() { return cx; }
 	public float getY() { return cy; }
 	public float getRadius() { return radius; }
@@ -72,6 +81,7 @@ public class Bumper extends Entity implements IElement, EventListener<Input.Even
 	public void handleCollision(Ball ball, Body body, GameModel model) {
 		hits ++;
 		Vector2 impulse = impulseForBall(ball.getBody());
+		ball.getBody().setLinearVelocity(0, 0);
 		ball.getBody().applyLinearImpulse(impulse, ball.getBody().getWorldCenter());
 	}
 	

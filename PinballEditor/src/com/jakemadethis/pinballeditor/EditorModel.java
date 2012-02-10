@@ -10,7 +10,7 @@ import com.jakemadethis.pinball.entities.WallPath;
 
 public class EditorModel extends BaseModel {
 	
-	LinkedList<WallPath> walls = new LinkedList<WallPath>();
+	public LinkedList<WallPath> walls = new LinkedList<WallPath>();
 	
 	public EditorModel() {
 		super();
@@ -30,10 +30,11 @@ public class EditorModel extends BaseModel {
 	@Override
 	public void initGame() {
 
+		scale = 100f;
 		width = 480f;
 		height = 1000f;
 
-		/*//addBox(100f, 100f, 100f, 100f);
+		//addBox(100f, 100f, 100f, 100f);
 		addBall(width-15f, height-15f, 15f);
 		
 		setName("sensor", addSensor(width-15f, height-260f, 2f));
@@ -66,7 +67,7 @@ public class EditorModel extends BaseModel {
 		addWallArc(r, r, r, r, (float) (-Math.PI), (float) (-Math.PI/2), 8);
 		
 		
-		*/
+		
 		width /= 100f;
 		height /= 100f;
 	}

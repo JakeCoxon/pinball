@@ -24,14 +24,12 @@ public class DrawableVisitor implements EntityVisitor<IDrawable, EditorView> {
 
 	@Override
 	public IDrawable visit(Bumper bumper, EditorView view) {
-		// TODO Auto-generated method stub
-		return null;
+		return new BumperDrawable(bumper, view);
 	}
 
 	@Override
 	public IDrawable visit(Flipper flipper, EditorView view) {
-		// TODO Auto-generated method stub
-		return null;
+		return new FlipperDrawable(flipper, view);
 	}
 
 	@Override

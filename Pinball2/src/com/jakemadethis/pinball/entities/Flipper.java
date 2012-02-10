@@ -60,7 +60,7 @@ public class Flipper extends Entity implements IElement {
     	// counterclockwise rotations are positive, so flip angles for flippers extending left
     	jointDef.lowerAngle = (type == Type.LEFT) ? this.minangle : -this.maxangle;
     	jointDef.upperAngle = (type == Type.LEFT) ? this.maxangle : -this.minangle;
-    	jointDef.maxMotorTorque = 1000f;
+    	jointDef.maxMotorTorque = 100f;
     	
     	joint = (RevoluteJoint)world.createJoint(jointDef);
     	setEffectiveMotorSpeed(downspeed);
@@ -117,6 +117,10 @@ public class Flipper extends Entity implements IElement {
 			float speed = (active) ? -upspeed : downspeed;
 			setEffectiveMotorSpeed(speed);
 		}
+	}
+	
+	public Type getType() {
+		return type;
 	}
 	
 	

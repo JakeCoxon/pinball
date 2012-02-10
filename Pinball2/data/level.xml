@@ -1,6 +1,9 @@
 <?xml version="1.0"?>
 <level label="New Level">
 	
+	<variable name="width" value="500" />
+	<variable name="height" value="1000" />
+	
 	<!-- right -->
 	<wall path="480,0,480,1000" />
 	<wall path="450,800,450,1000" />

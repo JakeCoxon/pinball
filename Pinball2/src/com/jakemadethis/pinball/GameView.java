@@ -16,9 +16,12 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -83,6 +86,7 @@ public class GameView extends BaseView {
 		sprites.put("bumper", new TextureRegion(spritesTexture, 0.25f, 0, 0.5f, 0.25f));
 		sprites.put("circle", new TextureRegion(spritesTexture, 0, 0, 0.125f, 0.125f));
 		sprites.put("ball", new TextureRegion(spritesTexture, 0.25f, 0, 0.5f, 0.25f));
+		sprites.put("line", new TextureRegion(spritesTexture, 0.0f, 0.25f, 0.25f, 0.5f));
 		
 
 		world = new SpriteBatch();
@@ -145,7 +149,6 @@ public class GameView extends BaseView {
 	}
 	
 	
-	private float[] coords;
 	public void render() {
 
 		Gdx.gl20.glClear(GL10.GL_COLOR_BUFFER_BIT);
@@ -158,6 +161,8 @@ public class GameView extends BaseView {
 		//Gdx.gl20.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		world.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
 
+		
+		
 		world.begin();
 		synchronized (model) {
 			
@@ -181,6 +186,7 @@ public class GameView extends BaseView {
 		while(b.length() < 5) b.insert(0, '0');
 		drawString(ui, b.toString(), 20f, 20f, 20f, new float[] {1f,1f,1f,1f});
 		drawString(ui, String.valueOf(model.combo), 20f, 40f, 20f, new float[] {1f,1f,1f,1f});
+		
 	}
 	
 	private void drawString(SpriteBatch batch, String str, float x, float y, float size, float[] color) {

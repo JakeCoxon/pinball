@@ -1,0 +1,369 @@
+// Fireworks JavaScript Command
+// Exports current document state as SVG graphics format
+// Install by copying to Fireworks/Configuration/Commands/
+// Run via the Commands menu in Fireworks
+// Aaron Beall 2010
+// Version 0.1
+
+/* TODO
+- symbols to def/use tags
+- shadow and glow and bevel filters
+- rectangle primitives
+- text
+- patterns
+- recognize duplicate definitions
+- images via feImage filters
+*/
+
+var dom =  fw.getDocumentDOM(); // document object
+var sel = [].concat(fw.selection); // saved selection
+
+var indent = "	";
+var newline = "\n";
+
+var docType = '<?xml version="1.0" standalone="no"?>' + newline
+			+ '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">'
+
+function ExportSVG() {
+	if (!dom)
+		return false;
+	
+	// extract SVG compatible objects
+	var objects = extractObjects(dom.topLayers || dom.layers);
+	
+	function extractObjects(container){
+		var objs = [], i = container.length;
+		while(i--){
+			var obj = container[i];
+			if(obj.isLayer){
+				if(obj.layerType != "web")
+					objs = objs.concat(extractObjects(obj.elems));
+			}else{
+				if(obj == "[object Path]")
+					objs.push(obj);
+				else if(obj == "[object Group]")
+					objs.push({isGroup:true, opacity:obj.opacity, effects:obj.effectList, elements:extractObjects(obj.elements)});
+				else if (obj == "[object Instance]") {
+					objs.push(obj);
+				}
+			}
+				
+		}
+		return objs;
+	}
+	
+	// begin svg output
+	var svgText = docType + newline;
+	var viewBox = dom.left + " " + dom.top + " " + dom.width + " " + dom.height;
+	svgText += '<svg viewBox="' + viewBox + '" version="1.1">' + newline;
+	var defs = [];
+	
+	// draw paths
+	var svgDrawing = "", currentIndent = "";
+	
+	parseObjects(objects, currentIndent + indent);
+	
+	function parseObjects(objects, currentIndent){
+		for(var i = 0; i < objects.length; i++){
+			
+			var obj = objects[i];
+			
+			// groups
+			/*if(obj.isGroup){
+				svgDrawing += currentIndent + "<g";
+				if(obj.opacity != 100)
+					svgDrawing += ' opacity="' + (obj.opacity / 100) + '"';
+				if(obj.effectList && obj.effectList.effects.length){
+					var filterID = renderFilters(obj.effectList, defs);
+					if(filterID)
+						svgDrawing += ' filter="url(#' + filterID + ')"';
+				}
+				svgDrawing += ">" + newline;
+				parseObjects(obj.elements, currentIndent + indent);
+				svgDrawing += currentIndent + "</g>" + newline;
+				continue;
+			}*/
+			
+			if (obj.symbolName && obj.symbolName == "bumper") {
+			
+				
+			
+			}
+			
+			svgDrawing += currentIndent + "<path";
+			
+			var data = "";
+			var contours = obj.contours;
+			for(var c = 0; c < contours.length; c++){
+				var contour = contours[c];
+				var nodes = contour.nodes;
+				
+				// move to new contour
+				data += "M " + nodes[0].x + " " + nodes[0].y + " ";
+				for(var n = 1; n <= nodes.length; n++){
+					
+					// non closed contours
+					if(!contour.isClosed && n == nodes.length)
+						break;
+					
+					// determine two bordering nodes
+					var node = nodes[n < nodes.length ? n : 0];
+					var prevNode = nodes[n > 0 ? n - 1 : nodes.length - 1]
+					
+					// draw between the nodes
+					if(node.predX == node.x && node.predY == node.y && prevNode.succX == prevNode.x && prevNode.succY == prevNode.y){
+						// line to
+						data += "L " + node.x + " " + node.y + " ";
+					}else{
+						// curve to
+						data += "C " + prevNode.succX + " " + prevNode.succY + " " + node.predX + " " + node.predY + " " + node.x + " " + node.y + " ";
+					}
+				}
+					
+				if(contour.isClosed)
+					data += "Z";
+			}
+			
+			// add path data
+			svgDrawing += ' d="' + data + '"';
+			
+			// path attributes
+			var attrs = obj.pathAttributes;
+			
+			// stroke
+			//if(attrs.brush)
+			//	svgDrawing += ' stroke="' + attrs.brushColor + '" stroke-width="' + attrs.brush.diameter + '"';
+			
+			// fill
+			/*if(attrs.fill){
+				if(attrs.fill.gradient && (attrs.fill.shape == "linear" || attrs.fill.shape == "radial")){
+					
+					// gradient color fill
+					var gradientStart = indent + indent, gradientEnd = indent + indent, id = getID("gradient");
+					
+					switch(attrs.fill.shape){
+						case "linear":
+							var x1 = percent(attrs.fillHandle1.x - obj.left, obj.width);
+							var y1 = percent(attrs.fillHandle1.y - obj.top, obj.height);
+							var x2 = percent(attrs.fillHandle2.x - obj.left, obj.width);
+							var y2 = percent(attrs.fillHandle2.y - obj.top, obj.height);
+							gradientStart += '<linearGradient id="' + id + '" x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '">'
+							gradientEnd += '</linearGradient>';
+							break;
+						
+						case "radial":
+							var cx = percent(attrs.fillHandle1.x - obj.left, obj.width);
+							var cy = percent(attrs.fillHandle1.y - obj.top, obj.height);
+							var r = percent(distance(attrs.fillHandle1, attrs.fillHandle2), Math.max(obj.width, obj.height));//Math.round(distance(attrs.fillHandle1, attrs.fillHandle2)) + "px";
+							gradientStart += '<radialGradient id="' + id + '" cx="' + cx + '" cy="' + cy + '" r="' + r + '">'
+							gradientEnd += '</radialGradient>';
+							break;
+					}
+					
+					// gradient stops
+					var gradientStops = "";
+					var nodes = [].concat(attrs.fill.gradient.nodes, attrs.fill.gradient.opacityNodes);
+					nodes.sort(function(a,b){return a.position - b.position});
+					var mergedNodes = [];
+					for(var n = 0; n < nodes.length; n++){
+						var prevNode = mergedNodes[mergedNodes.length - 1];
+						if(prevNode && nodes[n].position == prevNode.position)
+							nodes[n].isOpacityNode ? prevNode.opacity = nodes[n].color : prevNode.color = nodes[n].color;
+						else
+							mergedNodes.push(nodes[n].isOpacityNode ? 
+								{position:nodes[n].position, opacity:nodes[n].color, color:interpolateColorNodes(nodes, n)} : 
+								{position:nodes[n].position, opacity:interpolateOpacityNodes(nodes, n), color:nodes[n].color});
+					}
+					nodes = mergedNodes;
+					
+					for(var n = 0; n < nodes.length; n++){
+						gradientStops += indent + indent + indent;
+						gradientStops += '<stop';
+						//if(nodes[n].color)
+							gradientStops += ' stop-color="' + nodes[n].color + '"';
+						//if(nodes[n].opacity)
+							gradientStops += ' stop-opacity="' + gradientOpacity(nodes[n].opacity) + '"';
+						gradientStops += ' offset="' + percent(nodes[n].position, 1) + '"/>';
+						gradientStops += newline;
+					}
+					
+					// assign gradient fill
+					svgDrawing += ' fill="url(#' + id + ')"';
+					
+					// add gradient to defs
+					defs.push(gradientStart + newline + gradientStops + gradientEnd);
+				}else{
+					
+					// solid color fill
+					svgDrawing += ' fill="' + attrs.fillColor + '"';
+				}
+			}*/
+			
+			// opacity
+			/*if(obj.opacity != 100)
+				svgDrawing += ' opacity="' + (obj.opacity / 100) + '"';
+			
+			// filters
+			if(obj.effectList && obj.effectList.effects.length){
+				var filterID = renderFilters(obj.effectList, defs);
+				if(filterID)
+					svgDrawing += ' filter="url(#' + filterID + ')"';
+			}
+			
+			// visibility
+			if(!obj.visible)
+				svgDrawing += ' visibility="hidden"';*/
+			
+			// close path
+			svgDrawing += "/>" + newline;
+		}
+	}
+	
+	//svgDefs = defs.length ? indent + '<defs>' + newline + defs.join(newline) + newline + indent + '</defs>' + newline : "";
+	
+	var svg = svgText + svgDrawing + "</svg>";
+	
+	var fileURL = fw.browseForFileURL("save");
+	if(!fileURL)
+		return false;
+	
+	Files.deleteFileIfExisting(fileURL);
+	Files.createFile(fileURL, ".xml", fw.appMacCreator);
+	var file = Files.open(fileURL, true);
+	if(file){
+		file.write(svg);
+		file.close();
+	}else{
+		return alert("ERROR: Unable to write file to disk.");
+	}
+	
+	//alert(svg)
+}
+
+var ids = {};
+function getID(key){
+	if(!ids[key])
+		ids[key] = 1;
+	else
+		ids[key]++;
+	return key + ids[key];
+}
+
+function percent(val, max){
+	return Math.round((val / max) * 100) + "%";
+}
+
+function distance(p1, p2){
+	return Math.sqrt((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y));
+}
+
+function gradientOpacity(color){
+	return color.length > 7 ? parseInt(color.substr(7, 2), 16) / 255 : 1;
+}
+
+function interpolateColorNodes(nodes, index){
+	var prevColor, nextColor, prevPosition, nextPosition;
+	var n = index;
+	while(n--){
+		if(!nodes[n].isOpacityNode){
+			prevColor = nodes[n].color;
+			prevPosition = nodes[n].position;
+			break;
+		}
+	}
+	for(var n = index; n < nodes.length; n++){
+		if(!nodes[n].isOpacityNode){
+			nextColor = nodes[n].color;
+			nextPosition = nodes[n].position;
+			break;
+		}
+	}
+	if(!prevColor)
+		return "inherit";
+	else if(!nextColor)
+		return prevColor;
+	
+	var percent = (nodes[index].position - prevPosition) / (nextPosition - prevPosition)
+	var prevRGB = {
+		r:parseInt(prevColor.substr(1, 2), 16),
+		g:parseInt(prevColor.substr(3, 2), 16),
+		b:parseInt(prevColor.substr(5, 2), 16)
+	}
+	var nextRGB = {
+		r:parseInt(nextColor.substr(1, 2), 16),
+		g:parseInt(nextColor.substr(3, 2), 16),
+		b:parseInt(nextColor.substr(5, 2), 16)
+	}
+	var rgb = {
+		r:Math.round(prevRGB.r + (nextRGB.r - prevRGB.r) * percent),
+		g:Math.round(prevRGB.g + (nextRGB.g - prevRGB.g) * percent),
+		b:Math.round(prevRGB.b + (nextRGB.b - prevRGB.b) * percent)
+	}
+	var hex = {
+		r:String("00" + rgb.r.toString(16)).substr(-2),
+		g:String("00" + rgb.g.toString(16)).substr(-2),
+		b:String("00" + rgb.b.toString(16)).substr(-2)
+	}
+	return "#" + hex.r + hex.g + hex.b;
+}
+
+function interpolateOpacityNodes(nodes, index){
+	var prevOpacity, nextOpacity, prevPosition, nextPosition;
+	var n = index;
+	while(n--){
+		if(nodes[n].isOpacityNode){
+			prevOpacity = nodes[n].color;
+			prevPosition = nodes[n].position;
+			break;
+		}
+	}
+	for(var n = index; n < nodes.length; n++){
+		if(nodes[n].isOpacityNode){
+			nextOpacity = nodes[n].color;
+			nextPosition = nodes[n].position;
+			break;
+		}
+	}
+	if(!prevOpacity)
+		return "#000000ff";
+	else if(!nextOpacity)
+		return prevOpacity;
+	
+	var percent = (nodes[index].position - prevPosition) / (nextPosition - prevPosition)
+	var prevAlpha = prevOpacity.length > 7 ? parseInt(prevOpacity.substr(-2), 16) : 255;
+	var nextAlpha = nextOpacity.length > 7 ? parseInt(nextOpacity.substr(-2), 16) : 255;
+	var alpha = Math.round(prevAlpha + (nextAlpha - prevAlpha) * percent);
+	return "#000000" + String("00" + alpha.toString(16)).substr(-2);
+}
+
+function renderFilters(effectList, defs){
+	var filters = [], svgFilter;
+	for(var i = 0; i < effectList.effects.length; i++){
+		var effect = effectList.effects[i];
+		svgFilter = "";
+		switch(effect.EffectMoaID){
+			
+			// Gaussian Blur
+			case "{d04ef8c0-71b3-11d1-8c8200a024cdc039}":
+				svgFilter = indent + indent + indent;
+				svgFilter += '<feGaussianBlur in="SourceGraphic" stdDeviation="' + effect.gaussian_blur_radius + '"/>';
+				break;
+		}
+		if(svgFilter.length)
+			filters.push(svgFilter);
+	}
+	if(filters.length){
+		var id = getID("filter");
+		var svgFilters = indent + indent;
+		svgFilters += '<filter id="' + id + '">' + newline;
+		svgFilters += filters.join(newline + indent + indent + indent);
+		svgFilters += newline + indent + indent + '</filter>';
+		defs.push(svgFilters);
+		return id;
+	}else
+		return null;
+}
+
+try{
+ExportSVG();
+}catch(e){alert([e.lineNumber, e.message])}

@@ -36,13 +36,13 @@ public class GameController implements InputProcessor {
 		//Log.d("JAKE", "initGame");
 		model.initGame();
 		
-		Thread thread = new Thread(new Runnable() {
+		/*Thread thread = new Thread(new Runnable() {
 			@Override public void run() {
 				Server server = new Server(4444, new Protocol(model));
 				server.start();
 			}
 		});
-		thread.start();
+		thread.start();*/
 		
 		//new Client("127.0.0.1", 4444, new Protocol(model));
 		
@@ -56,8 +56,8 @@ public class GameController implements InputProcessor {
 	
 	public void run() {
 		float delta = Gdx.graphics.getDeltaTime();
-		model.think(0.01f * gameSpeed, 4);
-		view.think(0.01f * gameSpeed);
+		model.think(delta * gameSpeed, 4);
+		view.think(delta * gameSpeed);
 		view.render();
 	}
 

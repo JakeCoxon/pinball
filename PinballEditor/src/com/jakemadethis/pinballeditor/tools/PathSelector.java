@@ -1,4 +1,4 @@
-package com.jakemadethis.pinballeditor;
+package com.jakemadethis.pinballeditor.tools;
 
 import com.badlogic.gdx.math.Vector2;
 import com.jakemadethis.pinball.entities.WallPath;

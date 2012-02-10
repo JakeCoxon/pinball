@@ -27,6 +27,7 @@ public class BaseModel implements ContactListener {
 
 	protected IOManager ioManager;
 	public World world;
+	protected float scale = 1f;
 	public EventHandler<EntityArgs> entityAddedHandler = new EventHandler<EntityArgs>();
 	public EventHandler<EntityArgs> entityRemovedHandler = new EventHandler<EntityArgs>();
 	public LinkedList<Entity> entities;
@@ -34,7 +35,7 @@ public class BaseModel implements ContactListener {
 	
 	public BaseModel() {
 		entities = new LinkedList<Entity>();
-		world = new World(new Vector2(0, 20f), true);
+		world = new World(new Vector2(0, 8f), true);
 		world.setContactListener(this);
 		ioManager = new IOManager();
 	}
@@ -65,30 +66,30 @@ public class BaseModel implements ContactListener {
 	}
 	
 	public synchronized Sensor addSensor(float x, float y, float r) {
-		return add(new Sensor(x / 100f, y / 100f, r / 100f));
+		return add(new Sensor(x / scale, y / scale, r / scale));
 	}
 
 	public synchronized Ball addBall(float cx, float cy, float radius) {
-		return add(new Ball(world, cx / 100, cy / 100, radius / 100));
+		return add(new Ball(world, cx / scale, cy / scale, radius / scale));
 	}
 	
 	public synchronized Bumper addBumper(float cx, float cy, float radius) {
-		return add(new Bumper(world, cx / 100, cy / 100, radius / 100));
+		return add(new Bumper(world, cx / scale, cy / scale, radius / scale));
 	}
 	
 	public synchronized Flipper addFlipper(float cx, float cy, float length, Flipper.Type type) {
-		return add(new Flipper(world, cx / 100, cy / 100, length / 100, type));
+		return add(new Flipper(world, cx / scale, cy / scale, length / scale, type));
 	}
 	
 	public synchronized Wall addWall(float x0, float y0, float x1, float y1, float restitution) {
-		return add(new Wall(world, x0 / 100, y0 / 100, x1 / 100, y1 / 100, restitution));
+		return add(new Wall(world, x0 / scale, y0 / scale, x1 / scale, y1 / scale, restitution));
 	}
 	public synchronized WallPath addWallPath(float[] path, float restitution) {
-		for (int i=0; i < path.length; i++) path[i] = path[i]/100f;
+		for (int i=0; i < path.length; i++) path[i] = path[i]/scale;
 		return add(new WallPath(world, path, restitution));
 	}
 	public synchronized WallArc addWallArc(float cx, float cy, float xradius, float yradius, float minangle, float maxangle, int numSegments) {
-		return add(new WallArc(world, cx/100, cy/100, xradius/100, yradius/100, minangle, maxangle, numSegments));
+		return add(new WallArc(world, cx/scale, cy/scale, xradius/scale, yradius/scale, minangle, maxangle, numSegments));
 	}
 
 	@Override

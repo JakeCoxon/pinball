@@ -1,20 +1,38 @@
-package com.jakemadethis.pinballeditor;
+package com.jakemadethis.pinballeditor.tools;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector3;
+import com.jakemadethis.net.Client;
 import com.jakemadethis.pinball.Entity;
 import com.jakemadethis.pinball.IDrawable;
+import com.jakemadethis.pinballeditor.EditorModel;
+import com.jakemadethis.pinballeditor.EditorView;
 
-public abstract class Tool implements InputProcessor, IDrawable {
+public abstract class Tool implements InputProcessor {
 
-	@Override
-	public Entity getEntity() {
-		return null;
+
+	protected EditorView view;
+	protected EditorModel model;
+	protected SpriteBatch world;
+	protected OrthographicCamera worldCamera;
+	protected Vector3 worldMouse = new Vector3(0,0,0);
+	
+	public Tool(EditorView view, EditorModel model) {
+		this.view = view;
+		this.model = model;
+		this.world = view.world;
+		this.worldCamera = view.worldCamera;
 	}
-
-	@Override
+	
 	public abstract void draw();
 	
-	public abstract void think(float delta);
+	public void think(float delta) {
+		worldMouse.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+		view.worldCamera.unproject(worldMouse);
+	}
 
 	@Override
 	public boolean keyDown(int keycode) {

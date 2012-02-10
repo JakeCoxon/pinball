@@ -1,4 +1,4 @@
-package com.jakemadethis.pinballeditor;
+package com.jakemadethis.pinballeditor.tools;
 
 import java.util.ArrayList;
 
@@ -14,14 +14,12 @@ import com.jakemadethis.net.Client;
 import com.jakemadethis.pinball.Entity;
 import com.jakemadethis.pinball.IDrawable;
 import com.jakemadethis.pinball.entities.WallPath;
+import com.jakemadethis.pinballeditor.EditorModel;
+import com.jakemadethis.pinballeditor.EditorView;
 import com.jakemadethis.pinballeditor.net.EditorClient;
 
 public class WallPathTool extends Tool {
 
-	private EditorView view;
-	private EditorModel model;
-	private SpriteBatch world;
-	private OrthographicCamera worldCamera;
 
 	private Color orange = new Color(1f, 0.7f, 0f, 1f);
 	private Color white = new Color(1f, 1f, 1f, 1f);
@@ -31,20 +29,12 @@ public class WallPathTool extends Tool {
 	public Vector2 newPoint;
 	
 	private PathSelector dragSelection = new PathSelector(null, -1);
-	private Vector3 worldMouse = new Vector3(0,0,0);
 	private Client client;
 	
 
 	public WallPathTool(Client client, EditorView view, EditorModel model) {
+		super(view, model);
 		this.client = client;
-		this.view = view;
-		this.model = model;
-		this.world = view.world;
-		this.worldCamera = view.worldCamera;
-	}
-	@Override
-	public Entity getEntity() {
-		return null;
 	}
 	
 	
@@ -112,9 +102,8 @@ public class WallPathTool extends Tool {
 	}
 	
 	public void think(float delta) {
+		super.think(delta);
 		
-		worldMouse.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-		view.worldCamera.unproject(worldMouse);
 		
 		if (hoverSelection.valid() && isHover(hoverSelection.getPosition())) return;
 		
@@ -156,6 +145,12 @@ public class WallPathTool extends Tool {
 			return true;
 		}
 		else if (keycode == Keys.ENTER) {
+			if (newPointSelection.valid()) {
+				for (Vector2 point : newPointSelection.getPath().getPoints()) {
+					System.out.print(point.x+","+point.y+",");
+				}
+				System.out.println();
+			}
 			//for (WallPath path : walls) {
 			//	System.out.println(path.xmlString());
 			//}
@@ -164,18 +159,7 @@ public class WallPathTool extends Tool {
 		return false;
 	}
 
-	@Override
-	public boolean keyUp(int keycode) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean keyTyped(char character) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
+	
 	@Override
 	public boolean touchDown(int x, int y, int pointer, int button) {
 		if (newPointSelection.valid()) {
@@ -201,12 +185,6 @@ public class WallPathTool extends Tool {
 	}
 
 	@Override
-	public boolean touchUp(int x, int y, int pointer, int button) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public boolean touchDragged(int x, int y, int pointer) {
 		if (dragSelection.valid()) {
 			float mouse_x = view.snap(worldMouse.x);
@@ -220,16 +198,5 @@ public class WallPathTool extends Tool {
 		return false;
 	}
 
-	@Override
-	public boolean touchMoved(int x, int y) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean scrolled(int amount) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 }

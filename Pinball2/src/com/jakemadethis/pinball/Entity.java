@@ -9,7 +9,14 @@ import com.jakemadethis.pinball.io.Input.EventArgs;
 import com.jakemadethis.pinball.io.InputHandler;
 import com.jakemadethis.pinball.io.OutputHandler;
 
-public abstract class Entity  {
+/**
+ * Entity
+ * Has an optional IDrawable
+ * Holds inputs and outputs
+ * @author Jake
+ *
+ */
+public abstract class Entity {
 
 	public int ID;
 	public InputHandler inputs;
@@ -19,9 +26,28 @@ public abstract class Entity  {
 		this.ID = id;
 	}
 	
+	/**
+	 * Called when a ball hits this entity
+	 * @param ball
+	 * @param body
+	 * @param model
+	 */
 	public abstract void handleCollision(Ball ball, Body body, GameModel model);
+	
+	/**
+	 * Called every think frame
+	 * @param timestep
+	 * @param model
+	 */
 	public abstract void think(float timestep, GameModel model);
 	
+	/**
+	 * Creates an IDrawable
+	 * @param <A>
+	 * @param visitor
+	 * @param view
+	 * @return
+	 */
 	public abstract <A> IDrawable accept(EntityVisitor<IDrawable, A> visitor, A view);
 	
 	public static Connection addConnection(Entity entity, String outputName, Entity target, String inputName) {

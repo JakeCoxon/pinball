@@ -35,7 +35,7 @@ public class WallPathDrawable implements IDrawable {
 		
 		view.world.setColor(1f, 1f, 1f, 1f);
 		for (int i = 0; i < points.size() - 1; i ++) {
-			view.drawHairLine(view.world, points.get(i).x, points.get(i).y, points.get(i+1).x, points.get(i+1).y, 1f);
+			view.drawHairLine(view.world, points.get(i).x, points.get(i).y, points.get(i+1).x, points.get(i+1).y, 2f);
 			//view.world.drawLine(paths[i], paths[i+1], paths[i+2], paths[i+3], wallPath.isActive() ? colorOn : colorOff);
 			//view.getWorldDelegate().drawLine(DrawMode.NORMAL, seg[0], seg[1], seg[2], seg[3], color);
 		}

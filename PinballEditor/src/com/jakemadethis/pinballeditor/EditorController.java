@@ -13,12 +13,16 @@ import com.jakemadethis.pinball.GameModel;
 import com.jakemadethis.pinball.IView;
 import com.jakemadethis.pinball.entities.WallPath;
 import com.jakemadethis.pinballeditor.net.EditorClient;
+import com.jakemadethis.pinballeditor.tools.BumperTool;
+import com.jakemadethis.pinballeditor.tools.Tool;
+import com.jakemadethis.pinballeditor.tools.WallPathTool;
 
 public class EditorController implements InputProcessor {
 	private EditorModel model;
 	private EditorView view;
 	private Tool tool;
 	private Client client;
+	private Tool[] tools;
 
 	public EditorController(final EditorModel model, final EditorView view) {
 		this.model = model;
@@ -28,12 +32,21 @@ public class EditorController implements InputProcessor {
 		
 		client = new Client("127.0.0.1", 4444, new EditorClient(model));
 		
-		tool = new WallPathTool(client, view, model);
+		tools = new Tool[] {
+			new WallPathTool(client, view, model),
+			new BumperTool(view, model)
+		};
+		tool = tools[0];
+		
 		Gdx.input.setInputProcessor(this);
 		
 		view.setTool(tool);
 		
 		
+	}
+	private void setTool(int id) {
+		tool = tools[id];
+		view.setTool(tool);
 	}
 	
 	
@@ -46,6 +59,9 @@ public class EditorController implements InputProcessor {
 
 	@Override
 	public boolean keyDown(int keycode) {
+		if (keycode == Keys.F1) { setTool(0); return true; }
+		if (keycode == Keys.F2) { setTool(1); return true; }
+		
 		return tool.keyDown(keycode);
 	}
 

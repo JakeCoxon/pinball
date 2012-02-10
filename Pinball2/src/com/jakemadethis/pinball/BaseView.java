@@ -84,7 +84,10 @@ public abstract class BaseView implements IView {
 		float dx = x2 - x1;
 		float angle = (float) Math.toDegrees(Math.atan2(dy, dx));
 		float length = (float) Math.sqrt(dx * dx + dy * dy);
-		batch.draw(pixelTexture, x1, y1, 0f, width/2, length, width, 1f, 1f, angle, 0, 0, 1, 1, false, false);
+		TextureRegion region = sprites.get("line");
+		if (region == null) throw new RuntimeException("Needs a line texture");
+		batch.draw(region, x1, y1, 0f, width/2, length, width, 1f, 1f, angle);
+		//batch.draw(pixelTexture, x1, y1, 0f, width/2, length, width, 1f, 1f, angle, 0, 0, 1, 1, false, false);
 	}
 	
 	public void drawRect(SpriteBatch batch, float x, float y, float w, float h) {
