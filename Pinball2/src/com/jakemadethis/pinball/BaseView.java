@@ -10,12 +10,6 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.jakemadethis.pinball.BaseModel.EntityArgs;
-import com.jakemadethis.pinball.EventHandler.EventListener;
-import com.jakemadethis.pinball.drawing.ImmediateModeRenderer20;
-import com.jakemadethis.pinball.drawing.Layer;
-import com.jakemadethis.pinball.views.DrawableVisitor;
 
 public abstract class BaseView implements IView {
 	public EventHandler<Object> initGameHandler = new EventHandler<Object>();

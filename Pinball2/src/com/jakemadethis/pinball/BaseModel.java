@@ -8,16 +8,24 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
-import com.jakemadethis.pinball.entities.Ball;
-import com.jakemadethis.pinball.entities.Bumper;
-import com.jakemadethis.pinball.entities.Flipper;
-import com.jakemadethis.pinball.entities.Sensor;
-import com.jakemadethis.pinball.entities.Wall;
-import com.jakemadethis.pinball.entities.WallArc;
-import com.jakemadethis.pinball.entities.WallPath;
 import com.jakemadethis.pinball.io.IOManager;
+import com.jakemadethis.pinball.level.Ball;
+import com.jakemadethis.pinball.level.Bumper;
+import com.jakemadethis.pinball.level.Flipper;
+import com.jakemadethis.pinball.level.Sensor;
+import com.jakemadethis.pinball.level.Wall;
+import com.jakemadethis.pinball.level.WallArc;
+import com.jakemadethis.pinball.level.Wall;
 
+/**
+ * The base that holds the Box2d world, entities, physics listeners,
+ * io manager
+ * Also has helper methods for adding entities
+ * @author Jake
+ *
+ */
 public class BaseModel implements ContactListener {
+	
 	public static class EntityArgs {
 		final private Entity entity;
 		public EntityArgs(Entity entity) { this.entity = entity; }
@@ -27,10 +35,14 @@ public class BaseModel implements ContactListener {
 
 	protected IOManager ioManager;
 	public World world;
+	
+	// Scale is used when creating entities
 	protected float scale = 1f;
+	
 	public EventHandler<EntityArgs> entityAddedHandler = new EventHandler<EntityArgs>();
 	public EventHandler<EntityArgs> entityRemovedHandler = new EventHandler<EntityArgs>();
 	public LinkedList<Entity> entities;
+	
 	public float width, height;
 	
 	public BaseModel() {
@@ -42,24 +54,53 @@ public class BaseModel implements ContactListener {
 
 	public void initGame() {
 	}
+	
+	public IOManager getIoManager() {
+		return ioManager;
+	}
 
+	/**
+	 * Run every update frame
+	 * @param timestep
+	 * @param iters
+	 */
 	public synchronized void think(float timestep, int iters) {
 	}
+	
+	/**
+	 * Sets the name of the entity in the io manager
+	 * @param name
+	 * @param entity
+	 */
 	public void setName(String name, Entity entity) {
 		if (name.length() == 0) return;
 		ioManager.add(name, entity);
 	}
 	
-	private <T extends Entity> T add(String name, T entity) {
+	protected <T extends Entity> T add(String name, T entity) {
 		add(entity);
 		ioManager.add(name, entity);
 		return entity;
 	}
-	private <T extends Entity> T add(T entity) {
+	
+	/**
+	 * Adds an entity to the game and invokes the entityAdded handler
+	 * @param <T>
+	 * @param entity
+	 * @return
+	 */
+	protected <T extends Entity> T add(T entity) {
 		entities.add(entity);
 		entityAddedHandler.invoke(this, new EntityArgs(entity));
 		return entity;
 	}
+	
+	/**
+	 * Removes an entity to the game and invokes the entityRemoved handler
+	 * @param <T>
+	 * @param entity
+	 * @return
+	 */
 	public void remove(Entity entity) {
 		entities.remove(entity);
 		entityRemovedHandler.invoke(this, new EntityArgs(entity));
@@ -84,9 +125,9 @@ public class BaseModel implements ContactListener {
 	public synchronized Wall addWall(float x0, float y0, float x1, float y1, float restitution) {
 		return add(new Wall(world, x0 / scale, y0 / scale, x1 / scale, y1 / scale, restitution));
 	}
-	public synchronized WallPath addWallPath(float[] path, float restitution) {
+	public synchronized Wall addWallPath(float[] path, float restitution) {
 		for (int i=0; i < path.length; i++) path[i] = path[i]/scale;
-		return add(new WallPath(world, path, restitution));
+		return add(new Wall(world, path, restitution));
 	}
 	public synchronized WallArc addWallArc(float cx, float cy, float xradius, float yradius, float minangle, float maxangle, int numSegments) {
 		return add(new WallArc(world, cx/scale, cy/scale, xradius/scale, yradius/scale, minangle, maxangle, numSegments));
@@ -94,25 +135,21 @@ public class BaseModel implements ContactListener {
 
 	@Override
 	public void beginContact(Contact contact) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void endContact(Contact contact) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void preSolve(Contact contact, Manifold oldManifold) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void postSolve(Contact contact, ContactImpulse impulse) {
-		// TODO Auto-generated method stub
 		
 	}
 	

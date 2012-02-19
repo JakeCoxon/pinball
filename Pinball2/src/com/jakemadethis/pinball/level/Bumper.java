@@ -1,20 +1,18 @@
-package com.jakemadethis.pinball.entities;
+package com.jakemadethis.pinball.level;
 
 
-import java.util.Random;
+import java.util.HashMap;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
+import com.jakemadethis.pinball.BaseModel;
 import com.jakemadethis.pinball.Entity;
-import com.jakemadethis.pinball.EventHandler;
-import com.jakemadethis.pinball.GameView;
 import com.jakemadethis.pinball.IDrawable;
-import com.jakemadethis.pinball.IView;
 import com.jakemadethis.pinball.GameModel;
-import com.jakemadethis.pinball.Timer;
+import com.jakemadethis.pinball.IElement;
+import com.jakemadethis.pinball.builder.BuilderNode;
+import com.jakemadethis.pinball.builder.FactoryUtil;
 import com.jakemadethis.pinball.io.Input;
 import com.jakemadethis.pinball.io.InputHandler;
 import com.jakemadethis.pinball.io.Input.EventArgs;
@@ -22,6 +20,27 @@ import com.jakemadethis.pinball.EventHandler.EventListener;
 
 
 public class Bumper extends Entity implements IElement, EventListener<Input.EventArgs> {
+	
+	
+	/**
+	 * Creates a bumper from attributes at,radius[,name]
+	 * @param model
+	 * @param atts
+	 * @return
+	 */
+	public static Bumper fromNode(BaseModel model, BuilderNode node) {
+		HashMap<String, String> atts = node.getAttributes();
+		
+		float[] at = 	FactoryUtil.toPosition( FactoryUtil.expected(atts, "at") );
+		float radius = 			 Float.valueOf( FactoryUtil.expected(atts, "radius") );
+		String name = 						    FactoryUtil.optional(atts, "name", "");
+	
+		Bumper entity = model.addBumper(at[0], at[1], radius);
+		model.setName(name, entity);
+		
+		return entity;
+	}
+	
 	
 	public Body body;
 	private float cx;
@@ -31,6 +50,7 @@ public class Bumper extends Entity implements IElement, EventListener<Input.Even
 	private float kick = 1f;
 	
 	private static String INPUT_TOGGLE = "toggle";
+
 	
 	public Bumper(World world, float cx, float cy, float radius) {
 		body = Box2DFactory.createCircle(world, cx, cy, radius, true);
@@ -57,7 +77,7 @@ public class Bumper extends Entity implements IElement, EventListener<Input.Even
 	public float getRadius() { return radius; }
 	
 	@Override
-	public <A> IDrawable accept(EntityVisitor<IDrawable, A> visitor, A arg) {
+	public <A, R> R accept(EntityVisitor<R, A> visitor, A arg) {
 		return visitor.visit(this, arg);
 	}
 	

@@ -4,13 +4,13 @@ import java.util.LinkedList;
 
 import com.jakemadethis.pinball.BaseModel;
 import com.jakemadethis.pinball.Entity;
-import com.jakemadethis.pinball.entities.Flipper;
-import com.jakemadethis.pinball.entities.Wall;
-import com.jakemadethis.pinball.entities.WallPath;
+import com.jakemadethis.pinball.level.Flipper;
+import com.jakemadethis.pinball.level.Wall;
+import com.jakemadethis.pinball.level.Wall;
 
 public class EditorModel extends BaseModel {
 	
-	public LinkedList<WallPath> walls = new LinkedList<WallPath>();
+	public LinkedList<Wall> walls = new LinkedList<Wall>();
 	
 	public EditorModel() {
 		super();
@@ -81,8 +81,8 @@ public class EditorModel extends BaseModel {
 	}
 	
 	@Override
-	public synchronized WallPath addWallPath(float[] path, float restitution) {
-		WallPath wall = super.addWallPath(path, restitution);
+	public synchronized Wall addWallPath(float[] path, float restitution) {
+		Wall wall = super.addWallPath(path, restitution);
 		walls.add(wall);
 		return wall;
 	}

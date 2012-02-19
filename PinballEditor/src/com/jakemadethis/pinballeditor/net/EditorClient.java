@@ -2,7 +2,7 @@ package com.jakemadethis.pinballeditor.net;
 
 import com.jakemadethis.net.Client;
 import com.jakemadethis.net.IClientProtocol;
-import com.jakemadethis.pinball.entities.WallPath;
+import com.jakemadethis.pinball.level.Wall;
 import com.jakemadethis.pinballeditor.EditorModel;
 
 public class EditorClient implements IClientProtocol {
@@ -26,7 +26,7 @@ public class EditorClient implements IClientProtocol {
 			for (int i = 1; i < strs.length; i++) {
 				floats[i-1] = Float.valueOf(strs[i]) * 100f;
 			}
-			WallPath path = model.addWallPath(floats, 1f);
+			Wall path = model.addWallPath(floats, 1f);
 			path.setID(id);
 			System.out.println(id);
 		}

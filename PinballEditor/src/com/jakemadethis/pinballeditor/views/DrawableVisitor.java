@@ -1,18 +1,24 @@
 package com.jakemadethis.pinballeditor.views;
 
+import com.jakemadethis.pinball.Entity;
 import com.jakemadethis.pinball.IDrawable;
-import com.jakemadethis.pinball.entities.Ball;
-import com.jakemadethis.pinball.entities.Bumper;
-import com.jakemadethis.pinball.entities.EntityVisitor;
-import com.jakemadethis.pinball.entities.Flipper;
-import com.jakemadethis.pinball.entities.Sensor;
-import com.jakemadethis.pinball.entities.WallPath;
+import com.jakemadethis.pinball.level.Ball;
+import com.jakemadethis.pinball.level.Bumper;
+import com.jakemadethis.pinball.level.EntityVisitor;
+import com.jakemadethis.pinball.level.Flipper;
+import com.jakemadethis.pinball.level.Sensor;
+import com.jakemadethis.pinball.level.Wall;
 import com.jakemadethis.pinballeditor.EditorView;
 
 public class DrawableVisitor implements EntityVisitor<IDrawable, EditorView> {
 
 	@Override
-	public IDrawable visit(WallPath wallPath, EditorView view) {
+	public IDrawable visit(Entity entity, EditorView arg) {
+		return entity.accept(this, arg);
+	}
+	
+	@Override
+	public IDrawable visit(Wall wallPath, EditorView view) {
 		return new WallPathDrawable(wallPath, view);
 	}
 

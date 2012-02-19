@@ -1,18 +1,11 @@
 package com.jakemadethis.pinball;
 
-import java.io.IOException;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
-import com.jakemadethis.net.Client;
-import com.jakemadethis.net.Server;
-import com.jakemadethis.pinball.EventHandler.EventListener;
-import com.jakemadethis.pinball.BaseModel.EntityArgs;
-import com.jakemadethis.pinball.entities.Ball;
-import com.jakemadethis.pinball.entities.Bumper;
-import com.jakemadethis.pinball.entities.Wall;
-import com.jakemadethis.pinball.net.Protocol;
+import com.jakemadethis.pinball.builder.IBuilder;
+import com.jakemadethis.pinball.builder.XMLBuilder;
+import com.jakemadethis.pinball.builder.PinballFactory;
 
 public class GameController implements InputProcessor {
 	private boolean running = false;
@@ -29,13 +22,20 @@ public class GameController implements InputProcessor {
 		
 		Gdx.input.setInputProcessor(this);
 		
+		model.scale = 100f;
 
-		//FileHandle file = Gdx.files.internal("data/level.xml");
-		//Builder.fromStream(model, file.read());
+
 		
+		FileHandle file = Gdx.files.internal("data/level.xml");
+		IBuilder b = XMLBuilder.fromStream(file.read());
+		
+		PinballFactory factory = new PinballFactory(model);
+		b.create(factory);
+
 		//Log.d("JAKE", "initGame");
 		model.initGame();
-		
+
+
 		/*Thread thread = new Thread(new Runnable() {
 			@Override public void run() {
 				Server server = new Server(4444, new Protocol(model));

@@ -1,13 +1,17 @@
 package com.jakemadethis.pinball;
 
 
+import java.util.HashMap;
+
 import com.badlogic.gdx.physics.box2d.Body;
-import com.jakemadethis.pinball.entities.Ball;
-import com.jakemadethis.pinball.entities.EntityVisitor;
+import com.badlogic.gdx.physics.box2d.World;
 import com.jakemadethis.pinball.io.Connection;
 import com.jakemadethis.pinball.io.Input.EventArgs;
 import com.jakemadethis.pinball.io.InputHandler;
 import com.jakemadethis.pinball.io.OutputHandler;
+import com.jakemadethis.pinball.level.Ball;
+import com.jakemadethis.pinball.level.EntityVisitor;
+import com.jakemadethis.pinball.level.Level;
 
 /**
  * Entity
@@ -42,18 +46,31 @@ public abstract class Entity {
 	public abstract void think(float timestep, GameModel model);
 	
 	/**
-	 * Creates an IDrawable
-	 * @param <A>
+	 * Accepts the entity visitor
+	 * @param <A> the argument passed to the visitor
+	 * @param <R> the return value from the visitor
 	 * @param visitor
 	 * @param view
 	 * @return
 	 */
-	public abstract <A> IDrawable accept(EntityVisitor<IDrawable, A> visitor, A view);
+	public abstract <A, R> R accept(EntityVisitor<R, A> visitor, A arg);
 	
+	/**
+	 * Adds a connection between two entities
+	 * @param entity
+	 * @param outputName
+	 * @param target
+	 * @param inputName
+	 * @return
+	 */
 	public static Connection addConnection(Entity entity, String outputName, Entity target, String inputName) {
 		return Connection.add(entity.outputs, outputName, target.inputs, inputName);
 	}
 	
+	/**
+	 * Invokes an input on an entity
+	 * @param action
+	 */
 	public void invokeInput(String action) {
 		inputs.invoke(this, new EventArgs(action));
 	}

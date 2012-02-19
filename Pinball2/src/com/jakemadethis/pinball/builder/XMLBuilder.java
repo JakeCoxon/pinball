@@ -1,12 +1,10 @@
-package com.jakemadethis.pinball;
+package com.jakemadethis.pinball.builder;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Stack;
@@ -21,52 +19,22 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import com.jakemadethis.pinball.entities.IElement;
-import com.jakemadethis.pinball.entities.Wall;
-import com.jakemadethis.pinball.entities.Flipper;
+import com.jakemadethis.pinball.level.Flipper;
 
 
 
-
-public class Builder implements ContentHandler, ErrorHandler
+/**
+ * Builds objects from an XML file using the SAX parser
+ * @author Jake
+ *
+ */
+public class XMLBuilder implements ContentHandler, ErrorHandler, IBuilder
 {
 
-	private static String expected(Attributes atts, String key) {
-		String s = atts.getValue(key);
-		if (s == null) throw new RuntimeException(key+" expected");
-		return s;
-	}
-	private static String optional(Attributes atts, String key, String def) {
-		String s = atts.getValue(key);
-		if (s == null) s = def;
-		return s;
-	}
-	private static float[] toPosition(String str) {
-		String[] strs = str.split(",");
-		return new float[] { Float.valueOf(strs[0]), Float.valueOf(strs[1]) };
-	}
-	private static float[] toFloatList(String str) {
-		String[] strs = str.split(",");
-		float[] floats = new float[strs.length];
-		for (int i = 0; i < strs.length; i++) floats[i] = Float.valueOf(strs[i]);
-		return floats;
-	}
-	private static float realFloat(String str) {
-		return Float.intBitsToFloat(Integer.parseInt(str, 16));
-	}
-	private static float[] toFloatListReal(String str) {
-		String[] strs = str.split(",");
-		float[] floats = new float[strs.length];
-		for (int i = 0; i < strs.length; i++) 
-			floats[i] = realFloat(strs[i]);
-		return floats;
-	}
-	private static String[] toStringList(String str) {
-		return str.split(",");
-	}
-	
 
 	
+
+	/*
 	private interface IBuilder {
 		public void create(GameModel model);
 	}
@@ -190,77 +158,73 @@ public class Builder implements ContentHandler, ErrorHandler
 		public void create(GameModel model) {
 			
 		}
-	}
+	}*/
    
 
-	private Stack<Object> stack;
-	private HashMap<String, Class<?>> types;
-	private IBuilder topBuilder;
+	private Stack<BuilderNode> stack;
+	private BuilderNode topNode;
     
-    private IBuilder createBuilder(String className, Object parent, Attributes atts) {
-    	System.out.println("Creating "+className);
-    	try {
-    		Class<?> cla = types.get(className);
-    		if (cla == null) throw new RuntimeException("No such class "+className);
-    		Constructor<?> co = cla.getConstructor(String.class, Object.class, Attributes.class);
-    		IBuilder a = (IBuilder) co.newInstance(className, parent, atts);
-    		return a;
-    	} catch (Exception ex) {
-    		throw new RuntimeException("Malformed XML", ex);
-    	}
-    }
 	
     
-	/**
-	 * Creates a world from an XML file
-	 * @param file The filename
+	/*
+	 * Constructs an XMLBuilder instance
 	 */
-    private Builder(GameModel model, InputSource source) {
-    	types = new HashMap<String, Class<?>>();
-    	types.put("level", LevelBuilder.class);
-    	types.put("wall", WallBuilder.class);
-    	types.put("bumper", BumperBuilder.class);
-    	types.put("flipperLeft", FlipperBuilder.class);
-    	types.put("flipperRight", FlipperBuilder.class);
+    private XMLBuilder(InputSource source) {
     	
-    	
-    	stack = new Stack<Object>();
-    	
+    	stack = new Stack<BuilderNode>();
     	
     	XMLReader xr;
-		try {
-			//reader = new FileReader(file);
-			xr = XMLReaderFactory.createXMLReader();
-	    	xr.setContentHandler(this);
-	    	xr.setErrorHandler(this);
-	    	
-	    	xr.parse(source);
-	    	
-	    	topBuilder.create(model);
-	    	
-		} catch (SAXException e) {
-			System.out.println("Malformed XML file");
-			e.printStackTrace();
-		} catch (ClassCastException ex) {
-			System.out.println("Malformed XML file");
-			ex.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			try {
+				//reader = new FileReader(file);
+				xr = XMLReaderFactory.createXMLReader();
+				xr.setContentHandler(this);
+				xr.setErrorHandler(this);
+				
+				xr.parse(source);
+				
+				
+			} catch (SAXException e) {
+				System.out.println("Malformed XML file");
+				e.printStackTrace();
+			} catch (ClassCastException ex) {
+				System.out.println("Malformed XML file");
+				ex.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
     	
     }
     
+    /* (non-Javadoc)
+     * @see com.jakemadethis.pinball.builder.IBuilder#createAll(com.jakemadethis.pinball.builder.BuilderFactory, A)
+     */
+    @Override
+    public <R> R create(BuilderFactory<R> factory) {
+    	return factory.create(topNode);
+    }
     
     
-    public static void fromFile(GameModel model, String fileName) {
+    /**
+     * Creates a new Builder from a filename
+     * @param fileName
+     * @return
+     */
+    public static XMLBuilder fromFile(String fileName) {
     	try {
-			new Builder(model, new InputSource(new FileReader(fileName)));
+			return new XMLBuilder(new InputSource(new FileReader(fileName)));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+		return null;
     }
-    public static void fromStream(GameModel model, InputStream stream) {
-    	new Builder(model, new InputSource(stream));
+    
+    /**
+     * Creates a new XMLBuilder from an input stream
+     * @param stream
+     * @return
+     */
+    public static XMLBuilder fromStream(InputStream stream) {
+    	return new XMLBuilder(new InputSource(stream));
     }
 
     
@@ -269,15 +233,29 @@ public class Builder implements ContentHandler, ErrorHandler
 	public void startElement(String uri, String localName, String qName,
 			Attributes atts) throws SAXException {
 		
-		
-		Object parent = null;
+		// Parents are stored in a stack
+		BuilderNode parent = null;
 		if (stack.size() > 0) parent = stack.peek();
-		IBuilder obj = createBuilder(localName, parent, atts);
-
-		if (parent == null) { // top
-			topBuilder = obj;
+		
+		// Construct a hashmap from the Attributes instance
+		// 1. The Attributes instance is reused so I can't use this
+		// 2. This means I can switch from SAX easily if I need to
+		HashMap<String, String> attsMap = new HashMap<String, String>();
+		for (int i = 0; i < atts.getLength(); i++) {
+			attsMap.put(atts.getLocalName(i), atts.getValue(i));
 		}
-		stack.push(obj);
+		
+		// Create node
+		BuilderNode node = new BuilderNode(parent, localName, attsMap);
+		
+		// Add to parent
+		if (parent != null)
+			parent.addChild(node);
+		else 
+			topNode = node;
+		
+		// Add to stack
+		stack.push(node);
 		
 	}
 
@@ -285,8 +263,6 @@ public class Builder implements ContentHandler, ErrorHandler
 	@Override
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
-		
-		if (localName.equals("level")) return;
 		
 		stack.pop();
 	}

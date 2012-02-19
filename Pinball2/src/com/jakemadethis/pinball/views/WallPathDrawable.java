@@ -1,25 +1,22 @@
 package com.jakemadethis.pinball.views;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.jakemadethis.pinball.Entity;
 import com.jakemadethis.pinball.GameView;
 import com.jakemadethis.pinball.IDrawable;
-import com.jakemadethis.pinball.IView;
-import com.jakemadethis.pinball.entities.WallPath;
+import com.jakemadethis.pinball.level.Wall;
 
 public class WallPathDrawable implements IDrawable {
 	
 	private GameView view;
 	private final Color colorOn = new Color(1f, 1f, 1f, 0.5f);
 	private final Color colorOff = new Color(1f, 1f, 1f, 0.1f);
-	private WallPath wallPath;
+	private Wall wallPath;
 	private ArrayList<Vector2> points;
 	
-	public WallPathDrawable(WallPath wallPath, GameView view) {
+	public WallPathDrawable(Wall wallPath, GameView view) {
 		this.view = view;
 		this.wallPath = wallPath;
 		this.points = wallPath.getPoints();

@@ -2,18 +2,11 @@ package com.jakemadethis.pinballeditor.tools;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.jakemadethis.net.Client;
-import com.jakemadethis.pinball.Entity;
-import com.jakemadethis.pinball.IDrawable;
-import com.jakemadethis.pinball.entities.WallPath;
+import com.jakemadethis.pinball.level.Wall;
 import com.jakemadethis.pinballeditor.EditorModel;
 import com.jakemadethis.pinballeditor.EditorView;
 import com.jakemadethis.pinballeditor.net.EditorClient;
@@ -41,7 +34,7 @@ public class WallPathTool extends Tool {
 
 	@Override
 	public void draw() {
-		for (WallPath path : model.walls) {
+		for (Wall path : model.walls) {
 			ArrayList<Vector2> points = path.getPoints();
 			
 			world.setColor(white);
@@ -107,7 +100,7 @@ public class WallPathTool extends Tool {
 		
 		if (hoverSelection.valid() && isHover(hoverSelection.getPosition())) return;
 		
-		for (WallPath path : model.walls) {
+		for (Wall path : model.walls) {
 			ArrayList<Vector2> points = path.getPoints();
 			for (int i = 0; i < points.size(); i++) {
 				if (isHover(points.get(i))) {
@@ -119,7 +112,7 @@ public class WallPathTool extends Tool {
 		}
 		hoverSelection.clear();
 
-		for (WallPath path : model.walls) {
+		for (Wall path : model.walls) {
 			ArrayList<Vector2> points = path.getPoints();
 			for (int i = 0; i < points.size()-1; i++) {
 				if (isHoverLine(points.get(i), points.get(i+1))) {
@@ -135,7 +128,7 @@ public class WallPathTool extends Tool {
 	@Override
 	public boolean keyDown(int keycode) {
 		if (keycode == Keys.FORWARD_DEL && dragSelection.valid()) {
-			WallPath path = dragSelection.getPath();
+			Wall path = dragSelection.getPath();
 			path.getPoints().remove(dragSelection.getId());
 			if (path.getPoints().size() == 1) {
 				model.remove(path);
@@ -176,7 +169,7 @@ public class WallPathTool extends Tool {
 		
 		float mouse_x = view.snap(worldMouse.x);
 		float mouse_y = view.snap(worldMouse.y);
-		WallPath path = model.addWall(mouse_x*100f, mouse_y*100f, mouse_x*100f+1, mouse_y*100f+1, 1f);
+		Wall path = model.addWall(mouse_x*100f, mouse_y*100f, mouse_x*100f+1, mouse_y*100f+1, 1f);
 		dragSelection.set(path, 1);
 	
 		//EditorClient.sendAddWall(client, mouse_x, mouse_y);

@@ -7,8 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.jakemadethis.pinball.Entity;
 import com.jakemadethis.pinball.GameView;
 import com.jakemadethis.pinball.IDrawable;
-import com.jakemadethis.pinball.IView;
-import com.jakemadethis.pinball.entities.Ball;
+import com.jakemadethis.pinball.level.Ball;
 
 public class BallDrawable implements IDrawable {
 

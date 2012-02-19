@@ -7,9 +7,8 @@ import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
 import com.jakemadethis.pinball.Entity;
 import com.jakemadethis.pinball.GameView;
 import com.jakemadethis.pinball.IDrawable;
-import com.jakemadethis.pinball.IView;
 import com.jakemadethis.pinball.MathUtil;
-import com.jakemadethis.pinball.entities.Flipper;
+import com.jakemadethis.pinball.level.Flipper;
 
 public class FlipperDrawable implements IDrawable {
 	private GameView view;

@@ -1,14 +1,10 @@
 package com.jakemadethis.pinballeditor.views;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-
 import com.badlogic.gdx.math.Vector2;
 import com.jakemadethis.pinball.Entity;
-import com.jakemadethis.pinball.GameView;
 import com.jakemadethis.pinball.IDrawable;
-import com.jakemadethis.pinball.IView;
-import com.jakemadethis.pinball.entities.WallPath;
+import com.jakemadethis.pinball.level.Wall;
 import com.jakemadethis.pinballeditor.EditorView;
 
 public class WallPathDrawable implements IDrawable {
@@ -16,9 +12,9 @@ public class WallPathDrawable implements IDrawable {
 	private EditorView view;
 	private final float[] colorOn = new float[] { 1f, 1f, 1f, 0.5f };
 	private final float[] colorOff = new float[] { 1f, 1f, 1f, 0.1f };
-	private WallPath wallPath;
+	private Wall wallPath;
 	
-	public WallPathDrawable(WallPath wallPath, EditorView view) {
+	public WallPathDrawable(Wall wallPath, EditorView view) {
 		this.view = view;
 		this.wallPath = wallPath;
 	}

@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.jakemadethis.pinball.Entity;
 import com.jakemadethis.pinball.MathUtil;
-import com.jakemadethis.pinball.entities.Bumper;
+import com.jakemadethis.pinball.level.Bumper;
 import com.jakemadethis.pinballeditor.EditorModel;
 import com.jakemadethis.pinballeditor.EditorView;
 

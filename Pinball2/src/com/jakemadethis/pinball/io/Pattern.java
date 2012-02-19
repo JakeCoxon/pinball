@@ -3,8 +3,6 @@ package com.jakemadethis.pinball.io;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.jakemadethis.pinball.Entity;
-
 public class Pattern {
 
 	public static Integer matchID(String fullName) {

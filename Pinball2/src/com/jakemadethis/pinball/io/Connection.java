@@ -1,5 +1,10 @@
 package com.jakemadethis.pinball.io;
 
+/**
+ * A connection between an input and output
+ * @author Jake
+ *
+ */
 public class Connection {
 	private Input input;
 	private Output output;

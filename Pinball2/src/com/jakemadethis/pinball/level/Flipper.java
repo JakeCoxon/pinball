@@ -1,4 +1,6 @@
-package com.jakemadethis.pinball.entities;
+package com.jakemadethis.pinball.level;
+
+import java.util.HashMap;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -8,14 +10,42 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 
+import com.jakemadethis.pinball.BaseModel;
 import com.jakemadethis.pinball.Entity;
-import com.jakemadethis.pinball.GameView;
 import com.jakemadethis.pinball.IDrawable;
-import com.jakemadethis.pinball.IView;
 import com.jakemadethis.pinball.GameModel;
+import com.jakemadethis.pinball.IElement;
+import com.jakemadethis.pinball.builder.BuilderNode;
+import com.jakemadethis.pinball.builder.FactoryUtil;
 
 public class Flipper extends Entity implements IElement {
 
+	/**
+	 * Creates flipper from attributes: at,length,type[,name]
+	 * @param model
+	 * @param atts
+	 * @return
+	 */
+	public static Flipper fromNode(BaseModel model, BuilderNode node) {
+
+		HashMap<String, String> atts = node.getAttributes();
+		
+		
+		float[] at = FactoryUtil.getAbsolutePosition(node.getParent().getValue(), atts);
+		float length =        Float.valueOf( FactoryUtil.expected(atts, "length") );
+		String stype = 						 FactoryUtil.expected(atts, "type");
+		String name = 						 FactoryUtil.optional(atts, "name", "");
+		
+		Flipper.Type type = Flipper.Type.LEFT;
+		if (stype.equals("right"))
+			type = Flipper.Type.RIGHT;
+	
+		Flipper entity = model.addFlipper(at[0], at[1], length, type);
+		model.setName(name, entity);
+		
+		return entity;
+	}
+	
 	public enum Type {
 		LEFT, RIGHT;
 	}
@@ -67,7 +97,7 @@ public class Flipper extends Entity implements IElement {
 	}
 	
 	@Override
-	public <A> IDrawable accept(EntityVisitor<IDrawable, A> visitor, A arg) {
+	public <A, R> R accept(EntityVisitor<R, A> visitor, A arg) {
 		return visitor.visit(this, arg);
 	}
 	
@@ -102,8 +132,7 @@ public class Flipper extends Entity implements IElement {
 
 	@Override
 	public void handleCollision(Ball ball, Body body, GameModel model) {
-		// TODO Auto-generated method stub
-		
+
 	}
 	
 	public boolean isFlipperEngaged() {
@@ -126,3 +155,15 @@ public class Flipper extends Entity implements IElement {
 	
 
 }
+/*abstract class FlipperLeft {
+	public static Flipper fromNode(BaseModel model, HashMap<String, String> atts) {
+		atts.put("type", "left");
+		return Flipper.fromNode(model, atts);
+	}
+}
+abstract class FlipperRight {
+	public static Flipper fromNode(BaseModel model, HashMap<String, String> atts) {
+		atts.put("type", "right");
+		return Flipper.fromNode(model, atts);
+	}
+}*/

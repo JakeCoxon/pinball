@@ -2,9 +2,18 @@ package com.jakemadethis.pinball.io;
 
 import java.util.LinkedList;
 
-import com.jakemadethis.pinball.EventHandler;
-import com.jakemadethis.pinball.EventHandler.EventListener;
-
+/**
+ * An input is something that is invoked as a result 
+ * of an output firing an event
+ * 
+ * For example, "toggle" or "turnOff" are inputs
+ * 
+ * These events are passed to an input handler which 
+ * calls the appropriate function
+ * 
+ * @author Jake
+ *
+ */
 public class Input {
 	
 	public static class EventArgs {

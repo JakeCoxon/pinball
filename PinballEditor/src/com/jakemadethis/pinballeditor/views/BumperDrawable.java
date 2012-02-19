@@ -1,14 +1,9 @@
 package com.jakemadethis.pinballeditor.views;
 
-import java.util.Random;
-
 import com.badlogic.gdx.graphics.Color;
 import com.jakemadethis.pinball.Entity;
-import com.jakemadethis.pinball.GameView;
 import com.jakemadethis.pinball.IDrawable;
-import com.jakemadethis.pinball.IView;
-import com.jakemadethis.pinball.Timer;
-import com.jakemadethis.pinball.entities.Bumper;
+import com.jakemadethis.pinball.level.Bumper;
 import com.jakemadethis.pinballeditor.EditorView;
 
 public class BumperDrawable implements IDrawable {

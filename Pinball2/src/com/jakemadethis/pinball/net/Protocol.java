@@ -3,17 +3,19 @@ package com.jakemadethis.pinball.net;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.math.Vector2;
-import com.jakemadethis.net.Client;
-import com.jakemadethis.net.IClientProtocol;
 import com.jakemadethis.net.IServerProtocol;
 import com.jakemadethis.net.Server;
 import com.jakemadethis.pinball.Entity;
 import com.jakemadethis.pinball.GameModel;
-import com.jakemadethis.pinball.entities.Sensor;
-import com.jakemadethis.pinball.entities.Wall;
-import com.jakemadethis.pinball.entities.WallArc;
-import com.jakemadethis.pinball.entities.WallPath;
+import com.jakemadethis.pinball.level.WallArc;
+import com.jakemadethis.pinball.level.Wall;
 
+/**
+ * Net protocol
+ * Doesn't work yet
+ * @author Jake
+ *
+ */
 public class Protocol implements IServerProtocol {
 
 	private GameModel model;
@@ -33,8 +35,8 @@ public class Protocol implements IServerProtocol {
 			float x = Float.valueOf(strs[2]);
 			float y = Float.valueOf(strs[3]);
 			
-			if (entity instanceof WallPath) {
-				WallPath path = (WallPath) entity;
+			if (entity instanceof Wall) {
+				Wall path = (Wall) entity;
 				path.movePoint(pointId, x, y);
 			}
 			
@@ -46,8 +48,8 @@ public class Protocol implements IServerProtocol {
 			int entId = Integer.valueOf(strs[0]);
 			Entity entity = model.entities.get(entId);
 			
-			if (entity instanceof WallPath) {
-				WallPath path = (WallPath) entity;
+			if (entity instanceof Wall) {
+				Wall path = (Wall) entity;
 				path.reconstruct();
 			}
 			
@@ -62,8 +64,8 @@ public class Protocol implements IServerProtocol {
 			float x = Float.valueOf(strs[2]);
 			float y = Float.valueOf(strs[3]);
 			
-			if (entity instanceof WallPath) {
-				WallPath path = (WallPath) entity;
+			if (entity instanceof Wall) {
+				Wall path = (Wall) entity;
 				path.addPoint(pointId, new Vector2(x, y));
 			}
 			
@@ -74,7 +76,7 @@ public class Protocol implements IServerProtocol {
 			float x = Float.valueOf(strs[2]);
 			float y = Float.valueOf(strs[3]);
 			
-			WallPath p = model.addWall(x, y, x+1, y+1, 1f);
+			Wall p = model.addWall(x, y, x+1, y+1, 1f);
 			sendWallPath(server, model.entities.size()-1, p);
 			
 		}
@@ -106,15 +108,15 @@ public class Protocol implements IServerProtocol {
 		
 		int id = 0;
 		for (Entity entity : model.entities) {
-			if (entity instanceof WallPath && !(entity instanceof WallArc)) {
-				WallPath path = (WallPath) entity;
+			if (entity instanceof Wall && !(entity instanceof WallArc)) {
+				Wall path = (Wall) entity;
 				sendWallPath(server, id, path);
 			}
 			id++;
 		}
 	}
 	
-	private static void sendWallPath(Server server, int id, WallPath path) {
+	private static void sendWallPath(Server server, int id, Wall path) {
 		ArrayList<Vector2> points = path.getPoints();
 		StringBuilder sb = new StringBuilder("wall ");
 		

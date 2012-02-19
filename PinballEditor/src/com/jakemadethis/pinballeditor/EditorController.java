@@ -1,17 +1,9 @@
 package com.jakemadethis.pinballeditor;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.jakemadethis.net.Client;
-import com.jakemadethis.pinball.GameModel;
-import com.jakemadethis.pinball.IView;
-import com.jakemadethis.pinball.entities.WallPath;
 import com.jakemadethis.pinballeditor.net.EditorClient;
 import com.jakemadethis.pinballeditor.tools.BumperTool;
 import com.jakemadethis.pinballeditor.tools.Tool;

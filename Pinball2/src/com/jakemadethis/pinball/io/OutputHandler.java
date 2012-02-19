@@ -25,6 +25,12 @@ public class OutputHandler {
 		return outputs.get(outputName);
 	}
 	
+	/**
+	 * Gets the related input handler
+	 * This is used in the IO manager when it might want to trigger
+	 * something on itself
+	 * @return
+	 */
 	public InputHandler getRelatedInputHandler() {
 		return inputHandler;
 	}

@@ -1,24 +1,69 @@
-package com.jakemadethis.pinball.entities;
+package com.jakemadethis.pinball.level;
 
+import static com.jakemadethis.pinball.builder.FactoryUtil.getAbsolutePosition;
+import static com.jakemadethis.pinball.builder.FactoryUtil.optional;
+import static com.jakemadethis.pinball.builder.FactoryUtil.toFloatList;
+import static com.jakemadethis.pinball.builder.FactoryUtil.toFloatListReal;
+
+import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 
-import com.jakemadethis.pinball.BaseView;
 import com.jakemadethis.pinball.Entity;
 import com.jakemadethis.pinball.EventHandler.EventListener;
-import com.jakemadethis.pinball.GameView;
+import com.jakemadethis.pinball.BaseModel;
 import com.jakemadethis.pinball.IDrawable;
-import com.jakemadethis.pinball.IView;
 import com.jakemadethis.pinball.GameModel;
+import com.jakemadethis.pinball.IElement;
+import com.jakemadethis.pinball.builder.BuilderNode;
+import com.jakemadethis.pinball.builder.FactoryException;
+import com.jakemadethis.pinball.builder.PinballFactory;
 import com.jakemadethis.pinball.io.Input;
 import com.jakemadethis.pinball.io.InputHandler;
 import com.jakemadethis.pinball.io.Input.EventArgs;
+import com.jakemadethis.pinball.level.Ball;
 
-public class WallPath extends Entity implements IElement, EventListener<Input.EventArgs> {
+public class Wall extends Entity implements IElement, EventListener<Input.EventArgs> {
+	
+	public static Wall fromNode(BaseModel model, BuilderNode node) {
+		HashMap<String, String> atts = node.getAttributes();
+		
+
+		float restitution = Float.valueOf( optional(atts, "restitution", "0.5") );
+		String name =                      optional(atts, "name", "");
+		
+		
+		ArrayList<Float> pathList = new ArrayList<Float>();
+		
+		// Make all <point> tags
+		for (BuilderNode child : node.getChilds()) {
+			if (!child.getNodeName().equals("point")) 
+				throw new FactoryException("Invalid "+child.getNodeName()+" here");
+			
+			float[] pos = getAbsolutePosition(node.getParent().getValue(), child.getAttributes());
+			pathList.add(pos[0]);
+			pathList.add(pos[1]);
+		}
+		
+		// Clear childs list so the factory doesn't build them
+		node.getChilds().clear();
+		
+		// Put it into a float array
+		float[] path = new float[pathList.size()];
+		for (int i = 0; i < path.length; i++) 
+			path[i] = pathList.get(i);
+
+		
+		Wall entity = model.addWallPath(path, restitution);
+		model.setName(name, entity);
+	
+		return entity;
+	}
 	
 	public Body body;
 	private float restitution;
@@ -27,7 +72,7 @@ public class WallPath extends Entity implements IElement, EventListener<Input.Ev
 	private LinkedList<Body> wallBodies;
 	private boolean active;
 	
-	public WallPath(World world, float[] path, float restitution) {
+	public Wall(World world, float[] path, float restitution) {
 		if ((path.length & 1) == 1) throw new RuntimeException("Incorrect number of floats");
 		
 		this.active = true;
@@ -45,11 +90,16 @@ public class WallPath extends Entity implements IElement, EventListener<Input.Ev
 			wall.setUserData(this);
 			wallBodies.add(wall);
 		}
-		inputs = new InputHandler(this, "toggle", "turnOff", "turnOn");
+		inputs = new InputHandler(this, "toggle", "disable", "enable");
+	}
+
+	public Wall(World world, float x0, float y0, float x1, float y1,
+			float restitution) {
+		this(world, new float[] { x0, y0, x1, y1 }, restitution);
 	}
 
 	@Override
-	public <A> IDrawable accept(EntityVisitor<IDrawable, A> visitor, A arg) {
+	public <A, R> R accept(EntityVisitor<R, A> visitor, A arg) {
 		return visitor.visit(this, arg);
 	}
 	
@@ -77,10 +127,10 @@ public class WallPath extends Entity implements IElement, EventListener<Input.Ev
 			if (active) setActive(false);
 			else setActive(true);
 		}
-		else if(args.getInputName().equals("turnOff")) {
+		else if(args.getInputName().equals("disable")) {
 			setActive(false);
 		}
-		else if(args.getInputName().equals("turnOn")) {
+		else if(args.getInputName().equals("enable")) {
 			setActive(true);
 		}
 	}

@@ -1,31 +1,21 @@
 package com.jakemadethis.pinballeditor;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-
-import org.lwjgl.Sys;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
 import com.jakemadethis.pinball.BaseModel;
 import com.jakemadethis.pinball.BaseView;
 import com.jakemadethis.pinball.Entity;
-import com.jakemadethis.pinball.GameView;
 import com.jakemadethis.pinball.IDrawable;
-import com.jakemadethis.pinball.IView;
 import com.jakemadethis.pinball.BaseModel.EntityArgs;
 import com.jakemadethis.pinball.EventHandler.EventListener;
-import com.jakemadethis.pinball.entities.WallPath;
 import com.jakemadethis.pinballeditor.tools.Tool;
 import com.jakemadethis.pinballeditor.views.DrawableVisitor;
 

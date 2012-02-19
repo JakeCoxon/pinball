@@ -5,9 +5,6 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
-import com.jakemadethis.net.Client;
-import com.jakemadethis.pinball.Entity;
-import com.jakemadethis.pinball.IDrawable;
 import com.jakemadethis.pinballeditor.EditorModel;
 import com.jakemadethis.pinballeditor.EditorView;
 

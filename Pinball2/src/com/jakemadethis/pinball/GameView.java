@@ -31,8 +31,6 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.jakemadethis.pinball.EventHandler.EventListener;
 import com.jakemadethis.pinball.BaseModel.EntityArgs;
-import com.jakemadethis.pinball.drawing.ImmediateModeRenderer20;
-import com.jakemadethis.pinball.drawing.Layer;
 import com.jakemadethis.pinball.views.DrawableVisitor;
 
 

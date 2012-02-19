@@ -1,15 +1,12 @@
-package com.jakemadethis.pinball.entities;
+package com.jakemadethis.pinball.level;
 
-import java.util.LinkedList;
 import java.util.Random;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.jakemadethis.pinball.Entity;
-import com.jakemadethis.pinball.GameView;
 import com.jakemadethis.pinball.IDrawable;
-import com.jakemadethis.pinball.IView;
 import com.jakemadethis.pinball.GameModel;
 
 public class Ball extends Entity {
@@ -30,7 +27,7 @@ public class Ball extends Entity {
 	}
 	
 	@Override
-	public <A> IDrawable accept(EntityVisitor<IDrawable, A> visitor, A arg) {
+	public <A, R> R accept(EntityVisitor<R, A> visitor, A arg) {
 		return visitor.visit(this, arg);
 	}
 
