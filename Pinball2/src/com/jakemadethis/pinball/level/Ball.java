@@ -1,15 +1,27 @@
 package com.jakemadethis.pinball.level;
 
+import java.util.HashMap;
 import java.util.Random;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
+import com.jakemadethis.pinball.BaseModel;
 import com.jakemadethis.pinball.Entity;
 import com.jakemadethis.pinball.IDrawable;
 import com.jakemadethis.pinball.GameModel;
+import com.jakemadethis.pinball.builder.BuilderNode;
+import com.jakemadethis.pinball.builder.FactoryUtil;
 
 public class Ball extends Entity {
+	
+	public static final float BALL_RADIUS = 15f;
+	
+	public static Ball fromNode(BaseModel model, BuilderNode node) {
+		HashMap<String, String> atts = node.getAttributes();
+		float[] pos = FactoryUtil.getAbsolutePosition(node.getParent().getValue(), atts);
+		return model.addBall(pos[0], pos[1], BALL_RADIUS);
+	}
 	
 	private Body body;
 	private float radius;

@@ -27,12 +27,12 @@ public class FactoryUtil {
 	 * Returns the value of an attribute if it exists or the default value if not
 	 * @param atts
 	 * @param key
-	 * @param def
+	 * @param defaultValue
 	 * @return
 	 */
-	public static String optional(HashMap<String, String> atts, String key, String def) {
+	public static String optional(HashMap<String, String> atts, String key, String defaultValue) {
 		String s = atts.get(key);
-		if (s == null) s = def;
+		if (s == null) s = defaultValue;
 		return s;
 	}
 	public static float[] toPosition(String str) {

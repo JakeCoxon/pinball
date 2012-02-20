@@ -14,6 +14,9 @@ public class OutputHandler {
 		}
 	}
 	public void invoke(String outputName) {
+		Output output = outputs.get(outputName);
+		if (output == null)
+			throw new RuntimeException("The output '"+outputName+"' does not exist");
 		outputs.get(outputName).invoke();
 	}
 	/**

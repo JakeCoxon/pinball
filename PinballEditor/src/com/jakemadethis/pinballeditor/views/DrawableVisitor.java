@@ -6,6 +6,7 @@ import com.jakemadethis.pinball.level.Ball;
 import com.jakemadethis.pinball.level.Bumper;
 import com.jakemadethis.pinball.level.EntityVisitor;
 import com.jakemadethis.pinball.level.Flipper;
+import com.jakemadethis.pinball.level.Light;
 import com.jakemadethis.pinball.level.Sensor;
 import com.jakemadethis.pinball.level.Wall;
 import com.jakemadethis.pinballeditor.EditorView;
@@ -44,6 +45,11 @@ public class DrawableVisitor implements EntityVisitor<IDrawable, EditorView> {
 		return null;
 	}
 	
+	@Override
+	public IDrawable visit(Light light, EditorView arg) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 
 }

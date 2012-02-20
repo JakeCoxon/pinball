@@ -42,7 +42,7 @@ public class Box2DFactory {
 	 * through the given angle. Restitution defaults to 0.5.
 	 */
     public static Body createWall(World world, float xmin, float ymin, float xmax, float ymax, float angle) {
-    	return createWall(world, xmin, ymin, xmax, ymax, angle, 0f);
+    	return createWall(world, xmin, ymin, xmax, ymax, angle, 0.5f);
     }
     
 	/** Creates a wall by constructing a rectangle whose corners are (xmin,ymin) and (xmax,ymax), and rotating the box counterclockwise

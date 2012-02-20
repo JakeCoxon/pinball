@@ -31,7 +31,7 @@ public class WallPathDrawable implements IDrawable {
 	public void draw() {
 		float a = 0.5f + 0.5f * (float)Math.sin(System.currentTimeMillis() * 0.01);
 		if (!view.model.awesomeMode) {
-			a = 0.5f + a*0.5f;
+			a = 1;//0.5f + a*0.5f;
 		}
 		
 		colorOn.a = a;

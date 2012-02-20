@@ -7,6 +7,7 @@ import com.jakemadethis.pinball.level.Ball;
 import com.jakemadethis.pinball.level.Bumper;
 import com.jakemadethis.pinball.level.EntityVisitor;
 import com.jakemadethis.pinball.level.Flipper;
+import com.jakemadethis.pinball.level.Light;
 import com.jakemadethis.pinball.level.Sensor;
 import com.jakemadethis.pinball.level.Wall;
 
@@ -40,6 +41,11 @@ public class DrawableVisitor implements EntityVisitor<IDrawable, GameView> {
 	@Override
 	public IDrawable visit(Sensor sensor, GameView view) {
 		return new SensorDrawable(sensor, view);
+	}
+	
+	@Override
+	public IDrawable visit(Light light, GameView view) {
+		return new LightDrawable(light, view);
 	}
 	
 	

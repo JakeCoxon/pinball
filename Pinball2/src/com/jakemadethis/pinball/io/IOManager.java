@@ -73,13 +73,20 @@ public class IOManager {
 	
 	public void addEvent(String forName, String eventName, String targetName, String action) {
 		ArrayList<OutputHandler> collection = getOutput(forName);
-		if (collection == null) throw new RuntimeException("Couldn't find "+forName);
+		if (collection == null) 
+			throw new RuntimeException("Couldn't find "+forName);
 		System.out.println("Found "+collection.size()+" OutputHandlers for "+forName);
+		
 		boolean self = targetName.equals("#self");
-		for (OutputHandler outputHandler : collection) {
-			if (self) addEvent(outputHandler, eventName, outputHandler.getRelatedInputHandler(), action);
+		
+		for (int i = 0; i < collection.size(); i++) {
+			OutputHandler outputHandler = collection.get(i);
+			
+			if (self) {
+				addEvent(outputHandler, eventName, outputHandler.getRelatedInputHandler(), action);
+			}
 			else {
-				for (InputHandler target : getInput(targetName))
+				for (InputHandler target : getInputReplaced(targetName, i))
 					addEvent(outputHandler, eventName, target, action);
 			}
 		}
@@ -87,6 +94,14 @@ public class IOManager {
 	private static void addEvent(OutputHandler output, String eventName, InputHandler target, String action) {
 		System.out.println("Add event "+eventName+" -> "+action);
 		Connection.add(output, eventName, target, action);
+	}
+	
+	
+	public HashMap<String, ArrayList<InputHandler>> getAllInputs() {
+		return inputsMap;
+	}
+	public HashMap<String, ArrayList<OutputHandler>> getAllOutputs() {
+		return outputsMap;
 	}
 	
 	/**
@@ -97,6 +112,28 @@ public class IOManager {
 	public ArrayList<InputHandler> getInput(String fullName) {
 		return Pattern.match(inputsMap, fullName);
 	}
+	
+	/**
+	 * Gets inputs matching fullName with # replaced with number
+	 * @param fullName
+	 * @param number
+	 * @return ArrayList of InputHandler's - Note there may be gaps in the array
+	 */
+	public ArrayList<InputHandler> getInputReplaced(String fullName, int number) {
+		return getInput(fullName.replace("#", String.valueOf(number)));
+	}
+	
+	
+	
+	/**
+	 * Gets the whole array of inputs in a group
+	 * @param groupName
+	 * @return
+	 */
+	public ArrayList<InputHandler> getInputGroup(String groupName) {
+		return inputsMap.get(groupName);
+	}
+	
 	/**
 	 * Gets outputs matching fullName. Note there may be gaps in the array
 	 * @param fullName
@@ -104,6 +141,15 @@ public class IOManager {
 	 */
 	public ArrayList<OutputHandler> getOutput(String fullName) {
 		return Pattern.match(outputsMap, fullName);
+	}
+	
+	/**
+	 * Gets the whole array of outputs in a group
+	 * @param groupName
+	 * @return
+	 */
+	public ArrayList<OutputHandler> getOutputGroup(String groupName) {
+		return outputsMap.get(groupName);
 	}
 
 	public void debugPrint() {

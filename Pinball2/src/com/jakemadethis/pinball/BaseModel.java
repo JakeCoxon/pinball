@@ -2,6 +2,7 @@ package com.jakemadethis.pinball;
 
 import java.util.LinkedList;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
@@ -9,9 +10,12 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.jakemadethis.pinball.io.IOManager;
+import com.jakemadethis.pinball.io.InputHandler;
+import com.jakemadethis.pinball.io.OutputHandler;
 import com.jakemadethis.pinball.level.Ball;
 import com.jakemadethis.pinball.level.Bumper;
 import com.jakemadethis.pinball.level.Flipper;
+import com.jakemadethis.pinball.level.Light;
 import com.jakemadethis.pinball.level.Sensor;
 import com.jakemadethis.pinball.level.Wall;
 import com.jakemadethis.pinball.level.WallArc;
@@ -38,6 +42,7 @@ public class BaseModel implements ContactListener {
 	
 	// Scale is used when creating entities
 	protected float scale = 1f;
+	private int score = 0;
 	
 	public EventHandler<EntityArgs> entityAddedHandler = new EventHandler<EntityArgs>();
 	public EventHandler<EntityArgs> entityRemovedHandler = new EventHandler<EntityArgs>();
@@ -58,6 +63,13 @@ public class BaseModel implements ContactListener {
 	public IOManager getIoManager() {
 		return ioManager;
 	}
+	
+	public int getScore() {
+		return score;
+	}
+	public void addScore(int num) {
+		score += num;
+	}
 
 	/**
 	 * Run every update frame
@@ -77,6 +89,17 @@ public class BaseModel implements ContactListener {
 		ioManager.add(name, entity);
 	}
 	
+	/**
+	 * Sets the name of these handlers in the io manager
+	 * @param name
+	 * @param inputHandler
+	 * @param outputHandler
+	 */
+	public void setName(String name, InputHandler inputHandler, OutputHandler outputHandler) {
+		if (name.length() == 0) return;
+		ioManager.add(name, inputHandler, outputHandler);
+	}
+	
 	protected <T extends Entity> T add(String name, T entity) {
 		add(entity);
 		ioManager.add(name, entity);
@@ -89,7 +112,7 @@ public class BaseModel implements ContactListener {
 	 * @param entity
 	 * @return
 	 */
-	protected <T extends Entity> T add(T entity) {
+	public <T extends Entity> T add(T entity) {
 		entities.add(entity);
 		entityAddedHandler.invoke(this, new EntityArgs(entity));
 		return entity;
@@ -132,6 +155,9 @@ public class BaseModel implements ContactListener {
 	public synchronized WallArc addWallArc(float cx, float cy, float xradius, float yradius, float minangle, float maxangle, int numSegments) {
 		return add(new WallArc(world, cx/scale, cy/scale, xradius/scale, yradius/scale, minangle, maxangle, numSegments));
 	}
+	public Light addLight(float x, float y, float w, float h, Color color) {
+		return add(new Light(x/scale, y/scale, w/scale, h/scale, color));
+	}
 
 	@Override
 	public void beginContact(Contact contact) {
@@ -152,5 +178,6 @@ public class BaseModel implements ContactListener {
 	public void postSolve(Contact contact, ContactImpulse impulse) {
 		
 	}
+
 	
 }

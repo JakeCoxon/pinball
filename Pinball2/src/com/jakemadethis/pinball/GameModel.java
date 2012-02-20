@@ -20,7 +20,6 @@ public class GameModel extends BaseModel {
 	private Ball ball;
 	private Flipper flipperLeft;
 	private Flipper flipperRight;
-	private int score = 0;
 	public int combo = 0;
 	private Timer comboTimer = new Timer();
 	private Timer awesomeTimer = new Timer();
@@ -33,9 +32,7 @@ public class GameModel extends BaseModel {
 	}
 	
 	
-	public int getScore() {
-		return score;
-	}
+	
 	
 	public void engageFlipper(boolean active) {
 		flipperLeft.setFlipperEngaged(active);
@@ -55,6 +52,14 @@ public class GameModel extends BaseModel {
 		return f;
 	}
 	
+	@Override
+	public synchronized Ball addBall(float cx, float cy, float radius) {
+		if (ball != null) throw new RuntimeException("Only 1 ball currently allowed");
+		Ball b = super.addBall(cx, cy, radius);
+		ball = b;
+		return b;
+	}
+	
 	/**
 	 * Called after view is created
 	 */
@@ -65,7 +70,7 @@ public class GameModel extends BaseModel {
 		scale = 100f;
 
 		//addBox(100f, 100f, 100f, 100f);
-		ball = addBall(width-15f, height-15f, 15f);
+		//ball = addBall(width-15f, height-15f, 15f);
 		
 		//setName("sensor", addSensor(width-15f, height-260f, 2f));
 		
@@ -140,8 +145,7 @@ public class GameModel extends BaseModel {
 		
 		if (awesomeMode) score *= 2;
 		
-		this.score += score;
-		
+		super.addScore(score);
 		
 	}
 	

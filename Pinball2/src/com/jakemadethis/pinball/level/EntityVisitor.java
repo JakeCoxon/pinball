@@ -16,4 +16,5 @@ public interface EntityVisitor <R, A> {
 	R visit(Bumper bumper, A arg);
 	R visit(Flipper flipper, A arg);
 	R visit(Sensor sensor, A arg);
+	R visit(Light light, A arg);
 }

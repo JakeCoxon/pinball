@@ -22,7 +22,7 @@
 	
 	<!-- slide to the right of the flipper -->
 	<wall>
-		<point at="-31,-130" relativeTo="bottomright" />
+		<point at="-32,-130" relativeTo="bottomright" />
 		<point at="-130,-85" relativeTo="bottomright" />
 	</wall>
 	
@@ -34,13 +34,13 @@
 	
 	<!-- ball chute on the right -->
 	<wall>
-		<point at="-31,-200" relativeTo="bottomright" />
-		<point at="-31,0" relativeTo="bottomright" />
+		<point at="-32,-200" relativeTo="bottomright" />
+		<point at="-32,0" relativeTo="bottomright" />
 	</wall>
 	
 	<!-- ball hatch over the chute -->
 	<wall name="chuteHatch">
-		<point at="-31,-200" relativeTo="bottomright" />
+		<point at="-32,-200" relativeTo="bottomright" />
 		<point at="0,-230" relativeTo="bottomright" />
 	</wall>
 	
@@ -51,8 +51,30 @@
 		<point at="0,550" relativeTo="topleft" />
 	</wall>
 	
+	<ball at="-15,-15" relativeTo="bottomright" />
+	
+	
+	<!-- lights and sensors -->
+	<light at="100,400" size="20,20" color="1,0,0,1" name="light-0" />
+	<light at="70,450" size="20,20" color="1,0,0,1" name="light-1" />
+	<light at="40,500" size="20,20" color="1,0,0,1" name="light-2" />
+	
+	<sensor at="100,400" radius="10" name="lightsensor-0" />
+	<sensor at="70,450" radius="10" name="lightsensor-1" />
+	<sensor at="40,500" radius="10" name="lightsensor-2" />
+	
+	<counter max="3" name="lightcounter" />
+	<points name="lightspoints" number="100" />
+	
+	<event for="lightsensor" when="onSense" target="light-#" action="disable" />
+	<event for="level" when="onReset" target="light" action="enable" />
+	<event for="light" when="onDisable" target="lightcounter"	action="increment" />
+	<event for="lightcounter" when="onMax" target="lightspoints" action="increment" />
+	<event for="lightcounter" when="onMax" target="light" action="enable" />
+	<event for="lightcounter" when="onMax" target="lightcounter" action="reset" />
+	
 	<!-- sensor at top of chute to enable ball hatch -->
-	<sensor at="-15,-260" relativeTo="bottomright" radius="10" name="sensor" />
+	<sensor at="-15,-260" relativeTo="bottomright" radius="10" name="hatchSensor" />
 	
 	<!-- bumpers -->
 	<bumper at="130,110" radius="50" name="bumpers-0" />
@@ -73,8 +95,10 @@
 	
 	<!-- When the sensor senses the hatch enables and -->
 	<!-- when the level resets the hatch disables -->
-	<event for="sensor" when="onSense" target="chuteHatch" action="enable" />
+	<event for="hatchSensor" when="onSense" target="chuteHatch" action="enable" />
 	<event for="level" when="onReset" target="chuteHatch" action="disable" />
+	
+	
 	
 	
 	<!-- <light at="4,5" name="lights-0" />
