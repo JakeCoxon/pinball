@@ -74,7 +74,7 @@ public class IOManager {
 	public void addEvent(String forName, String eventName, String targetName, String action) {
 		ArrayList<OutputHandler> collection = getOutput(forName);
 		if (collection == null) 
-			throw new RuntimeException("Couldn't find "+forName);
+			throw new IOException("Couldn't find any entities matching '"+forName+"'");
 		System.out.println("Found "+collection.size()+" OutputHandlers for "+forName);
 		
 		boolean self = targetName.equals("#self");

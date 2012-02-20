@@ -1,26 +1,104 @@
 <?xml version="1.0"?>
-<level label="New Level">
+<level name="Basic Level" size="480,1000">
 	
-	<!-- right -->
-	<wall path="480,0,480,1000" />
-	<wall path="450,800,450,1000" />
+	<!-- corners -->
+	<wallArc at="100,100" relativeTo="topleft" 
+		size="100,100" angles="180,270" />
+	<wallArc at="-100,100" relativeTo="topright" 
+		size="100,100" angles="270,360" />
+
+	<!-- from top left to top right -->
+	<wall>
+		<point at="100,0" relativeTo="topleft" />
+		<point at="-100,0" relativeTo="topright" />
+	</wall>
 	
-	<!-- top -->
-	<wall path="0,0,480,0" />
+	<!-- from top left to bottom left -->
+	<wall>
+		<point at="0,100" relativeTo="topleft" />
+		<point at="0,-130" relativeTo="bottomleft" />
+		<point at="100,-85" relativeTo="bottomleft" />
+	</wall>
 	
-	<!-- left -->
-	<wall path="0,0,0,1000" />
+	<!-- slide to the right of the flipper -->
+	<wall>
+		<point at="-32,-130" relativeTo="bottomright" />
+		<point at="-130,-85" relativeTo="bottomright" />
+	</wall>
 	
-	<wall path="0,300,90,370" />
+	<!-- from top right to bottom right -->
+	<wall>
+		<point at="0,100" relativeTo="topright" />
+		<point at="0,0" relativeTo="bottomright" />
+	</wall>
 	
-	<wall path="450,800,480,770" name="toggleWall" />
+	<!-- ball chute on the right -->
+	<wall>
+		<point at="-32,-200" relativeTo="bottomright" />
+		<point at="-32,0" relativeTo="bottomright" />
+	</wall>
 	
+	<!-- ball hatch over the chute -->
+	<wall name="chuteHatch">
+		<point at="-32,-200" relativeTo="bottomright" />
+		<point at="0,-230" relativeTo="bottomright" />
+	</wall>
+	
+	<!-- triangle on left -->
+	<wall>
+		<point at="0,300" relativeTo="topleft" />
+		<point at="90,370" relativeTo="topleft" />
+		<point at="0,520" relativeTo="topleft" />
+	</wall>
+	
+	<ball at="-15,-15" relativeTo="bottomright" />
+	
+	
+	<!-- lights and sensors -->
+	<light at="100,400" size="20,20" color="1,0,0,1" name="light-0" />
+	<light at="70,450" size="20,20" color="1,0,0,1" name="light-1" />
+	<light at="40,500" size="20,20" color="1,0,0,1" name="light-2" />
+	
+	<sensor at="100,400" radius="10" name="lightsensor-0" />
+	<sensor at="70,450" radius="10" name="lightsensor-1" />
+	<sensor at="40,500" radius="10" name="lightsensor-2" />
+	
+	<counter max="3" name="lightcounter" />
+	<points name="lightspoints" number="100" />
+	
+	<event for="lightsensor" when="onSense" target="light-#" action="disable" />
+	<event for="level" when="onReset" target="light" action="enable" />
+	<event for="light" when="onDisable" target="lightcounter"	action="increment" />
+	<event for="lightcounter" when="onMax" target="lightspoints" action="increment" />
+	<event for="lightcounter" when="onMax" target="light" action="enable" />
+	<event for="lightcounter" when="onMax" target="lightcounter" action="reset" />
+	
+	<!-- sensor at top of chute to enable ball hatch -->
+	<sensor at="-15,-260" relativeTo="bottomright" radius="10" name="hatchSensor" />
+	
+	<!-- bumpers -->
 	<bumper at="130,110" radius="50" name="bumpers-0" />
 	<bumper at="300,150" radius="50" name="bumpers-1" />
 	<bumper at="328,300" radius="64" name="bumpers-2" />
 	
-	<flipperLeft at="2,3" length="2" />
-	<flipperRight at="2,3" length="2" />
+	<!-- A frame which covered the whole level minus the chute on the right -->
+	<frame>
+		<topLeft at="0,0" relativeTo="topleft" />
+		<bottomRight at="-31,0" relativeTo="bottomright" />
+		
+		<children>
+			<flipper at="-120,-80" relativeTo="bottomcenter" type="left" length="100" />
+			<flipper at="120,-80" relativeTo="bottomcenter" type="right" length="100" />	
+		</children>
+	</frame>
+	
+	<!-- When the sensor senses the hatch enables and -->
+	<!-- when the level resets the hatch disables -->
+	<event for="hatchSensor" when="onSense" target="chuteHatch" action="enable" />
+	<event for="level" when="onReset" target="chuteHatch" action="disable" />
+	
+	
+	
 	
 	<!-- <light at="4,5" name="lights-0" />
 	<light at="4,5" name="lights-1" />

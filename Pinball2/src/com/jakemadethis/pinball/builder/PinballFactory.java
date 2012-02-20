@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.jakemadethis.pinball.BaseModel;
 import com.jakemadethis.pinball.Entity;
 import com.jakemadethis.pinball.GameModel;
+import com.jakemadethis.pinball.LevelException;
 import com.jakemadethis.pinball.Pinball;
 import com.jakemadethis.pinball.builder.BuilderFactory;
 import com.jakemadethis.pinball.builder.BuilderNode;
@@ -60,19 +61,30 @@ public class PinballFactory implements BuilderFactory<Object> {
 
 	private Object invokeMethod(String type, BuilderNode node, BaseModel model) {
 		Method method = null;
-		try {
-			// Find the base package of Pinball
-			// This should be com.jakemadethis.pinball
-			// but I don't want to hard code it
-			String basePackage = Pinball.class.getPackage().getName();
+		
+		try{
+				try {
 			
-			String className = String.format(CLASS_PATTERN, basePackage, type);
-			Class<?> c = Class.forName(className);
-			method = c.getMethod(CONSTRUCT_METHOD, BaseModel.class, BuilderNode.class);
-			
-			return method.invoke(null, model, node);
-			
-		} catch (NoSuchMethodException e) {
+				// Find the base package of Pinball
+				// This should be com.jakemadethis.pinball
+				// but I don't want to hard code it
+				String basePackage = Pinball.class.getPackage().getName();
+				
+				String className = String.format(CLASS_PATTERN, basePackage, type);
+				Class<?> c = Class.forName(className);
+				method = c.getMethod(CONSTRUCT_METHOD, BaseModel.class, BuilderNode.class);
+				
+				return method.invoke(null, model, node);
+				
+			} catch (InvocationTargetException e) {
+				if (e.getCause() instanceof Exception)
+					throw (Exception) e.getCause();
+				throw new RuntimeException(e.getCause());
+			}
+		} catch (Exception e) {
+			throw new LevelException("Node '"+node.getNodeName()+"' could not be created", e);
+		}
+		/*} catch (NoSuchMethodException e) {
 			System.err.println("Pinball Factory error");
 			e.printStackTrace();	
 		} catch (IllegalArgumentException e) {
@@ -87,8 +99,7 @@ public class PinballFactory implements BuilderFactory<Object> {
 		} catch (ClassNotFoundException e) {
 			System.err.println("Pinball Factory error");
 			e.printStackTrace();
-		}
-		return null;
+		}*/
 	}
 
 	

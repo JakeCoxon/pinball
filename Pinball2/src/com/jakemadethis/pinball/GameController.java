@@ -1,5 +1,6 @@
 package com.jakemadethis.pinball;
 
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
@@ -25,12 +26,20 @@ public class GameController implements InputProcessor {
 		model.scale = 100f;
 
 
-		
-		FileHandle file = Gdx.files.internal("data/level.xml");
-		IBuilder b = XMLBuilder.fromStream(file.read());
-		
-		PinballFactory factory = new PinballFactory(model);
-		b.create(factory);
+		try {
+			// Android needs this for SAX
+			if (Gdx.app.getType() == ApplicationType.Android)
+				System.setProperty("org.xml.sax.driver", "org.xmlpull.v1.sax2.Driver");
+			
+			FileHandle file = Gdx.files.internal("data/level.xml");
+			IBuilder b = XMLBuilder.fromStream(file.read());
+			
+			PinballFactory factory = new PinballFactory(model);
+			b.create(factory);
+		}
+		catch (LevelException e) {
+			e.printStackTrace();
+		}
 
 		//Log.d("JAKE", "initGame");
 		model.initGame();

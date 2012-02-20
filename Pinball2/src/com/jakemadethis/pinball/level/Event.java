@@ -4,7 +4,9 @@ import java.util.HashMap;
 
 import static com.jakemadethis.pinball.builder.FactoryUtil.*;
 import com.jakemadethis.pinball.BaseModel;
+import com.jakemadethis.pinball.LevelException;
 import com.jakemadethis.pinball.builder.BuilderNode;
+import com.jakemadethis.pinball.io.IOException;
 
 public abstract class Event {
 
@@ -17,7 +19,12 @@ public abstract class Event {
 		String action = expected(atts, "action");
 		float wait = Float.valueOf(optional(atts, "wait", "0"));
 		
-		model.getIoManager().addEvent(_for, when, target, action);
+		try {
+			model.getIoManager().addEvent(_for, when, target, action);
+		}
+		catch(IOException e) {
+			throw new LevelException("Event couldn't be created", e);
+		}
 		
 		return null;		
 	}

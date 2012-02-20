@@ -10,6 +10,7 @@ import org.xml.sax.Attributes;
 
 import com.jakemadethis.pinball.Attachable;
 import com.jakemadethis.pinball.Entity;
+import com.jakemadethis.pinball.LevelException;
 
 public class FactoryUtil {
 	
@@ -19,7 +20,7 @@ public class FactoryUtil {
 	 */
 	public static String expected(HashMap<String, String> atts, String key) {
 		String s = atts.get(key);
-		if (s == null) throw new RuntimeException(key+" expected");
+		if (s == null) throw new LevelException("Attribute '"+key+"' expected");
 		return s;
 	}
 	
@@ -58,9 +59,9 @@ public class FactoryUtil {
 	
 	public static float[] getAbsolutePosition(Object parent, HashMap<String, String> atts) {
 		if (parent == null) 
-			throw new FactoryException("Parent is null");
+			throw new LevelException("Parent is null");
 		if (!(parent instanceof Attachable))
-			throw new FactoryException("Parent node is not attachable ("+parent.getClass().getSimpleName()+")");
+			throw new LevelException("Parent node is not attachable ("+parent.getClass().getSimpleName()+")");
 		
 		Attachable attachParent = (Attachable) parent;
 		

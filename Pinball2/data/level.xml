@@ -48,7 +48,7 @@
 	<wall>
 		<point at="0,300" relativeTo="topleft" />
 		<point at="90,370" relativeTo="topleft" />
-		<point at="0,550" relativeTo="topleft" />
+		<point at="0,520" relativeTo="topleft" />
 	</wall>
 	
 	<ball at="-15,-15" relativeTo="bottomright" />
@@ -80,7 +80,6 @@
 	<bumper at="130,110" radius="50" name="bumpers-0" />
 	<bumper at="300,150" radius="50" name="bumpers-1" />
 	<bumper at="328,300" radius="64" name="bumpers-2" />
-	
 	
 	<!-- A frame which covered the whole level minus the chute on the right -->
 	<frame>
