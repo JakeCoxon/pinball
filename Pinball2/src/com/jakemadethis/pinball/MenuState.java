@@ -34,10 +34,9 @@ public class MenuState implements IState, InputProcessor {
 		c.setToOrtho(true);
 		spriteBatch.setProjectionMatrix(c.combined);
 		
-		alphabetTexture = new Texture(Gdx.files.internal("data/alphabet.png"));
-		alphabetTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		TextureManager textureMan = TextureManager.get();
 		
-		font = new Font(alphabetTexture);
+		font = new Font(textureMan.regularfont);
 		
 		levels = new ArrayList<String>();
 		
@@ -66,7 +65,6 @@ public class MenuState implements IState, InputProcessor {
 			font.drawString(spriteBatch, level, 0, i*64f, 64f);
 			
 		}
-		font.drawString(spriteBatch, "hello", Gdx.graphics.getWidth()/2, 300f, 64f, Alignment.CENTER);
 		
 		spriteBatch.end();
 	}

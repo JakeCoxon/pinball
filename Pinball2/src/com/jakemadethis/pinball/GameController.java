@@ -10,12 +10,13 @@ import com.jakemadethis.pinball.builder.PinballFactory;
 
 public class GameController implements InputProcessor {
 	private boolean running = false;
-    private int targetFrameRate = 60;
-    public static float gameSpeed = 1f;
+  private int targetFrameRate = 60;
+  public static float gameSpeed = 1f;
 	
 	final private GameModel model;
 	final private IView view;
 	private PinballStateManager stateManager;
+	private Timer gamePausedTimer = new Timer();
 	
 	public GameController(PinballStateManager stateManager, final GameModel model, final IView view, String levelName) {
 		
@@ -89,7 +90,13 @@ public class GameController implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int x, int y, int pointer, int button) {
-		if (model.gameOver) return false;
+		if (model.gameOver) {
+			if (!gamePausedTimer.started())
+				gamePausedTimer.start(1f);
+			else if(gamePausedTimer.finished())
+				stateManager.setMenu();
+		return true; 
+	}
 		
 		if (model.getBall().isActive()) {
 			model.engageFlipper(true);

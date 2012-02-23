@@ -34,8 +34,6 @@ import com.jakemadethis.pinball.BaseModel.EntityArgs;
 import com.jakemadethis.pinball.Font.Alignment;
 import com.jakemadethis.pinball.views.DrawableVisitor;
 
-
-
 public class GameView extends BaseView {
 
 	
@@ -48,16 +46,12 @@ public class GameView extends BaseView {
 	public SpriteBatch world;
 	public SpriteBatch ui;
 	private ParticleEmitter particleEmitter;
-	
-
-	protected Texture spritesTexture;
-	protected Texture scoreFontTexture;
 
 	private Random r;
 	public GameModel model;
 	private Font scorefont;
-	private Texture regularFontTexture;
 	private Font regularFont;
+	StringBuilder stringBuilder = new StringBuilder();
 	
 	private Timer gameOverTimer = new Timer();
 	
@@ -78,29 +72,22 @@ public class GameView extends BaseView {
 	
 		Gdx.gl20.glClearColor(0.6f, 0.2f, 0.4f, 1f);
 
-		spritesTexture = new Texture(Gdx.files.internal("data/sprites.png"));
-		spritesTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		TextureManager textureMan = TextureManager.get();
 		
-		scoreFontTexture = new Texture(Gdx.files.internal("data/scorefont.png"));
-		scoreFontTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		
-		regularFontTexture = new Texture(Gdx.files.internal("data/alphabet.png"));
-		regularFontTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-
-		scorefont = new Font(scoreFontTexture, true);
+		scorefont = new Font(textureMan.scorefont, true);
 		scorefont.setLetterSpacing(-8);
 
-		regularFont = new Font(regularFontTexture);
+		regularFont = new Font(textureMan.regularfont);
 		
 		
 		//ui.getTextureRenderer().setTexture(0, numbersTexture);
 		//world.getTextureRenderer().setTexture(0, spritesTexture);
 		
-		sprites.put("bumper", new TextureRegion(spritesTexture, 0.25f, 0, 0.5f, 0.25f));
-		sprites.put("circle", new TextureRegion(spritesTexture, 0, 0, 0.125f, 0.125f));
-		sprites.put("ball", new TextureRegion(spritesTexture, 0.25f, 0, 0.5f, 0.25f));
-		sprites.put("line", new TextureRegion(spritesTexture, 0.0f, 0.25f, 0.25f, 0.5f));
-		sprites.put("rect", new TextureRegion(spritesTexture, 0.5f, 0f, 0.75f, 0.25f));
+		sprites.put("bumper", new TextureRegion(textureMan.sprites, 0.25f, 0, 0.5f, 0.25f));
+		sprites.put("circle", new TextureRegion(textureMan.sprites, 0, 0, 0.125f, 0.125f));
+		sprites.put("ball", new TextureRegion(textureMan.sprites, 0.25f, 0, 0.5f, 0.25f));
+		sprites.put("line", new TextureRegion(textureMan.sprites, 0.0f, 0.25f, 0.25f, 0.5f));
+		sprites.put("rect", new TextureRegion(textureMan.sprites, 0.5f, 0f, 0.75f, 0.25f));
 		
 
 		world = new SpriteBatch();
@@ -179,8 +166,8 @@ public class GameView extends BaseView {
 		world.begin();
 		synchronized (model) {
 			
-			for (IDrawable drawable : drawables) {
-				drawable.draw();
+			for (int i = 0; i < drawables.size(); i++) {
+				drawables.get(i).draw();
 			}
 		}
 		
@@ -194,11 +181,12 @@ public class GameView extends BaseView {
 	
 	private void drawUI() {
 		ui.begin();
-		StringBuilder b = new StringBuilder().append(score);
-		while(b.length() < 5) b.insert(0, '0');
+		stringBuilder.setLength(0);
+		stringBuilder.append(score);
+		while(stringBuilder.length() < 5) stringBuilder.insert(0, '0');
 		String scoreText = String.valueOf(model.combo);
 
-		drawTextShadow(ui, scorefont, b.toString(), 20f, 20f, 32f);
+		drawTextShadow(ui, scorefont, stringBuilder.toString(), 20f, 20f, 32f);
 		drawTextShadow(ui, scorefont, String.valueOf(model.balls), width-20f, 20f, 32f, Alignment.RIGHT);
 		drawTextShadow(ui, scorefont, scoreText, 20f, 45f, 32f);
 		
@@ -213,6 +201,7 @@ public class GameView extends BaseView {
 			ui.setColor(1f, 1f, 1f, 1f);
 			drawTextShadow(ui, regularFont, "Game", x+width/2, 100f, 64f, Alignment.CENTER);
 			drawTextShadow(ui, regularFont, "Over", x+width/2, 164f, 64f, Alignment.CENTER);
+			drawTextShadow(ui, regularFont, String.valueOf(model.getScore()), x+width/2, 300f, 64f, Alignment.CENTER);
 		}
 
 		ui.end();

@@ -23,7 +23,7 @@ public class GameModel extends BaseModel {
 	private LinkedList<Flipper> flipperLeft = new LinkedList<Flipper>();
 	private LinkedList<Flipper> flipperRight = new LinkedList<Flipper>();
 	public int combo = 0;
-	public int balls = 1;
+	public int balls = 3;
 	
 	private Timer comboTimer = new Timer();
 	private Timer awesomeTimer = new Timer();
@@ -126,8 +126,9 @@ public class GameModel extends BaseModel {
 			world.step(dt, 5, 5);
 		}
 		
-		for (Entity ent : entities) 
-			ent.think(timestep, this);
+		for (int i = 0; i < entities.size(); i++) {
+			entities.get(i).think(timestep, this);
+		}
 		
 		if (ball.getBody().getPosition().y > height + 1f) {
 			ballLost();

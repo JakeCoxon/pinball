@@ -129,7 +129,6 @@ public class Font {
 		for (int i = 0; i < str.length(); i++) {
 			float charWidth = drawLetter(batch, str.charAt(i), x, y, size, align);
 			x += charWidth;
-				
 		}
 	}
 	private void drawStringRight(SpriteBatch batch, String str, float x, float y, float size) {

@@ -59,7 +59,7 @@ public class Timer {
 	 * @return true if the timer has run and finished
 	 */
 	public boolean finished() {
-		return !running() && length != 0;
+		return !running() && started();
 	}
 	
 	/**
@@ -67,5 +67,19 @@ public class Timer {
 	 */
 	public long getLength() {
 		return length;
+	}
+
+	/**
+	 * @return true if the timer has been started
+	 */
+	public boolean started() {
+		return length > 0;
+	}
+	
+	/**
+	 * Resets the timer so started() returns true
+	 */
+	public void reset() {
+		length = 0;
 	}
 }
