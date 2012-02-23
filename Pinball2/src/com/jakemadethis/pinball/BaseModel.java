@@ -72,6 +72,16 @@ public class BaseModel implements ContactListener {
 	}
 
 	/**
+	 * Set the size of the model
+	 * @param width
+	 * @param height
+	 */
+	public void setSize(float width, float height) {
+		this.width = width;
+		this.height = height;
+	}
+
+	/**
 	 * Run every update frame
 	 * @param timestep
 	 * @param iters
@@ -178,6 +188,7 @@ public class BaseModel implements ContactListener {
 	public void postSolve(Contact contact, ContactImpulse impulse) {
 		
 	}
+
 
 	
 }

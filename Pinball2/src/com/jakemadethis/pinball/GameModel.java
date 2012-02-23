@@ -23,10 +23,13 @@ public class GameModel extends BaseModel {
 	private LinkedList<Flipper> flipperLeft = new LinkedList<Flipper>();
 	private LinkedList<Flipper> flipperRight = new LinkedList<Flipper>();
 	public int combo = 0;
+	public int balls = 1;
+	
 	private Timer comboTimer = new Timer();
 	private Timer awesomeTimer = new Timer();
 	public boolean awesomeMode = false;
 	private OutputHandler outputs = new OutputHandler("onReset");
+	public boolean gameOver;
 	
 	
 	public GameModel() {
@@ -36,7 +39,7 @@ public class GameModel extends BaseModel {
 	
 	
 	
-	public void engageFlipper(boolean active) {
+	public void engageFlipper(boolean active) {		
 		for (Flipper f : flipperLeft) 
 			f.setFlipperEngaged(active);
 		for (Flipper f : flipperRight)
@@ -69,57 +72,10 @@ public class GameModel extends BaseModel {
 	 */
 	public void initGame() {
 		
-		width = 480f;
-		height = 1000f;
+		//width = 480f;
+		//height = 1000f;
 		scale = 100f;
-
-		//addBox(100f, 100f, 100f, 100f);
-		//ball = addBall(width-15f, height-15f, 15f);
 		
-		//setName("sensor", addSensor(width-15f, height-260f, 2f));
-		
-		//addBumper(130f, 110f, 50f);
-		//addBumper(300f, 150f, 50f);
-		//addBumper(328f, 300f, 64f);
-		
-		float rest = 0.5f;
-
-		float mid = (15f + width-30f)/2;
-		//flipperLeft = addFlipper(mid - 120f, height-80f, 100f, Flipper.Type.LEFT);
-		//flipperRight = addFlipper(mid + 120f, height-80f, 100f, Flipper.Type.RIGHT);
-
-		//addWall(width-30f, height-200f, width-30f, height, rest);
-		
-		//setName("toggleWall", addWall(width-30f, height-200f, width, height-230f, rest));
-		
-		//addWall(15, height-15, width-15, height - 15, 0);
-
-		
-		//addWall(0, 300f, 90f, 370f, rest);
-		//addWall(0.0f,544f,89.2f,369.4f, rest);
-		
-		//addWall(105.5f,915f,0.0f,864f, rest);
-		//addWall(448f,864f,360.8f,911.6f, rest);
-		
-		
-		//add(new ParticleEmitter(width/100f/2f, height/100f/2f));
-		
-		float r = 100;
-		//addWallArc(width-r, r, r, r, (float) (-Math.PI/2), 0, 8);
-		//addWallArc(r, r, r, r, (float) (-Math.PI), (float) (-Math.PI/2), 8);
-
-		// Top
-		//addWall(r, 0, width-r, 0, rest);
-
-		//addWall(0, r, 0, 864f, rest);
-		//addWall(width, r, width, height, rest);
-		
-		//Entity.addConnection(sensor, "onSense", toggleWall, "turnOn");
-		//Connection.add(outputs, "onReset", toggleWall.inputs, "turnOff");
-		//ioManager.addEvent("sensor", "onSense", "toggleWall", "turnOn");
-		//ioManager.addEvent("level", "onReset", "toggleWall", "turnOff");
-		
-		//ioManager.testAdd();
 		ioManager.debugPrint();
 		
 		
@@ -174,7 +130,7 @@ public class GameModel extends BaseModel {
 			ent.think(timestep, this);
 		
 		if (ball.getBody().getPosition().y > height + 1f) {
-			reset();
+			ballLost();
 		}
 		
 		if (!comboTimer.running()) combo = 0;
@@ -186,6 +142,17 @@ public class GameModel extends BaseModel {
 	
 	
 	
+	private void ballLost() {
+		balls--;
+		reset();
+		if (balls == 0) {
+			gameOver = true;
+		}
+	}
+
+
+
+
 	@Override
 	public void beginContact(Contact contact) {
 		Ball b = null;

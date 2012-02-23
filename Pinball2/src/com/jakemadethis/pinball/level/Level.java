@@ -15,6 +15,7 @@ public class Level extends Attachable {
 		float[] size = toFloatList(expected(atts, "size"));
 		String label =             expected(atts, "name");
 		
+		model.setSize(size[0], size[1]);
 		return new Level(label, size[0], size[1]);
 	}
 

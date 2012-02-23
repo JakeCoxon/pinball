@@ -22,6 +22,8 @@ public class Font {
 	private float inv_h;// = 0.03125f;
 	private int[] leftMargin = new int[ROWS*COLS];
 	private int[] rightMargin = new int[ROWS*COLS];
+	
+	public enum Alignment {LEFT, RIGHT, CENTER}
 
 	private int w;
 	private int h;
@@ -84,13 +86,70 @@ public class Font {
 		return true;
 	}
 	
-	public void drawString(SpriteBatch batch, String str, float x, float y, float size) {
-		str = str.toLowerCase();
+	/**
+	 * Gets the width in pixels of this string
+	 * @param str The text
+	 * @param size The font size
+	 * @return
+	 */
+	public float stringWidth(String str, float size) {
+		float width = 0;
 		for (int i = 0; i < str.length(); i++) {
-			float w = drawLetter(batch, str.charAt(i), x, y, size);
-			x += w;
+			width += charWidth(str.charAt(i), size);
+		}
+		return width;
+	}
+
+	/**
+	 * Gets the width in pixels of this character
+	 * @param c
+	 * @param size
+	 * @return
+	 */
+	public float charWidth(char c, float size) {
+		if (c == ' ') return w/2;
+		return (float)(rightMargin[c] - leftMargin[c]) / this.w * size;
+	}
+
+	public void drawString(SpriteBatch batch, String str, float x, float y, float size) {
+		drawString(batch, str, x, y, size, Alignment.LEFT);
+	}
+	
+	public void drawString(SpriteBatch batch, String str, float x, float y, float size, Alignment align) {
+		if (align == Alignment.RIGHT) {
+			drawStringRight(batch, str, x, y, size);
+			return;
+		}
+		else if (align == Alignment.CENTER) {
+			// Find the size of the whole string
+			// TODO: Fix this - its not in the middle
+			x -= stringWidth(str, size)/2;
+			align = Alignment.LEFT;
+		}
+		for (int i = 0; i < str.length(); i++) {
+			float charWidth = drawLetter(batch, str.charAt(i), x, y, size, align);
+			x += charWidth;
 				
 		}
+	}
+	private void drawStringRight(SpriteBatch batch, String str, float x, float y, float size) {
+		for (int i = str.length()-1; i >= 0; i--) {
+			float charWidth = drawLetter(batch, str.charAt(i), x, y, size, Alignment.RIGHT);
+			x -= charWidth;
+		}
+	}
+	
+	/**
+	 * Draw a single character aligned to the left
+	 * @param batch the SpriteBatch to use
+	 * @param c The character
+	 * @param x X position of the character, at the left
+	 * @param y Y position of the character, at the top
+	 * @param size The height of the character
+	 * @return The width of the character
+	 */
+	public float drawLetter(SpriteBatch batch, char c, float x, float y, float size) {
+		return drawLetter(batch, c, x, y, size, Alignment.LEFT);
 	}
 	
 	/**
@@ -100,9 +159,12 @@ public class Font {
 	 * @param x X position of the character, at the left
 	 * @param y Y position of the character, at the top
 	 * @param size The height of the character
+	 * @param align The alignment of the character
 	 * @return The width of the character
 	 */
-	public float drawLetter(SpriteBatch batch, char c, float x, float y, float size) {
+	public float drawLetter(SpriteBatch batch, char c, float x, float y, float size, Alignment align) {
+		if (c == ' ') return charWidth(c, size);
+		
 		int num_x = c % COLS;
 		int num_y = c / COLS;
 
@@ -118,10 +180,14 @@ public class Font {
 		u2 = u + r;
 		u = u + l;
 		
-		float letterW = (float)(rightMargin[num] - leftMargin[num]) / this.w * size;
+		float letterW = charWidth(c, size);
 		
-		batch.draw(texture, x, y, letterW, size, u, v, u2, v2);
+		float offset = 0;
+		if (align == Alignment.RIGHT ) offset = letterW;
+		else if (align == Alignment.CENTER) offset = letterW/2;
 		
-		return letterW + letterSpacing ;
+		batch.draw(texture, x - offset, y, letterW, size, u, v, u2, v2);
+		
+		return letterW + letterSpacing;
 	}
 }

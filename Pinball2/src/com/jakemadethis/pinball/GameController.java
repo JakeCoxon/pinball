@@ -89,6 +89,8 @@ public class GameController implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int x, int y, int pointer, int button) {
+		if (model.gameOver) return false;
+		
 		if (model.getBall().isActive()) {
 			model.engageFlipper(true);
 		}

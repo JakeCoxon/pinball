@@ -31,6 +31,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.jakemadethis.pinball.EventHandler.EventListener;
 import com.jakemadethis.pinball.BaseModel.EntityArgs;
+import com.jakemadethis.pinball.Font.Alignment;
 import com.jakemadethis.pinball.views.DrawableVisitor;
 
 
@@ -50,11 +51,15 @@ public class GameView extends BaseView {
 	
 
 	protected Texture spritesTexture;
-	protected Texture alphabetTexture;
+	protected Texture scoreFontTexture;
 
 	private Random r;
 	public GameModel model;
 	private Font scorefont;
+	private Texture regularFontTexture;
+	private Font regularFont;
+	
+	private Timer gameOverTimer = new Timer();
 	
 	
 	public GameView(GameModel model) {
@@ -75,11 +80,17 @@ public class GameView extends BaseView {
 
 		spritesTexture = new Texture(Gdx.files.internal("data/sprites.png"));
 		spritesTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		alphabetTexture = new Texture(Gdx.files.internal("data/scorefont.png"));
-		alphabetTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
-		scorefont = new Font(alphabetTexture, true);
+		scoreFontTexture = new Texture(Gdx.files.internal("data/scorefont.png"));
+		scoreFontTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
+		regularFontTexture = new Texture(Gdx.files.internal("data/alphabet.png"));
+		regularFontTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
+		scorefont = new Font(scoreFontTexture, true);
 		scorefont.setLetterSpacing(-8);
+
+		regularFont = new Font(regularFontTexture);
 		
 		
 		//ui.getTextureRenderer().setTexture(0, numbersTexture);
@@ -89,6 +100,7 @@ public class GameView extends BaseView {
 		sprites.put("circle", new TextureRegion(spritesTexture, 0, 0, 0.125f, 0.125f));
 		sprites.put("ball", new TextureRegion(spritesTexture, 0.25f, 0, 0.5f, 0.25f));
 		sprites.put("line", new TextureRegion(spritesTexture, 0.0f, 0.25f, 0.25f, 0.5f));
+		sprites.put("rect", new TextureRegion(spritesTexture, 0.5f, 0f, 0.75f, 0.25f));
 		
 
 		world = new SpriteBatch();
@@ -186,15 +198,36 @@ public class GameView extends BaseView {
 		while(b.length() < 5) b.insert(0, '0');
 		String scoreText = String.valueOf(model.combo);
 
-		ui.setColor(0f, 0f, 0f, 0.5f);
-		scorefont.drawString(ui, b.toString(), 20f-1, 20f+1, 32f);
-		scorefont.drawString(ui, scoreText, 20f-1, 45f+1, 32f);
+		drawTextShadow(ui, scorefont, b.toString(), 20f, 20f, 32f);
+		drawTextShadow(ui, scorefont, String.valueOf(model.balls), width-20f, 20f, 32f, Alignment.RIGHT);
+		drawTextShadow(ui, scorefont, scoreText, 20f, 45f, 32f);
 		
-		ui.setColor(1f, 1f, 1f, 1f);
-		scorefont.drawString(ui, b.toString(), 20f, 20f, 32f);
-		scorefont.drawString(ui, scoreText, 20f, 45f, 32f);
+		if (model.gameOver && gameOverTimer.getLength() == 0) {
+			gameOverTimer.start(0.5f);
+		}
+		if (gameOverTimer.getLength() > 0) {
+			float x = Interpolator.easeOutQuad(gameOverTimer, -width, 0);
+			
+			ui.setColor(0f, 0f, 0f, 0.7f);
+			ui.draw(getSprite("rect"), x, 0, width, height);
+			ui.setColor(1f, 1f, 1f, 1f);
+			drawTextShadow(ui, regularFont, "Game", x+width/2, 100f, 64f, Alignment.CENTER);
+			drawTextShadow(ui, regularFont, "Over", x+width/2, 164f, 64f, Alignment.CENTER);
+		}
 
 		ui.end();
+	}
+
+	private void drawTextShadow(SpriteBatch batch, Font font, String text, float x, float y, float size) {
+		drawTextShadow(batch, font, text, x, y, size, Alignment.LEFT);
+	}
+	private void drawTextShadow(SpriteBatch batch, Font font, String text, float x, float y, float size, Alignment align) {
+
+		ui.setColor(0f, 0f, 0f, 0.5f);
+		font.drawString(batch, text, x-1, y-1, size, align);
+		
+		ui.setColor(1f, 1f, 1f, 1f);
+		font.drawString(batch, text, x, y, size, align);
 	}
 	
 	

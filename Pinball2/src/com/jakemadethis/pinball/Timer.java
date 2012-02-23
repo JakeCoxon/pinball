@@ -6,6 +6,7 @@ package com.jakemadethis.pinball;
  *
  */
 public class Timer {
+	
 	private long length = 0;
 	private long startTime = 0;
 	public Timer() {
@@ -41,7 +42,7 @@ public class Timer {
 	/**
 	 * @param min
 	 * @param max
-	 * @return  the interpolated value between min and max of the timer
+	 * @return the interpolated value between min and max of the timer
 	 */
 	public float value(float min, float max) {
 		return min + value() * (max - min);
@@ -52,5 +53,19 @@ public class Timer {
 	 */
 	public boolean running() {
 		return System.nanoTime() <= startTime + length;
+	}
+	
+	/**
+	 * @return true if the timer has run and finished
+	 */
+	public boolean finished() {
+		return !running() && length != 0;
+	}
+	
+	/**
+	 * @return the length of the timer
+	 */
+	public long getLength() {
+		return length;
 	}
 }

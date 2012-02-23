@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.jakemadethis.pinball.Font.Alignment;
 
 public class MenuState implements IState, InputProcessor {
 
@@ -65,6 +66,8 @@ public class MenuState implements IState, InputProcessor {
 			font.drawString(spriteBatch, level, 0, i*64f, 64f);
 			
 		}
+		font.drawString(spriteBatch, "hello", Gdx.graphics.getWidth()/2, 300f, 64f, Alignment.CENTER);
+		
 		spriteBatch.end();
 	}
 
