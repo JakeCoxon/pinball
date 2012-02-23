@@ -1,5 +1,7 @@
 package com.jakemadethis.pinball;
 
+import java.util.LinkedList;
+
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Contact;
 
@@ -18,8 +20,8 @@ public class GameModel extends BaseModel {
 
 	
 	private Ball ball;
-	private Flipper flipperLeft;
-	private Flipper flipperRight;
+	private LinkedList<Flipper> flipperLeft = new LinkedList<Flipper>();
+	private LinkedList<Flipper> flipperRight = new LinkedList<Flipper>();
 	public int combo = 0;
 	private Timer comboTimer = new Timer();
 	private Timer awesomeTimer = new Timer();
@@ -35,8 +37,10 @@ public class GameModel extends BaseModel {
 	
 	
 	public void engageFlipper(boolean active) {
-		flipperLeft.setFlipperEngaged(active);
-		flipperRight.setFlipperEngaged(active);
+		for (Flipper f : flipperLeft) 
+			f.setFlipperEngaged(active);
+		for (Flipper f : flipperRight)
+			f.setFlipperEngaged(active);
 	}
 	
 	public Ball getBall() {
@@ -47,14 +51,14 @@ public class GameModel extends BaseModel {
 	public synchronized Flipper addFlipper(float cx, float cy, float length,
 			Type type) {
 		Flipper f = super.addFlipper(cx, cy, length, type);
-		if (type == Type.LEFT) flipperLeft = f;
-		else if (type == Type.RIGHT) flipperRight = f;
+		if (type == Type.LEFT) flipperLeft.add(f);
+		else if (type == Type.RIGHT) flipperRight.add(f);
 		return f;
 	}
 	
 	@Override
 	public synchronized Ball addBall(float cx, float cy, float radius) {
-		if (ball != null) throw new RuntimeException("Only 1 ball currently allowed");
+		if (ball != null) throw new LevelException("Only 1 ball currently allowed");
 		Ball b = super.addBall(cx, cy, radius);
 		ball = b;
 		return b;

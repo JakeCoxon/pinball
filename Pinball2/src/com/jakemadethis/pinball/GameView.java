@@ -50,10 +50,11 @@ public class GameView extends BaseView {
 	
 
 	protected Texture spritesTexture;
-	protected Texture numbersTexture;
+	protected Texture alphabetTexture;
 
 	private Random r;
 	public GameModel model;
+	private Font scorefont;
 	
 	
 	public GameView(GameModel model) {
@@ -74,8 +75,11 @@ public class GameView extends BaseView {
 
 		spritesTexture = new Texture(Gdx.files.internal("data/sprites.png"));
 		spritesTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		numbersTexture = new Texture(Gdx.files.internal("data/numbers.png"));
-		numbersTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		alphabetTexture = new Texture(Gdx.files.internal("data/scorefont.png"));
+		alphabetTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
+		scorefont = new Font(alphabetTexture, true);
+		scorefont.setLetterSpacing(-8);
 		
 		
 		//ui.getTextureRenderer().setTexture(0, numbersTexture);
@@ -140,8 +144,7 @@ public class GameView extends BaseView {
 		if (model.awesomeMode) {
 			if (particleEmitter.isComplete())
 				particleEmitter.start();
-		}
-		else {
+		} else {
 			particleEmitter.allowCompletion();
 		}
 	}
@@ -174,32 +177,27 @@ public class GameView extends BaseView {
 			
 		world.end();
 
-		ui.begin();
 		drawUI();
-		ui.end();
 	}
 	
 	private void drawUI() {
+		ui.begin();
 		StringBuilder b = new StringBuilder().append(score);
 		while(b.length() < 5) b.insert(0, '0');
-		drawString(ui, b.toString(), 20f, 20f, 20f, new float[] {1f,1f,1f,1f});
-		drawString(ui, String.valueOf(model.combo), 20f, 40f, 20f, new float[] {1f,1f,1f,1f});
+		String scoreText = String.valueOf(model.combo);
+
+		ui.setColor(0f, 0f, 0f, 0.5f);
+		scorefont.drawString(ui, b.toString(), 20f-1, 20f+1, 32f);
+		scorefont.drawString(ui, scoreText, 20f-1, 45f+1, 32f);
 		
+		ui.setColor(1f, 1f, 1f, 1f);
+		scorefont.drawString(ui, b.toString(), 20f, 20f, 32f);
+		scorefont.drawString(ui, scoreText, 20f, 45f, 32f);
+
+		ui.end();
 	}
 	
-	private void drawString(SpriteBatch batch, String str, float x, float y, float size, float[] color) {
-		for (int i = 0; i < str.length(); i++) {
-			if (Character.isDigit(str.charAt(i)))
-				drawNumber(batch, Character.digit(str.charAt(i), 10), x, y, size, size, color);
-			x += size;
-		}
-	}
-	private void drawNumber(SpriteBatch batch, int num, float x, float y, float w, float h, float[] color) {
-		float u2 = num * 0.0625f;
-		float v2 = (num+1) * 0.0625f;
-
-		batch.draw(numbersTexture, x, y, w, h, 0, u2, 1, v2);
-	}
+	
 
 
 }

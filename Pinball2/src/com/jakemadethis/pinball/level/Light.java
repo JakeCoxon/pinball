@@ -9,6 +9,7 @@ import com.jakemadethis.pinball.BaseModel;
 import com.jakemadethis.pinball.Entity;
 import com.jakemadethis.pinball.GameModel;
 import com.jakemadethis.pinball.EventHandler.EventListener;
+import com.jakemadethis.pinball.Timer;
 import com.jakemadethis.pinball.builder.BuilderNode;
 import com.jakemadethis.pinball.builder.FactoryUtil;
 import com.jakemadethis.pinball.io.Input;
@@ -37,6 +38,7 @@ public class Light extends Entity implements EventListener<Input.EventArgs> {
 	private float w;
 	private float h;
 	private boolean enabled;
+	private Timer flashTimer = new Timer();;
 
 	public Light(float x, float y, float w, float h, Color color) {
 		this.x = x;
@@ -46,7 +48,7 @@ public class Light extends Entity implements EventListener<Input.EventArgs> {
 		this.color = color;
 		this.enabled = true;
 		
-		inputs = new InputHandler(this, "toggle", "disable", "enable");
+		inputs = new InputHandler(this, "toggle", "disable", "enable", "flash");
 		outputs = new OutputHandler("onEnable", "onDisable");
 	}
 	
@@ -96,17 +98,36 @@ public class Light extends Entity implements EventListener<Input.EventArgs> {
 		else if (inputName.equals("disable")) {
 			disable();
 		}
+		else if (inputName.equals("flash")) {
+			flash();
+		}
+	}
+	
+	/**
+	 * Gets whether this light is flashing
+	 * @return
+	 */
+	public boolean isFlashing() {
+		return flashTimer.running();
+	}
+	
+	public Timer getFlashTimer() {
+		return flashTimer;
+	}
+
+	private void flash() {
+		flashTimer.start(2f, true);
 	}
 
 	private void disable() {
-		if (enabled) {
+		if (enabled && !flashTimer.running()) {
 			enabled = false;
 			outputs.invoke("onDisable");
 		}
 	}
 
 	private void enable() {
-		if (!enabled) {
+		if (!enabled && !flashTimer.running()) {
 			enabled = true;
 			outputs.invoke("onEnable");
 		}

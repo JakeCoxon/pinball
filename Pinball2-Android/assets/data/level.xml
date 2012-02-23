@@ -59,9 +59,9 @@
 	<light at="70,450" size="20,20" color="1,0,0,1" name="light-1" />
 	<light at="40,500" size="20,20" color="1,0,0,1" name="light-2" />
 	
-	<sensor at="100,400" radius="10" name="lightsensor-0" />
-	<sensor at="70,450" radius="10" name="lightsensor-1" />
-	<sensor at="40,500" radius="10" name="lightsensor-2" />
+	<sensor at="100,400" relativeTo="topleft" radius="10" name="lightsensor-0" />
+	<sensor at="70,450" relativeTo="topleft" radius="10" name="lightsensor-1" />
+	<sensor at="40,500" relativeTo="topleft" radius="10" name="lightsensor-2" />
 	
 	<counter max="3" name="lightcounter" />
 	<points name="lightspoints" number="100" />
@@ -71,6 +71,7 @@
 	<event for="light" when="onDisable" target="lightcounter"	action="increment" />
 	<event for="lightcounter" when="onMax" target="lightspoints" action="increment" />
 	<event for="lightcounter" when="onMax" target="light" action="enable" />
+	<event for="lightcounter" when="onMax" target="light" action="flash" />
 	<event for="lightcounter" when="onMax" target="lightcounter" action="reset" />
 	
 	<!-- sensor at top of chute to enable ball hatch -->

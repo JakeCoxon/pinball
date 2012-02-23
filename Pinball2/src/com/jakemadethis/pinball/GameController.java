@@ -15,9 +15,11 @@ public class GameController implements InputProcessor {
 	
 	final private GameModel model;
 	final private IView view;
+	private PinballStateManager stateManager;
 	
-	public GameController(final GameModel model, final IView view) {
+	public GameController(PinballStateManager stateManager, final GameModel model, final IView view, String levelName) {
 		
+		this.stateManager = stateManager;
 		this.model = model;
 		this.view = view;
 		
@@ -31,7 +33,7 @@ public class GameController implements InputProcessor {
 			if (Gdx.app.getType() == ApplicationType.Android)
 				System.setProperty("org.xml.sax.driver", "org.xmlpull.v1.sax2.Driver");
 			
-			FileHandle file = Gdx.files.internal("data/level.xml");
+			FileHandle file = Gdx.files.internal("data/"+levelName+".xml");
 			IBuilder b = XMLBuilder.fromStream(file.read());
 			
 			PinballFactory factory = new PinballFactory(model);

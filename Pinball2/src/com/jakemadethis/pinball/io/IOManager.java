@@ -86,7 +86,11 @@ public class IOManager {
 				addEvent(outputHandler, eventName, outputHandler.getRelatedInputHandler(), action);
 			}
 			else {
-				for (InputHandler target : getInputReplaced(targetName, i))
+				ArrayList<InputHandler> targets = getInputReplaced(targetName, i);
+				if (targets == null) {
+					throw new IOException("Couldn't find any entities matching '"+targetName+"'");
+				}
+				for (InputHandler target : targets)
 					addEvent(outputHandler, eventName, target, action);
 			}
 		}
