@@ -71,7 +71,7 @@
 	<event for="light" when="onDisable" target="lightcounter"	action="increment" />
 	<event for="lightcounter" when="onMax" target="lightspoints" action="increment" />
 	<event for="lightcounter" when="onMax" target="light" action="enable" />
-	<event for="lightcounter" when="onMax" target="light" action="flash" />
+	<event for="lightcounter" when="onMax" target="light" action="flash,5" />
 	<event for="lightcounter" when="onMax" target="lightcounter" action="reset" />
 	
 	<!-- sensor at top of chute to enable ball hatch -->

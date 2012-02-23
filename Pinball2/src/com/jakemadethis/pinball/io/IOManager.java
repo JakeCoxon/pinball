@@ -54,7 +54,7 @@ public class IOManager {
 			if (!outputsMap.containsKey(name))
 				outputsMap.put(name, outputs = new ArrayList<OutputHandler>());
 			else
-				outputs = outputsMap.get(name);		
+				outputs = outputsMap.get(name);
 			
 			set(outputs, id, outputHandler);
 			
@@ -71,7 +71,7 @@ public class IOManager {
 			list.add(handler);
 	}
 	
-	public void addEvent(String forName, String eventName, String targetName, String action) {
+	public void addEvent(String forName, String eventName, String targetName, String actionString) {
 		ArrayList<OutputHandler> collection = getOutput(forName);
 		if (collection == null) 
 			throw new IOException("Couldn't find any entities matching '"+forName+"'");
@@ -83,7 +83,7 @@ public class IOManager {
 			OutputHandler outputHandler = collection.get(i);
 			
 			if (self) {
-				addEvent(outputHandler, eventName, outputHandler.getRelatedInputHandler(), action);
+				addEvent(outputHandler, eventName, outputHandler.getRelatedInputHandler(), actionString);
 			}
 			else {
 				ArrayList<InputHandler> targets = getInputReplaced(targetName, i);
@@ -91,13 +91,21 @@ public class IOManager {
 					throw new IOException("Couldn't find any entities matching '"+targetName+"'");
 				}
 				for (InputHandler target : targets)
-					addEvent(outputHandler, eventName, target, action);
+					addEvent(outputHandler, eventName, target, actionString);
 			}
 		}
 	}
-	private static void addEvent(OutputHandler output, String eventName, InputHandler target, String action) {
-		System.out.println("Add event "+eventName+" -> "+action);
-		Connection.add(output, eventName, target, action);
+	private static void addEvent(OutputHandler output, String eventName, InputHandler target, String actionString) {
+		System.out.println("Add event "+eventName+" -> "+actionString);
+		String[] split = actionString.split(",");
+		String action = split[0];
+		
+		// Copy 1..n-1 to args
+		String[] args = new String[split.length-1];
+		if (args.length > 0)
+			System.arraycopy(split, 1, args, 0, split.length-1);
+		
+		Connection.add(output, eventName, target, action, args);
 	}
 	
 	

@@ -28,7 +28,7 @@ public class LightDrawable implements IDrawable {
 		float w = light.getWidth(), h = light.getHeight();
 		Color color = offColor;
 		if (light.isFlashing()) {
-			if (((int)(light.getFlashTimer().value()*20) & 1) == 1) {
+			if (((int)(light.getFlashTimer().getTimeElapsed()*4) & 1) == 1) {
 				color = light.getColor();
 			}
 		}

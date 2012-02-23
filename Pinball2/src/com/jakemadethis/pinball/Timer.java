@@ -40,6 +40,13 @@ public class Timer {
 	}
 	
 	/**
+	 * @return The number of seconds since the timer started
+	 */
+	public float getTimeElapsed() {
+		return (float)(System.nanoTime() - startTime) / 1000000000L;
+	}
+	
+	/**
 	 * @param min
 	 * @param max
 	 * @return the interpolated value between min and max of the timer

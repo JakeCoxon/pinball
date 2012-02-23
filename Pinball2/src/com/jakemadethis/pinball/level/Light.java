@@ -12,6 +12,7 @@ import com.jakemadethis.pinball.EventHandler.EventListener;
 import com.jakemadethis.pinball.Timer;
 import com.jakemadethis.pinball.builder.BuilderNode;
 import com.jakemadethis.pinball.builder.FactoryUtil;
+import com.jakemadethis.pinball.io.EventUtil;
 import com.jakemadethis.pinball.io.Input;
 import com.jakemadethis.pinball.io.Input.EventArgs;
 import com.jakemadethis.pinball.io.InputHandler;
@@ -99,7 +100,8 @@ public class Light extends Entity implements EventListener<Input.EventArgs> {
 			disable();
 		}
 		else if (inputName.equals("flash")) {
-			flash();
+			float length = EventUtil.optionalFloat(args.getArgs(), 0, 2f);
+			flash(length);
 		}
 	}
 	
@@ -115,8 +117,8 @@ public class Light extends Entity implements EventListener<Input.EventArgs> {
 		return flashTimer;
 	}
 
-	private void flash() {
-		flashTimer.start(2f, true);
+	private void flash(float length) {
+		flashTimer.start(length, true);
 	}
 
 	private void disable() {

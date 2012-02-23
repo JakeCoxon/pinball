@@ -18,12 +18,17 @@ public class Input {
 	
 	public static class EventArgs {
 		private String inputName;
+		private String[] args;
 
-		public EventArgs(String inputName) {
+		public EventArgs(String inputName, String... args) {
 			this.inputName = inputName;
+			this.args = args;
 		}
 		public String getInputName() {
 			return inputName;
+		}
+		public String[] getArgs() {
+			return args;
 		}
 	}
 	private LinkedList<Connection> connections;
@@ -42,7 +47,7 @@ public class Input {
 		connections.add(connection);
 	}
 	public void invoke(Connection connection) {
-		handler.invoke(this, new EventArgs(connection.getInput().getName()));
+		handler.invoke(this, new EventArgs(connection.getInput().getName(), connection.getArgs()));
 	}
 	
 }

@@ -95,8 +95,8 @@ public class GameController implements InputProcessor {
 				gamePausedTimer.start(1f);
 			else if(gamePausedTimer.finished())
 				stateManager.setMenu();
-		return true; 
-	}
+			return true; 
+		}
 		
 		if (model.getBall().isActive()) {
 			model.engageFlipper(true);
