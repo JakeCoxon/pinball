@@ -9,17 +9,17 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.jakemadethis.pinball.Font.Alignment;
 
 public class MenuState implements IState, InputProcessor {
 
 	private PinballStateManager stateManager;
 	private SpriteBatch spriteBatch;
 	private Texture alphabetTexture;
-	private Font font;
 	private ArrayList<String> levels;
 	private int press = -1;
+	private BitmapFont bitmapfont;
 
 	public MenuState(PinballStateManager stateManager) {
 		this.stateManager = stateManager;
@@ -36,7 +36,7 @@ public class MenuState implements IState, InputProcessor {
 		
 		TextureManager textureMan = TextureManager.get();
 		
-		font = new Font(textureMan.regularfont);
+		bitmapfont = new BitmapFont(Gdx.files.internal("data/regular.fnt"), true);
 		
 		levels = new ArrayList<String>();
 		
@@ -59,10 +59,11 @@ public class MenuState implements IState, InputProcessor {
 		
 		spriteBatch.begin();
 		for (int i = 0; i < levels.size(); i++) {
-			String level = levels.get(i);
-			if (press == i) spriteBatch.setColor(0.9f, 0f, 0f, 1f);
-			else spriteBatch.setColor(0.9f, 0.9f, 0.9f, 1f);
-			font.drawString(spriteBatch, level, 0, i*64f, 64f);
+			String levelName = levels.get(i);
+			if (press == i) bitmapfont.setColor(0.9f, 0f, 0f, 1f);
+			else bitmapfont.setColor(0.9f, 0.9f, 0.9f, 1f);
+			bitmapfont.draw(spriteBatch, levelName, 0, i*64f);
+			//font.drawString(spriteBatch, level, 0, i*64f, 64f);
 			
 		}
 		

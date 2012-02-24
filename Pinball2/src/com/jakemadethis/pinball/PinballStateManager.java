@@ -24,7 +24,9 @@ public class PinballStateManager {
 	}
 	
 	public void setGame(String l) {
+		long s = System.currentTimeMillis();
 		current = new GameState(this, l);
+		System.out.println("Started GameState in "+(System.currentTimeMillis()-s)+"ms");
 	}
 	
 }

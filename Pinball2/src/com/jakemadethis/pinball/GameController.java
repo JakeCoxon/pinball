@@ -28,7 +28,6 @@ public class GameController implements InputProcessor {
 		
 		model.scale = 100f;
 
-
 		try {
 			// Android needs this for SAX
 			if (Gdx.app.getType() == ApplicationType.Android)
@@ -46,6 +45,7 @@ public class GameController implements InputProcessor {
 
 		//Log.d("JAKE", "initGame");
 		model.initGame();
+		
 
 
 		/*Thread thread = new Thread(new Runnable() {

@@ -65,13 +65,16 @@ public class XMLBuilder implements ContentHandler, ErrorHandler, IBuilder
 		
 	}
     
-    /* (non-Javadoc)
-     * @see com.jakemadethis.pinball.builder.IBuilder#createAll(com.jakemadethis.pinball.builder.BuilderFactory, A)
-     */
-    @Override
-    public <R> R create(BuilderFactory<R> factory) {
-    	return factory.create(topNode);
-    }
+	/* (non-Javadoc)
+	 * @see com.jakemadethis.pinball.builder.IBuilder#createAll(com.jakemadethis.pinball.builder.BuilderFactory, A)
+	 */
+	@Override
+	public <R> R create(BuilderFactory<R> factory) {
+		long startTime = System.currentTimeMillis();
+		R r = factory.create(topNode);
+		System.out.println("Generated level in "+(System.currentTimeMillis()-startTime)+"ms");
+		return r;
+	}
     
     
     /**
@@ -79,7 +82,7 @@ public class XMLBuilder implements ContentHandler, ErrorHandler, IBuilder
      * @param fileName
      * @return
      */
-  public static XMLBuilder fromFile(String fileName) {
+	public static XMLBuilder fromFile(String fileName) {
   	try {
 			return new XMLBuilder(new InputSource(new FileReader(fileName)));
 		} catch (FileNotFoundException e) {

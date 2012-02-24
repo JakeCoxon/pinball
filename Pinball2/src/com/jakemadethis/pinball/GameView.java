@@ -22,6 +22,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -31,7 +33,6 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.jakemadethis.pinball.EventHandler.EventListener;
 import com.jakemadethis.pinball.BaseModel.EntityArgs;
-import com.jakemadethis.pinball.Font.Alignment;
 import com.jakemadethis.pinball.views.DrawableVisitor;
 
 public class GameView extends BaseView {
@@ -49,8 +50,8 @@ public class GameView extends BaseView {
 
 	private Random r;
 	public GameModel model;
-	private Font scorefont;
-	private Font regularFont;
+	private BitmapFont regularFont;
+	private BitmapFont scoreFont;
 	StringBuilder stringBuilder = new StringBuilder();
 	
 	private Timer gameOverTimer = new Timer();
@@ -74,11 +75,14 @@ public class GameView extends BaseView {
 
 		TextureManager textureMan = TextureManager.get();
 		
-		scorefont = new Font(textureMan.scorefont, true);
-		scorefont.setLetterSpacing(-8);
+		//scorefont = new Font(textureMan.scorefont, true);
+		//scorefont.setLetterSpacing(-8);
 
-		regularFont = new Font(textureMan.regularfont);
+		//regularFont = new Font(textureMan.regularfont, true);
 		
+		regularFont = new BitmapFont(Gdx.files.internal("data/regular.fnt"), true);
+		scoreFont = new BitmapFont(Gdx.files.internal("data/scorefont.fnt"), true);
+		scoreFont.setFixedWidthGlyphs("0123456789");
 		
 		//ui.getTextureRenderer().setTexture(0, numbersTexture);
 		//world.getTextureRenderer().setTexture(0, spritesTexture);
@@ -186,9 +190,9 @@ public class GameView extends BaseView {
 		while(stringBuilder.length() < 5) stringBuilder.insert(0, '0');
 		String scoreText = String.valueOf(model.combo);
 
-		drawTextShadow(ui, scorefont, stringBuilder.toString(), 20f, 20f, 32f);
-		drawTextShadow(ui, scorefont, String.valueOf(model.balls), width-20f, 20f, 32f, Alignment.RIGHT);
-		drawTextShadow(ui, scorefont, scoreText, 20f, 45f, 32f);
+		drawTextShadow(ui, scoreFont, stringBuilder.toString(), 20f, 20f);
+		drawTextShadow(ui, scoreFont, String.valueOf(model.balls), 0, 20f, width-20f, HAlignment.RIGHT);
+		drawTextShadow(ui, scoreFont, scoreText, 20f, 45f);
 		
 		if (model.gameOver && gameOverTimer.getLength() == 0) {
 			gameOverTimer.start(0.5f);
@@ -199,24 +203,24 @@ public class GameView extends BaseView {
 			ui.setColor(0f, 0f, 0f, 0.7f);
 			ui.draw(getSprite("rect"), x, 0, width, height);
 			ui.setColor(1f, 1f, 1f, 1f);
-			drawTextShadow(ui, regularFont, "Game", x+width/2, 100f, 64f, Alignment.CENTER);
-			drawTextShadow(ui, regularFont, "Over", x+width/2, 164f, 64f, Alignment.CENTER);
-			drawTextShadow(ui, regularFont, String.valueOf(model.getScore()), x+width/2, 300f, 64f, Alignment.CENTER);
+			drawTextShadow(ui, regularFont, "Game", x, 100f, width, HAlignment.CENTER);
+			drawTextShadow(ui, regularFont, "Over", x, 164f, width, HAlignment.CENTER);
+			drawTextShadow(ui, regularFont, String.valueOf(model.getScore()), x, 300f, width, HAlignment.CENTER);
 		}
 
 		ui.end();
 	}
 
-	private void drawTextShadow(SpriteBatch batch, Font font, String text, float x, float y, float size) {
-		drawTextShadow(batch, font, text, x, y, size, Alignment.LEFT);
+	private void drawTextShadow(SpriteBatch batch, BitmapFont font, String text, float x, float y) {
+		drawTextShadow(batch, font, text, x, y, width, HAlignment.LEFT);
 	}
-	private void drawTextShadow(SpriteBatch batch, Font font, String text, float x, float y, float size, Alignment align) {
+	private void drawTextShadow(SpriteBatch batch, BitmapFont font, String text, float x, float y, float alignWidth, HAlignment align) {
 
-		ui.setColor(0f, 0f, 0f, 0.5f);
-		font.drawString(batch, text, x-1, y-1, size, align);
+		font.setColor(0f, 0f, 0f, 0.5f);
+		font.drawMultiLine(batch, text, x-1, y-1, alignWidth, align);
 		
-		ui.setColor(1f, 1f, 1f, 1f);
-		font.drawString(batch, text, x, y, size, align);
+		font.setColor(1f, 1f, 1f, 1f);
+		font.drawMultiLine(batch, text, x, y, alignWidth, align);
 	}
 	
 	

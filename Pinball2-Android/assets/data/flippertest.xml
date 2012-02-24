@@ -44,43 +44,13 @@
 		<point at="0,-230" relativeTo="bottomright" />
 	</wall>
 	
-	<!-- triangle on left -->
-	<wall>
-		<point at="0,300" relativeTo="topleft" />
-		<point at="90,370" relativeTo="topleft" />
-		<point at="0,520" relativeTo="topleft" />
-	</wall>
+
 	
 	<ball at="-15,-15" relativeTo="bottomright" />
-	
-	
-	<!-- lights and sensors -->
-	<light at="100,400" size="20,20" color="1,0,0,1" name="light-0" />
-	<light at="70,450" size="20,20" color="1,0,0,1" name="light-1" />
-	<light at="40,500" size="20,20" color="1,0,0,1" name="light-2" />
-	
-	<sensor at="100,400" relativeTo="topleft" radius="10" name="lightsensor-0" />
-	<sensor at="70,450" relativeTo="topleft" radius="10" name="lightsensor-1" />
-	<sensor at="40,500" relativeTo="topleft" radius="10" name="lightsensor-2" />
-	
-	<counter max="3" name="lightcounter" />
-	<points name="lightspoints" number="100" />
-	
-	<event for="lightsensor" when="onSense" target="light-#" action="disable" />
-	<event for="level" when="onReset" target="light" action="enable" />
-	<event for="light" when="onDisable" target="lightcounter"	action="increment" />
-	<event for="lightcounter" when="onMax" target="lightspoints" action="increment" />
-	<event for="lightcounter" when="onMax" target="light" action="enable" />
-	<event for="lightcounter" when="onMax" target="light" action="flash,5" />
-	<event for="lightcounter" when="onMax" target="lightcounter" action="reset" />
-	
+
 	<!-- sensor at top of chute to enable ball hatch -->
 	<sensor at="-15,-260" relativeTo="bottomright" radius="10" name="hatchSensor" />
 	
-	<!-- bumpers -->
-	<bumper at="130,110" radius="50" name="bumpers-0" />
-	<bumper at="300,150" radius="50" name="bumpers-1" />
-	<bumper at="328,300" radius="64" name="bumpers-2" />
 	
 	<!-- A frame which covered the whole level minus the chute on the right -->
 	<frame>
@@ -92,6 +62,13 @@
 			<flipper at="120,-80" relativeTo="bottomcenter" type="right" length="100" />	
 		</children>
 	</frame>
+	
+	<flipper at="120,200" relativeTo="topleft" type="left" length="100" />
+	<flipper at="-120,200" relativeTo="topright" type="right" length="100" />	
+	
+	<flipper at="120,600" relativeTo="topleft" type="left" length="100" />
+	<flipper at="-120,600" relativeTo="topright" type="right" length="100" />	
+		
 	
 	<!-- When the sensor senses the hatch enables and -->
 	<!-- when the level resets the hatch disables -->
