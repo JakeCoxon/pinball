@@ -1,20 +1,20 @@
 package com.jakemadethis.pinball.level;
 
-import static com.jakemadethis.pinball.builder.FactoryUtil.*;
+import static com.jakemadethis.pinball.builder.FactoryUtil.expected;
+import static com.jakemadethis.pinball.builder.FactoryUtil.getAbsolutePosition;
+import static com.jakemadethis.pinball.builder.FactoryUtil.optional;
+import static com.jakemadethis.pinball.builder.FactoryUtil.toFloatList;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 
-import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.jakemadethis.pinball.Attachable;
 import com.jakemadethis.pinball.BaseModel;
+import com.jakemadethis.pinball.MathUtil;
 import com.jakemadethis.pinball.builder.BuilderNode;
 
 public class WallArc extends Wall {
 
-	private LinkedList<Body> wallBodies;
-	private float[][] lineSegments;
 
 	public static WallArc fromNode(BaseModel model, BuilderNode node) {
 		HashMap<String, String> atts = node.getAttributes();
@@ -34,8 +34,38 @@ public class WallArc extends Wall {
 	
 	public WallArc(World world, float cx, float cy, float xradius, float yradius, float minangle, float maxangle, int numsegments) {
 		super(world, constructPath(cx, cy, xradius, yradius, minangle, maxangle, numsegments), 0);
-		wallBodies = new LinkedList<Body>();
+	}
+	
+	public WallArc(World world, float cx, float cy, float radius, float minangle, float maxangle, int numsegments) {
+		super(world, constructPath(cx, cy, radius, minangle, maxangle, numsegments), 0);
+	}
+	
+	private static float[] constructPath(float cx, float cy, float radius, Vector2 startDir, Vector2 endDir, int numSegments) {
+		float[] path = new float[(numSegments+1)*2];
+		Vector2 normal = startDir.cpy();
 		
+		for(int i=0; i <= numSegments; i++) {
+
+			float d = i/2 / (float)numSegments;
+			
+			normal.x = MathUtil.interp(d, startDir.x, endDir.x);
+			normal.y = MathUtil.interp(d, startDir.y, endDir.y);
+			normal.nor();
+
+			float x = cx + normal.x * radius;
+			float y = cy + normal.y * radius;
+			
+			path[i] = x;
+			path[i+1] = y;
+			
+		}
+		return path;
+	}
+	
+	private static float[] constructPath(float cx, float cy, float radius, float minangle, float maxangle, int numSegments) {
+		Vector2 startDir = new Vector2((float)Math.sin(minangle), (float)Math.cos(minangle));
+		Vector2 endDir = new Vector2((float)Math.sin(maxangle), (float)Math.cos(maxangle));
+		return constructPath(cx, cy, radius, startDir, endDir, numSegments);
 	}
 	
 	private static float[] constructPath(float cx, float cy, float xradius, float yradius, float minangle, float maxangle, int numsegments) {

@@ -25,8 +25,7 @@ public class DrawableVisitor implements EntityVisitor<IDrawable, EditorView> {
 
 	@Override
 	public IDrawable visit(Ball ball, EditorView view) {
-		// TODO Auto-generated method stub
-		return null;
+		return new BallDrawable(ball, view);
 	}
 
 	@Override
@@ -41,14 +40,12 @@ public class DrawableVisitor implements EntityVisitor<IDrawable, EditorView> {
 
 	@Override
 	public IDrawable visit(Sensor sensor, EditorView view) {
-		// TODO Auto-generated method stub
-		return null;
+		return new SensorDrawable(sensor, view);
 	}
 	
 	@Override
-	public IDrawable visit(Light light, EditorView arg) {
-		// TODO Auto-generated method stub
-		return null;
+	public IDrawable visit(Light light, EditorView view) {
+		return new LightDrawable(light, view);
 	}
 	
 

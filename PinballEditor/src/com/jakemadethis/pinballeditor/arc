@@ -1,0 +1,48 @@
+world.begin();
+		Vector3 mouse = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+		worldCamera.unproject(mouse);
+		Vector2 p0 = new Vector2(0.10f, 0.00f);
+		Vector2 p1 = new Vector2(2.0f, 0.20f);
+		Vector2 p2 = new Vector2(4.0f, 4.00f);
+		
+		p1 = new Vector2(mouse.x, mouse.y);
+		
+		
+		
+		Vector2 p10 = p0.cpy().sub(p1).nor();
+		Vector2 p12 = p2.cpy().sub(p1).nor();
+		
+		Vector2 mid = p12.cpy().add(p10).nor();
+		
+
+		
+		float r = 1.2f;
+		
+		float cross = p10.crs(mid);
+		double h = r / Math.abs(cross);
+
+		
+		Vector2 c = mid.cpy().mul((float)h).add(p1);
+		
+		
+		//world.draw(getSprite("circle"), c.x-0.1f, c.y-0.1f, 0.2f, 0.2f);
+		
+
+		Vector2 p12normal = new Vector2(-p12.y, p12.x);
+		Vector2 p10normal = new Vector2(p10.y, -p10.x);
+		if (cross < 0) {
+			p12normal.mul(-1f);
+			p10normal.mul(-1f);
+		}
+		Vector2 a = p10normal.cpy().mul(r).add(c);
+		Vector2 b = p12normal.cpy().mul(r).add(c);
+		
+		
+		//world.draw(getSprite("circle"), a.x-0.1f, a.y-0.1f, 0.2f, 0.2f);
+		//world.draw(getSprite("circle"), b.x-0.1f, b.y-0.1f, 0.2f, 0.2f);
+
+		drawArc(c, p10normal, p12normal, r);
+		drawHairLine(world, p0.x, p0.y, a.x, a.y, 2);
+		drawHairLine(world, b.x, b.y, p2.x, p2.y, 2);
+
+		world.end();

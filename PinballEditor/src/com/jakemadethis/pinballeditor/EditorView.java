@@ -2,28 +2,30 @@ package com.jakemadethis.pinballeditor;
 
 import java.util.LinkedList;
 
+import javax.tools.Tool;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.jakemadethis.pinball.BaseModel;
+import com.jakemadethis.pinball.BaseModel.EntityArgs;
 import com.jakemadethis.pinball.BaseView;
 import com.jakemadethis.pinball.Entity;
-import com.jakemadethis.pinball.IDrawable;
-import com.jakemadethis.pinball.BaseModel.EntityArgs;
 import com.jakemadethis.pinball.EventHandler.EventListener;
-import com.jakemadethis.pinballeditor.tools.Tool;
+import com.jakemadethis.pinball.IDrawable;
 import com.jakemadethis.pinballeditor.views.DrawableVisitor;
 
 public class EditorView extends BaseView {
 
-	private EditorModel model;
+	private final EditorModel model;
 	public OrthographicCamera worldCamera;
-	private float gridSize = 0.32f;
+	private final float gridSize = 0.32f;
 	public SpriteBatch world;
 	private Tool tool;
 	
@@ -41,8 +43,7 @@ public class EditorView extends BaseView {
 		
 		worldCamera = new OrthographicCamera(width, height);
 		worldCamera.setToOrtho(true);
-		worldCamera.position.set(model.width/2, model.height/2, 0f);
-		worldCamera.zoom = model.height / (height - 20f);
+		resetCamera();
 		
 		Gdx.gl20.glClearColor(0f, 0f, 0f, 1f);
 		
@@ -91,6 +92,11 @@ public class EditorView extends BaseView {
 		
 	}
 	
+	public void resetCamera() {
+		worldCamera.position.set(model.width/2, model.height/2, 0f);
+		worldCamera.zoom = model.height / (height - 20f);
+	}
+
 	@Override
 	public void think(float timeStep) {
 		
@@ -135,15 +141,39 @@ public class EditorView extends BaseView {
 			for (IDrawable drawable : drawables) {
 				drawable.draw();
 			}
-			tool.draw();
 			
 			
 			//world.render(worldCamera.combined);
 			
 			world.end();
 		}
-		
 		//spriteBatch.setColor(1f, 0f, 0f, 0.5f);
+
+		
+	}
+	
+	private void drawArc(Vector2 center, Vector2 startNormal, Vector2 endNormal, float radius) {
+		Vector2 normal = startNormal.cpy();
+		final int segs = 20;
+		for(int i=0; i <= segs; i++) {
+			
+			float d = (float)i/segs;
+			float x = center.x + normal.x * radius;
+			float y = center.y + normal.y * radius;
+			
+			normal.x = lerp(d, startNormal.x, endNormal.x);
+			normal.y = lerp(d, startNormal.y, endNormal.y);
+			normal.nor();
+
+			float x2 = center.x + normal.x * radius;
+			float y2 = center.y + normal.y * radius;
+			
+			drawHairLine(world, x, y, x2, y2, 2);
+			
+		}
+	}
+	private float lerp(float v, float min, float max) {
+		return min + v * (max-min);
 	}
 	
 	
@@ -155,9 +185,6 @@ public class EditorView extends BaseView {
 		return world;
 	}
 
-	public void setTool(Tool tool) {
-		this.tool = tool;
-	}
 
 	
 

@@ -10,7 +10,6 @@ public class PinballEditor implements ApplicationListener {
 	
 	@Override
 	public void create() {
-
 		model = new EditorModel();
 		view = new EditorView(model);
 		controller = new EditorController(model, view);
@@ -18,8 +17,6 @@ public class PinballEditor implements ApplicationListener {
 
 	@Override
 	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

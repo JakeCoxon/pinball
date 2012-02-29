@@ -10,4 +10,8 @@ public class MathUtil {
 	public static float clamp(float value, float lower, float upper) {
 		return Math.min(Math.max(value, lower), upper);
 	}
+	
+	public static float interp(float t, float min, float max) {
+		return min*(1-t)+max*t;
+	}
 }
