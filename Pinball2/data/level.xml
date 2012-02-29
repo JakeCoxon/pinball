@@ -34,14 +34,14 @@
 	
 	<!-- ball chute on the right -->
 	<wall>
-		<point at="-32,-200" relativeTo="bottomright" />
+		<point at="-32,-400" relativeTo="bottomright" />
 		<point at="-32,0" relativeTo="bottomright" />
 	</wall>
 	
 	<!-- ball hatch over the chute -->
 	<wall name="chuteHatch">
-		<point at="-32,-200" relativeTo="bottomright" />
-		<point at="0,-230" relativeTo="bottomright" />
+		<point at="-32,-400" relativeTo="bottomright" />
+		<point at="0,-430" relativeTo="bottomright" />
 	</wall>
 	
 	<!-- triangle on left -->
@@ -75,12 +75,12 @@
 	<event for="lightcounter" when="onMax" target="lightcounter" action="reset" />
 	
 	<!-- sensor at top of chute to enable ball hatch -->
-	<sensor at="-15,-260" relativeTo="bottomright" radius="10" name="hatchSensor" />
+	<sensor at="-15,-460" relativeTo="bottomright" radius="10" name="hatchSensor" />
 	
 	<!-- bumpers -->
 	<bumper at="130,110" radius="50" name="bumpers-0" />
 	<bumper at="300,150" radius="50" name="bumpers-1" />
-	<bumper at="328,300" radius="64" name="bumpers-2" />
+	<bumper at="360,300" radius="64" name="bumpers-2" />
 	
 	<!-- A frame which covered the whole level minus the chute on the right -->
 	<frame>
@@ -88,6 +88,28 @@
 		<bottomRight at="-31,0" relativeTo="bottomright" />
 		
 		<children>
+			<wall>
+				<point at="35,-300" relativeTo="bottomleft" />
+				<point at="35,-170" relativeTo="bottomleft" />
+				<point at="105,-130" relativeTo="bottomleft" />
+				<point at="35,-300" relativeTo="bottomleft" />
+			</wall>
+			<wall restitution="2">
+				<point at="45,-280" relativeTo="bottomleft" />
+				<point at="99,-150" relativeTo="bottomleft" />
+			</wall>
+			
+			<wall>
+				<point at="-35,-300" relativeTo="bottomright" />
+				<point at="-35,-170" relativeTo="bottomright" />
+				<point at="-105,-130" relativeTo="bottomright" />
+				<point at="-35,-300" relativeTo="bottomright" />
+			</wall>
+			<wall restitution="2">
+				<point at="-45,-280" relativeTo="bottomright" />
+				<point at="-99,-150" relativeTo="bottomright" />
+			</wall>
+		
 			<flipper at="-120,-80" relativeTo="bottomcenter" type="left" length="100" />
 			<flipper at="120,-80" relativeTo="bottomcenter" type="right" length="100" />	
 		</children>

@@ -2,21 +2,23 @@ package com.jakemadethis.pinball;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
 import com.jakemadethis.pinball.builder.IBuilder;
-import com.jakemadethis.pinball.builder.XMLBuilder;
 import com.jakemadethis.pinball.builder.PinballFactory;
+import com.jakemadethis.pinball.builder.XMLBuilder;
 
 public class GameController implements InputProcessor {
-	private boolean running = false;
-  private int targetFrameRate = 60;
+	private final boolean running = false;
+  private final int targetFrameRate = 60;
   public static float gameSpeed = 1f;
 	
 	final private GameModel model;
 	final private IView view;
-	private PinballStateManager stateManager;
-	private Timer gamePausedTimer = new Timer();
+	private final PinballStateManager stateManager;
+	private final Timer gamePausedTimer = new Timer();
+	private final String levelName;
 	
 	public GameController(PinballStateManager stateManager, final GameModel model, final IView view, String levelName) {
 		
@@ -26,6 +28,24 @@ public class GameController implements InputProcessor {
 		
 		Gdx.input.setInputProcessor(this);
 		
+		this.levelName = levelName;
+		loadLevel();
+		
+
+
+		/*Thread thread = new Thread(new Runnable() {
+			@Override public void run() {
+				Server server = new Server(4444, new Protocol(model));
+				server.start();
+			}
+		});
+		thread.start();*/
+		
+		//new Client("127.0.0.1", 4444, new Protocol(model));
+		
+	}
+
+	private void loadLevel() {
 		model.scale = 100f;
 
 		try {
@@ -45,19 +65,6 @@ public class GameController implements InputProcessor {
 
 		//Log.d("JAKE", "initGame");
 		model.initGame();
-		
-
-
-		/*Thread thread = new Thread(new Runnable() {
-			@Override public void run() {
-				Server server = new Server(4444, new Protocol(model));
-				server.start();
-			}
-		});
-		thread.start();*/
-		
-		//new Client("127.0.0.1", 4444, new Protocol(model));
-		
 	}
 	
 	public void resetGame() {
@@ -75,8 +82,13 @@ public class GameController implements InputProcessor {
 
 	@Override
 	public boolean keyDown(int keycode) {
+		if (keycode == Keys.T) {
+			loadLevel();
+			return true;
+		}
 		return false;
 	}
+
 
 	@Override
 	public boolean keyUp(int keycode) {

@@ -20,6 +20,9 @@ public class MenuState implements IState, InputProcessor {
 	private ArrayList<String> levels;
 	private int press = -1;
 	private BitmapFont bitmapfont;
+	private TextureManager textureMan;
+	private int width;
+	private int height;
 
 	public MenuState(PinballStateManager stateManager) {
 		this.stateManager = stateManager;
@@ -27,16 +30,21 @@ public class MenuState implements IState, InputProcessor {
 		Gdx.input.setInputProcessor(this);
 		
 		spriteBatch = new SpriteBatch();
+		width = Gdx.graphics.getWidth();
+		height = Gdx.graphics.getHeight();
+		
 		OrthographicCamera c = 
 			new OrthographicCamera(
 					Gdx.graphics.getWidth(),
 					Gdx.graphics.getHeight());
-		c.setToOrtho(true);
+		c.setToOrtho(false);
+		c.update();
+		
 		spriteBatch.setProjectionMatrix(c.combined);
 		
-		TextureManager textureMan = TextureManager.get();
-		
-		bitmapfont = new BitmapFont(Gdx.files.internal("data/regular.fnt"), true);
+		textureMan = TextureManager.get();
+				
+		bitmapfont = new BitmapFont(Gdx.files.internal("data/regular.fnt"), false);
 		
 		levels = new ArrayList<String>();
 		
@@ -62,7 +70,8 @@ public class MenuState implements IState, InputProcessor {
 			String levelName = levels.get(i);
 			if (press == i) bitmapfont.setColor(0.9f, 0f, 0f, 1f);
 			else bitmapfont.setColor(0.9f, 0.9f, 0.9f, 1f);
-			bitmapfont.draw(spriteBatch, levelName, 0, i*64f);
+
+			bitmapfont.draw(spriteBatch, levelName, 0, height-i*bitmapfont.getLineHeight());
 			//font.drawString(spriteBatch, level, 0, i*64f, 64f);
 			
 		}
@@ -98,7 +107,7 @@ public class MenuState implements IState, InputProcessor {
 
 	@Override
 	public boolean touchDown(int x, int y, int pointer, int button) {
-		int i = y/64;
+		int i = (int) (y / bitmapfont.getLineHeight());
 		if (i < levels.size()) {
 			String l = levels.get(i);
 			press = i;
@@ -111,7 +120,7 @@ public class MenuState implements IState, InputProcessor {
 
 	@Override
 	public boolean touchUp(int x, int y, int pointer, int button) {
-		int i = y/64;
+		int i = (int) (y / bitmapfont.getLineHeight());
 		press = -1;
 		if (i < levels.size()) {
 			String l = levels.get(i);

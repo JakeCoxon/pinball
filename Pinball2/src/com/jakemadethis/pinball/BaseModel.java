@@ -19,7 +19,6 @@ import com.jakemadethis.pinball.level.Light;
 import com.jakemadethis.pinball.level.Sensor;
 import com.jakemadethis.pinball.level.Wall;
 import com.jakemadethis.pinball.level.WallArc;
-import com.jakemadethis.pinball.level.Wall;
 
 /**
  * The base that holds the Box2d world, entities, physics listeners,
@@ -41,7 +40,7 @@ public class BaseModel implements ContactListener {
 	public World world;
 	
 	// Scale is used when creating entities
-	protected float scale = 1f;
+	public float scale = 1f;
 	private int score = 0;
 	
 	public EventHandler<EntityArgs> entityAddedHandler = new EventHandler<EntityArgs>();
@@ -52,11 +51,20 @@ public class BaseModel implements ContactListener {
 	
 	public BaseModel() {
 		entities = new LinkedList<Entity>();
+		clear();
+		
+	}
+
+	public void clear() {
+		if (entities != null) {
+			while(!entities.isEmpty()) {
+				remove(entities.getLast());
+			}
+		}
 		world = new World(new Vector2(0, 8f), true);
 		world.setContactListener(this);
 		ioManager = new IOManager();
 	}
-
 	public void initGame() {
 	}
 	

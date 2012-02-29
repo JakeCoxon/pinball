@@ -35,7 +35,7 @@ public class LightDrawable implements IDrawable {
 		else if (light.isEnabled()) {
 			color = light.getColor();
 		}
-		
+
 		view.world.setColor(color);
 		view.world.draw(view.getSprite("bumper"), x-w/2, y-h/2, w, h);
 	}
