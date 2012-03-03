@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<level name="Basic Level" size="480,1000">
+	
+	<roundedWall radius="150" numSegments="10">
+		<point at="0,0" relativeTo="bottomleft" />
+		<point at="0,-90" relativeTo="topleft" />
+		<point at="0,150" relativeTo="topright" />
+		<point at="0,0" relativeTo="bottomright" />
+	</roundedWall>
+	
+	<roundedWall radius="10" numSegments="4" looped="true">
+		<point at="35,-300" relativeTo="bottomleft" />
+		<point at="34,-170" relativeTo="bottomleft" />
+		<point at="105,-130" relativeTo="bottomleft" />
+	</roundedWall>
+	<roundedWall radius="10" numSegments="4" looped="true">
+		<point at="-65,-300" relativeTo="bottomright" />
+		<point at="-64,-170" relativeTo="bottomright" />
+		<point at="-135,-130" relativeTo="bottomright" />
+	</roundedWall>
+	
+	<ball at="-15,-15" relativeTo="bottomright" />
+	
+	<wall>
+		<point at="-30,0" relativeTo="bottomright" />
+		<point at="-30,0" relativeTo="centerright" />
+	</wall>
+</level>

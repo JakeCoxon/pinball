@@ -3,6 +3,7 @@ package com.jakemadethis.pinballeditor;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -12,6 +13,7 @@ public class FileMonitor {
 	private FileChangedListener listener;
 	private final LinkedList<File> files;
 	private final int period;
+	private final HashMap<String, FileMonitorTask> map = new HashMap<String, FileMonitor.FileMonitorTask>();
 
 	public FileMonitor(int period) {
 		this.period = period;
@@ -28,9 +30,17 @@ public class FileMonitor {
 		FileMonitorTask task;
 		try {
 			task = new FileMonitorTask(file);
+			map.put(file.getAbsolutePath(), task);
 			timer.schedule(task, period, period);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+		}
+	}
+
+	public void removeFile(File file) {
+		files.remove(file);
+		if (map.containsKey(file.getAbsolutePath())) {
+			FileMonitorTask remove = map.remove(file.getAbsolutePath());
 		}
 	}
 

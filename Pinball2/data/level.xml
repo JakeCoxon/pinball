@@ -1,21 +1,17 @@
 <?xml version="1.0"?>
 <level name="Basic Level" size="480,1000">
 	
-	<!-- corners -->
-	<wallArc at="100,100" relativeTo="topleft" 
-		size="100,100" angles="180,270" />
-	<wallArc at="-100,100" relativeTo="topright" 
-		size="100,100" angles="270,360" />
+	
+	<roundedWall radius="100" numSegments="8">
+		<point at="0,-130" relativeTo="bottomleft" />
+		<point at="0,0" relativeTo="topleft" />
+		<point at="0,0" relativeTo="topright" />
+		<point at="0,0" relativeTo="bottomright" />
+	</roundedWall>
 
-	<!-- from top left to top right -->
-	<wall>
-		<point at="100,0" relativeTo="topleft" />
-		<point at="-100,0" relativeTo="topright" />
-	</wall>
 	
 	<!-- from top left to bottom left -->
 	<wall>
-		<point at="0,100" relativeTo="topleft" />
 		<point at="0,-130" relativeTo="bottomleft" />
 		<point at="100,-85" relativeTo="bottomleft" />
 	</wall>
@@ -26,11 +22,6 @@
 		<point at="-130,-85" relativeTo="bottomright" />
 	</wall>
 	
-	<!-- from top right to bottom right -->
-	<wall>
-		<point at="0,100" relativeTo="topright" />
-		<point at="0,0" relativeTo="bottomright" />
-	</wall>
 	
 	<!-- ball chute on the right -->
 	<wall>
@@ -88,25 +79,23 @@
 		<bottomRight at="-31,0" relativeTo="bottomright" />
 		
 		<children>
-			<wall>
+			<roundedWall radius="8" looped="true">
 				<point at="35,-300" relativeTo="bottomleft" />
 				<point at="35,-170" relativeTo="bottomleft" />
 				<point at="105,-130" relativeTo="bottomleft" />
-				<point at="35,-300" relativeTo="bottomleft" />
-			</wall>
+			</roundedWall>
 			<wall restitution="2">
-				<point at="45,-280" relativeTo="bottomleft" />
+				<point at="55,-260" relativeTo="bottomleft" />
 				<point at="99,-150" relativeTo="bottomleft" />
 			</wall>
 			
-			<wall>
+			<roundedWall radius="8" looped="true">
 				<point at="-35,-300" relativeTo="bottomright" />
 				<point at="-35,-170" relativeTo="bottomright" />
 				<point at="-105,-130" relativeTo="bottomright" />
-				<point at="-35,-300" relativeTo="bottomright" />
-			</wall>
+			</roundedWall>
 			<wall restitution="2">
-				<point at="-45,-280" relativeTo="bottomright" />
+				<point at="-55,-260" relativeTo="bottomright" />
 				<point at="-99,-150" relativeTo="bottomright" />
 			</wall>
 		

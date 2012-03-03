@@ -5,14 +5,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-import javax.tools.Tool;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
-import com.jakemadethis.net.Client;
 import com.jakemadethis.pinball.LevelException;
 import com.jakemadethis.pinball.builder.IBuilder;
 import com.jakemadethis.pinball.builder.PinballFactory;
@@ -22,38 +22,58 @@ import com.jakemadethis.pinballeditor.FileMonitor.FileChangedListener;
 public class EditorController implements InputProcessor {
 	private final EditorModel model;
 	private final EditorView view;
-	private Tool tool;
-	private Client client;
-	private Tool[] tools;
 	private boolean firstLoad;
+	private File currentFile;
+	private final FileMonitor monitor;
 
 	public EditorController(final EditorModel model, final EditorView view) {
 		this.model = model;
 		this.view = view;
 		this.firstLoad = true;
 		
-
+		
 		System.setOut(new PrintStream(new OutputStream() {
 			@Override public void write(int arg0) throws IOException {
 				
 			}
 		}));
 		
-		load();
 		
-		FileMonitor monitor = new FileMonitor(500);
+		monitor = new FileMonitor(500);
 		monitor.setFileChangedListener(new FileChangedListener() {
 			@Override public void fileChanged(File file) {
-				load();
+				reload();
 			}
 		});
 
-		
-		monitor.addFile(new File("data/level.xml"));
+		load();
+
 		
 	}
 	
 	public void load() {
+		JFileChooser chooser = new JFileChooser();
+    FileNameExtensionFilter filter = new FileNameExtensionFilter(
+        "XML Document", "xml");
+    chooser.setFileFilter(filter);
+    
+    
+    chooser.setCurrentDirectory(new File("../Pinball2/data"));
+    int returnVal = chooser.showOpenDialog(null);
+    if (returnVal == JFileChooser.APPROVE_OPTION) {
+    	if (currentFile != null) {
+    		monitor.removeFile(currentFile);
+    	}
+      
+    	currentFile = chooser.getSelectedFile();
+ 
+    	reload();
+    	monitor.addFile(currentFile);
+    }
+
+	}
+	
+	public void reload() {
 
 		model.clear();
 		model.scale = 100f;
@@ -64,7 +84,7 @@ public class EditorController implements InputProcessor {
 			if (Gdx.app.getType() == ApplicationType.Android)
 				System.setProperty("org.xml.sax.driver", "org.xmlpull.v1.sax2.Driver");
 			
-			FileHandle file = Gdx.files.internal("data/level.xml");
+			FileHandle file = Gdx.files.internal(currentFile.getAbsolutePath());
 			IBuilder b = XMLBuilder.fromStream(file.read());
 			
 			PinballFactory factory = new PinballFactory(model);
@@ -101,7 +121,10 @@ public class EditorController implements InputProcessor {
 
 	@Override
 	public boolean keyDown(int keycode) {
-		if (keycode == Keys.F1) { load(); }
+		if (keycode == Keys.F1) { reload(); }
+		if (keycode == Keys.O && Gdx.input.isKeyPressed(Keys.CONTROL_LEFT)) {
+			load();
+		}
 		
 		return false;
 	}
