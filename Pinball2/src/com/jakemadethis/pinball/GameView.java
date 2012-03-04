@@ -30,7 +30,7 @@ public class GameView extends BaseView {
 
 	public SpriteBatch world;
 	public SpriteBatch ui;
-	private ParticleEmitter particleEmitter;
+	private ParticleEmitter awesomeEffect;
 
 	private final Random r;
 	public GameModel model;
@@ -41,6 +41,7 @@ public class GameView extends BaseView {
 	private final Timer gameOverTimer = new Timer();
 	private final Timer shakeTimer = new Timer();
 	private float shakeness = 1f;
+	private ParticleEmitter spawnEffect;
 	
 	
 	public GameView(GameModel model) {
@@ -73,11 +74,13 @@ public class GameView extends BaseView {
 		//ui.getTextureRenderer().setTexture(0, numbersTexture);
 		//world.getTextureRenderer().setTexture(0, spritesTexture);
 		
+		
 		sprites.put("bumper", new TextureRegion(textureMan.sprites, 0.25f, 0, 0.5f, 0.25f));
 		sprites.put("circle", new TextureRegion(textureMan.sprites, 0, 0, 0.125f, 0.125f));
 		sprites.put("ball", new TextureRegion(textureMan.sprites, 0.25f, 0, 0.5f, 0.25f));
 		sprites.put("line", new TextureRegion(textureMan.sprites, 0.0f, 0.25f, 0.25f, 0.5f));
 		sprites.put("rect", new TextureRegion(textureMan.sprites, 0.5f, 0f, 0.75f, 0.25f));
+		sprites.put("donut", new TextureRegion(textureMan.sprites, 0.25f, 0.25f, 0.5f, 0.5f));
 		
 
 		world = new SpriteBatch();
@@ -85,9 +88,17 @@ public class GameView extends BaseView {
 		ui.setProjectionMatrix(uiCamera.combined);
 		
 		try {
-			particleEmitter = new ParticleEmitter( new BufferedReader(new InputStreamReader(Gdx.files.internal("data/particle").read())));
+			awesomeEffect = new ParticleEmitter( new BufferedReader(new InputStreamReader(Gdx.files.internal("data/particle").read())));
 			Sprite sprite = new Sprite(sprites.get("circle"));
-			particleEmitter.setSprite(sprite);
+			awesomeEffect.setSprite(sprite);
+			//particleEmitter.start();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			spawnEffect = new ParticleEmitter( new BufferedReader(new InputStreamReader(Gdx.files.internal("data/spawneffect").read())));
+			Sprite sprite = new Sprite(sprites.get("donut"));
+			spawnEffect.setSprite(sprite);
 			//particleEmitter.start();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -110,9 +121,20 @@ public class GameView extends BaseView {
 				if (drawable != null) drawables.add(drawable);
 			}
 		});
+		
+		model.newBallHandler.add(new EventHandler.ActionListener() {
+			@Override public void invoke(Object sender, Object args) {
+				newBall();
+			}
+		});
 
 	}
 	
+	protected void newBall() {
+		spawnEffect.setPosition(model.getBall().getBody().getPosition().x, model.getBall().getBody().getPosition().y);
+		spawnEffect.start();
+	}
+
 	public void shake() {
 		if (shakeTimer.running()) shakeness += 0.05f;
 		else shakeness = 0.05f;
@@ -140,16 +162,20 @@ public class GameView extends BaseView {
 		worldCamera.update();
 		world.setProjectionMatrix(worldCamera.combined);
 
-		particleEmitter.setPosition(model.getBall().getBody().getPosition().x, model.getBall().getBody().getPosition().y);
+		awesomeEffect.setPosition(model.getBall().getBody().getPosition().x, model.getBall().getBody().getPosition().y);
 		//particleEmitter.getSprite().setSize(1f, 1f);
 		
-		if (model.getScore() > score) score++;
+		if (model.getScore() > score) {
+			
+			if (model.getScore() - score > 200) score += 4;
+			else score ++;
+		}
 		
 		if (model.awesomeMode) {
-			if (particleEmitter.isComplete())
-				particleEmitter.start();
+			if (awesomeEffect.isComplete())
+				awesomeEffect.start();
 		} else {
-			particleEmitter.allowCompletion();
+			awesomeEffect.allowCompletion();
 		}
 	}
 	
@@ -157,6 +183,7 @@ public class GameView extends BaseView {
 	@Override
 	public void render() {
 
+		Gdx.gl20.glClearColor(0.6f, 0.2f, 0.4f, 1f);
 		Gdx.gl20.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		Gdx.gl20.glEnable(GL10.GL_BLEND);
 		Gdx.gl20.glEnable(GL10.GL_LINE_SMOOTH);
@@ -178,7 +205,8 @@ public class GameView extends BaseView {
 		}
 		
 		
-		particleEmitter.draw(world, Gdx.graphics.getDeltaTime());
+		awesomeEffect.draw(world, Gdx.graphics.getDeltaTime());
+		spawnEffect.draw(world, Gdx.graphics.getDeltaTime());
 			
 		world.end();
 
@@ -201,8 +229,9 @@ public class GameView extends BaseView {
 		}
 		if (gameOverTimer.getLength() > 0) {
 			float x = Interpolator.easeOutQuad(gameOverTimer, -width, 0);
+			float alpha = Interpolator.easeOutQuad(gameOverTimer, 0, 0.7f);
 			
-			ui.setColor(0f, 0f, 0f, 0.7f);
+			ui.setColor(0f, 0f, 0f, alpha);
 			ui.draw(getSprite("rect"), x, 0, width, height);
 			ui.setColor(1f, 1f, 1f, 1f);
 			drawTextShadow(ui, regularFont, "Game", x, 100f, width, HAlignment.CENTER);

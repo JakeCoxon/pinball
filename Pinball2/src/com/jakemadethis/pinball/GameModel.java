@@ -2,10 +2,8 @@ package com.jakemadethis.pinball;
 
 import java.util.LinkedList;
 
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Contact;
-
-
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.jakemadethis.pinball.io.OutputHandler;
 import com.jakemadethis.pinball.level.Ball;
 import com.jakemadethis.pinball.level.Flipper;
@@ -20,15 +18,17 @@ public class GameModel extends BaseModel {
 
 	
 	private Ball ball;
-	private LinkedList<Flipper> flipperLeft = new LinkedList<Flipper>();
-	private LinkedList<Flipper> flipperRight = new LinkedList<Flipper>();
+	private final LinkedList<Flipper> flipperLeft = new LinkedList<Flipper>();
+	private final LinkedList<Flipper> flipperRight = new LinkedList<Flipper>();
+	
+	public EventHandler<Object> newBallHandler = new EventHandler<Object>();
 	public int combo = 0;
 	public int balls = 3;
 	
-	private Timer comboTimer = new Timer();
-	private Timer awesomeTimer = new Timer();
+	private final Timer comboTimer = new Timer();
+	private final Timer awesomeTimer = new Timer();
 	public boolean awesomeMode = false;
-	private OutputHandler outputs = new OutputHandler("onReset");
+	private final OutputHandler outputs = new OutputHandler("onReset");
 	public boolean gameOver;
 	
 	
@@ -70,6 +70,7 @@ public class GameModel extends BaseModel {
 	/**
 	 * Called after view is created
 	 */
+	@Override
 	public void initGame() {
 		
 		//width = 480f;
@@ -88,6 +89,7 @@ public class GameModel extends BaseModel {
 	}
 	
 	
+	@Override
 	public void addScore(int score) {
 		if (comboTimer.running()) {
 			comboTimer.start(1f);
@@ -114,7 +116,10 @@ public class GameModel extends BaseModel {
 		getBall().reset();
 		awesomeMode = false;
 		combo = 0;
-		outputs.invoke("onReset");
+		if (balls > 0) {
+			outputs.invoke("onReset");
+			newBallHandler.invoke(this, null);
+		}
 	}
 	
 	@Override

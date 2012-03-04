@@ -91,6 +91,9 @@ public class GameController implements InputProcessor {
 			loadLevel();
 			return true;
 		}
+		else if (keycode == Keys.BACK || keycode == Keys.BACKSPACE) {
+			stateManager.setMenu();
+		}
 		return false;
 	}
 

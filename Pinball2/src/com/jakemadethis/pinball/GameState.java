@@ -1,10 +1,12 @@
 package com.jakemadethis.pinball;
 
+import com.badlogic.gdx.Gdx;
+
 public class GameState implements IState {
 
-	private GameModel model;
-	private GameView view;
-	private GameController controller;
+	private final GameModel model;
+	private final GameView view;
+	private final GameController controller;
 	
 	public GameState(PinballStateManager stateManager, String levelName) {
 		long s = System.currentTimeMillis();
@@ -18,6 +20,8 @@ public class GameState implements IState {
 		s = System.currentTimeMillis();
 		controller = new GameController(stateManager, model, view, levelName);
 		System.out.println("Created GameController in "+(System.currentTimeMillis()-s)+"ms");
+		
+		Gdx.input.setCatchBackKey(true);
 	}
 	
 	@Override

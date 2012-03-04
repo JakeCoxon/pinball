@@ -8,21 +8,20 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class MenuState implements IState, InputProcessor {
 
-	private PinballStateManager stateManager;
-	private SpriteBatch spriteBatch;
+	private final PinballStateManager stateManager;
+	private final SpriteBatch spriteBatch;
 	private Texture alphabetTexture;
-	private ArrayList<String> levels;
+	private final ArrayList<String> levels;
 	private int press = -1;
-	private BitmapFont bitmapfont;
-	private TextureManager textureMan;
-	private int width;
-	private int height;
+	private final BitmapFont bitmapfont;
+	private final TextureManager textureMan;
+	private final int width;
+	private final int height;
 
 	public MenuState(PinballStateManager stateManager) {
 		this.stateManager = stateManager;
@@ -55,6 +54,8 @@ public class MenuState implements IState, InputProcessor {
 				levels.add(f.nameWithoutExtension());
 			}
 		}
+		
+		Gdx.input.setCatchBackKey(false);
 		
 	}
 	
