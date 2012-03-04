@@ -15,6 +15,7 @@ import com.jakemadethis.pinball.io.OutputHandler;
 import com.jakemadethis.pinball.level.Ball;
 import com.jakemadethis.pinball.level.Bumper;
 import com.jakemadethis.pinball.level.Flipper;
+import com.jakemadethis.pinball.level.Kicker;
 import com.jakemadethis.pinball.level.Light;
 import com.jakemadethis.pinball.level.Sensor;
 import com.jakemadethis.pinball.level.Wall;
@@ -175,6 +176,11 @@ public class BaseModel implements ContactListener {
 	}
 	public Light addLight(float x, float y, float w, float h, Color color) {
 		return add(new Light(x/scale, y/scale, w/scale, h/scale, color));
+	}
+
+	public synchronized Kicker addKicker(float[] path, float restitution) {
+		for (int i=0; i < path.length; i++) path[i] = path[i]/scale;
+		return add(new Kicker(world, path, restitution));
 	}
 
 	@Override

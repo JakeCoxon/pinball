@@ -11,15 +11,15 @@ import com.jakemadethis.pinball.level.Bumper;
 
 public class BumperDrawable implements IDrawable {
 
-	private GameView view;
+	private final GameView view;
 	private int hits = 0;
 	
 	private final Color offColor = new Color( 1f, 1f, 1f, 1f );
 	private final Color blendColor = new Color( 50f/255f, 204f/255f, 1f, 0.2f );
 	
-	private Timer timer = new Timer();
-	private Random r;
-	private Bumper bumper;
+	private final Timer timer = new Timer();
+	private final Random r;
+	private final Bumper bumper;
 	
 	public BumperDrawable(Bumper bumper, GameView view) {
 		this.view = view;
@@ -39,6 +39,7 @@ public class BumperDrawable implements IDrawable {
 		if (bumper.getHits() > hits) {
 			hits ++;
 			timer.start(0.2f, true);
+			view.shake();
 		}
 		
 

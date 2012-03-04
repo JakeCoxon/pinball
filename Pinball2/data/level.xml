@@ -84,20 +84,20 @@
 				<point at="35,-170" relativeTo="bottomleft" />
 				<point at="105,-130" relativeTo="bottomleft" />
 			</roundedWall>
-			<wall restitution="2">
+			<kicker restitution="2">
 				<point at="55,-260" relativeTo="bottomleft" />
 				<point at="99,-150" relativeTo="bottomleft" />
-			</wall>
+			</kicker>
 			
 			<roundedWall radius="8" looped="true">
 				<point at="-35,-300" relativeTo="bottomright" />
 				<point at="-35,-170" relativeTo="bottomright" />
 				<point at="-105,-130" relativeTo="bottomright" />
 			</roundedWall>
-			<wall restitution="2">
+			<kicker restitution="2">
 				<point at="-55,-260" relativeTo="bottomright" />
 				<point at="-99,-150" relativeTo="bottomright" />
-			</wall>
+			</kicker>
 		
 			<flipper at="-120,-80" relativeTo="bottomcenter" type="left" length="100" />
 			<flipper at="120,-80" relativeTo="bottomcenter" type="right" length="100" />	

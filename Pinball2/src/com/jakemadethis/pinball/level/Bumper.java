@@ -8,15 +8,14 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.jakemadethis.pinball.BaseModel;
 import com.jakemadethis.pinball.Entity;
-import com.jakemadethis.pinball.IDrawable;
+import com.jakemadethis.pinball.EventHandler.EventListener;
 import com.jakemadethis.pinball.GameModel;
 import com.jakemadethis.pinball.IElement;
 import com.jakemadethis.pinball.builder.BuilderNode;
 import com.jakemadethis.pinball.builder.FactoryUtil;
 import com.jakemadethis.pinball.io.Input;
-import com.jakemadethis.pinball.io.InputHandler;
 import com.jakemadethis.pinball.io.Input.EventArgs;
-import com.jakemadethis.pinball.EventHandler.EventListener;
+import com.jakemadethis.pinball.io.InputHandler;
 
 
 public class Bumper extends Entity implements IElement, EventListener<Input.EventArgs> {
@@ -47,7 +46,7 @@ public class Bumper extends Entity implements IElement, EventListener<Input.Even
 	private float cy;
 	private float radius;
 	private int hits = 0;
-	private float kick = 1f;
+	private final float kick = 0.5f;
 	
 	private static String INPUT_TOGGLE = "toggle";
 
@@ -81,6 +80,7 @@ public class Bumper extends Entity implements IElement, EventListener<Input.Even
 		return visitor.visit(this, arg);
 	}
 	
+	@Override
 	public void invoke(Object sender, EventArgs args) {
 		if (args.getInputName().equals(INPUT_TOGGLE)) {
 			System.out.println("Bumpers toggle function invoked");
@@ -102,19 +102,16 @@ public class Bumper extends Entity implements IElement, EventListener<Input.Even
 		hits ++;
 		Vector2 impulse = impulseForBall(ball.getBody());
 		ball.getBody().setLinearVelocity(0, 0);
-		ball.getBody().applyLinearImpulse(impulse, ball.getBody().getWorldCenter());
+		if (impulse != null)
+			ball.getBody().applyLinearImpulse(impulse, ball.getBody().getWorldCenter());
 	}
 	
 	private Vector2 impulseForBall(Body ball) {
 		if (this.kick <= 0.01f) return null;
-		// compute unit vector from center of peg to ball, and scale by kick value to get impulse
 		Vector2 ballpos = ball.getWorldCenter();
 		Vector2 thisPos = body.getPosition();
-		float ix = ballpos.x - thisPos.x;
-		float iy = ballpos.y - thisPos.y;
-		float mag = (float)Math.sqrt(ix*ix + iy*iy);
-		float scale = this.kick  / mag;
-		return new Vector2(ix*scale, iy*scale);
+		Vector2 impulse = ballpos.cpy().sub(thisPos).nor().mul(kick);
+		return impulse;
 	}
 
 	public int getHits() {

@@ -4,42 +4,26 @@ package com.jakemadethis.pinball;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Random;
 
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.util.vector.Matrix;
-import org.lwjgl.util.vector.Matrix4f;
-
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL10;
-import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.VertexAttribute;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector3;
-import com.jakemadethis.pinball.EventHandler.EventListener;
 import com.jakemadethis.pinball.BaseModel.EntityArgs;
+import com.jakemadethis.pinball.EventHandler.EventListener;
 import com.jakemadethis.pinball.views.DrawableVisitor;
 
 public class GameView extends BaseView {
 
 	
-	private OrthographicCamera worldCamera;
-	private OrthographicCamera uiCamera;
+	private final OrthographicCamera worldCamera;
+	private final OrthographicCamera uiCamera;
 
 
 	public int score = 0;
@@ -48,13 +32,15 @@ public class GameView extends BaseView {
 	public SpriteBatch ui;
 	private ParticleEmitter particleEmitter;
 
-	private Random r;
+	private final Random r;
 	public GameModel model;
-	private BitmapFont regularFont;
-	private BitmapFont scoreFont;
+	private final BitmapFont regularFont;
+	private final BitmapFont scoreFont;
 	StringBuilder stringBuilder = new StringBuilder();
 	
-	private Timer gameOverTimer = new Timer();
+	private final Timer gameOverTimer = new Timer();
+	private final Timer shakeTimer = new Timer();
+	private float shakeness = 1f;
 	
 	
 	public GameView(GameModel model) {
@@ -127,6 +113,13 @@ public class GameView extends BaseView {
 
 	}
 	
+	public void shake() {
+		if (shakeTimer.running()) shakeness += 0.05f;
+		else shakeness = 0.05f;
+		shakeTimer.start(0.5f);
+	}
+	
+	@Override
 	public void think(float timestep) {
 		final float margin = 15f;
 		
@@ -135,7 +128,15 @@ public class GameView extends BaseView {
 		
 		float y = model.getBall().getBody().getPosition().y;
 		y = Math.min(Math.max(y, half), model.height - half);
-		worldCamera.position.set(model.width/2, y, 0f);
+		
+		float shakex = 0;
+		float shakey = 0; 
+		if (shakeTimer.running()) {
+			float t = shakeTimer.value(shakeness, 0f);
+			shakex = r.nextFloat() * t;
+			shakey = r.nextFloat() * t;
+		}
+		worldCamera.position.set(model.width/2 + shakex, y + shakey, 0f);
 		worldCamera.update();
 		world.setProjectionMatrix(worldCamera.combined);
 
@@ -153,6 +154,7 @@ public class GameView extends BaseView {
 	}
 	
 	
+	@Override
 	public void render() {
 
 		Gdx.gl20.glClear(GL10.GL_COLOR_BUFFER_BIT);
@@ -222,6 +224,8 @@ public class GameView extends BaseView {
 		font.setColor(1f, 1f, 1f, 1f);
 		font.drawMultiLine(batch, text, x, y, alignWidth, align);
 	}
+
+	
 	
 	
 

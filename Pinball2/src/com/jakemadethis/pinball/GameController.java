@@ -78,6 +78,11 @@ public class GameController implements InputProcessor {
 		model.think(delta * gameSpeed, 4);
 		view.think(delta * gameSpeed);
 		view.render();
+		
+		if (model.gameOver) {
+			if (!gamePausedTimer.started())
+				gamePausedTimer.start(0.5f);
+		}
 	}
 
 	@Override
@@ -103,9 +108,7 @@ public class GameController implements InputProcessor {
 	@Override
 	public boolean touchDown(int x, int y, int pointer, int button) {
 		if (model.gameOver) {
-			if (!gamePausedTimer.started())
-				gamePausedTimer.start(1f);
-			else if(gamePausedTimer.finished())
+			if(gamePausedTimer.finished())
 				stateManager.setMenu();
 			return true; 
 		}

@@ -2,10 +2,7 @@ package com.jakemadethis.pinball.level;
 
 import static com.jakemadethis.pinball.builder.FactoryUtil.getAbsolutePosition;
 import static com.jakemadethis.pinball.builder.FactoryUtil.optional;
-import static com.jakemadethis.pinball.builder.FactoryUtil.toFloatList;
-import static com.jakemadethis.pinball.builder.FactoryUtil.toFloatListReal;
 
-import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -13,20 +10,16 @@ import java.util.LinkedList;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
-
+import com.jakemadethis.pinball.BaseModel;
 import com.jakemadethis.pinball.Entity;
 import com.jakemadethis.pinball.EventHandler.EventListener;
-import com.jakemadethis.pinball.BaseModel;
-import com.jakemadethis.pinball.IDrawable;
 import com.jakemadethis.pinball.GameModel;
 import com.jakemadethis.pinball.IElement;
 import com.jakemadethis.pinball.builder.BuilderNode;
 import com.jakemadethis.pinball.builder.FactoryException;
-import com.jakemadethis.pinball.builder.PinballFactory;
 import com.jakemadethis.pinball.io.Input;
-import com.jakemadethis.pinball.io.InputHandler;
 import com.jakemadethis.pinball.io.Input.EventArgs;
-import com.jakemadethis.pinball.level.Ball;
+import com.jakemadethis.pinball.io.InputHandler;
 
 public class Wall extends Entity implements IElement, EventListener<Input.EventArgs> {
 	
@@ -66,10 +59,10 @@ public class Wall extends Entity implements IElement, EventListener<Input.EventA
 	}
 	
 	public Body body;
-	private float restitution;
+	private final float restitution;
 	//private float[] path;
-	private ArrayList<Vector2> points;
-	private LinkedList<Body> wallBodies;
+	private final ArrayList<Vector2> points;
+	private final LinkedList<Body> wallBodies;
 	private boolean active;
 	
 	public Wall(World world, float[] path, float restitution) {

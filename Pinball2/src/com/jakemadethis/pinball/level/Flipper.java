@@ -9,10 +9,8 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
-
 import com.jakemadethis.pinball.BaseModel;
 import com.jakemadethis.pinball.Entity;
-import com.jakemadethis.pinball.IDrawable;
 import com.jakemadethis.pinball.GameModel;
 import com.jakemadethis.pinball.IElement;
 import com.jakemadethis.pinball.builder.BuilderNode;
@@ -49,17 +47,17 @@ public class Flipper extends Entity implements IElement {
 	public enum Type {
 		LEFT, RIGHT;
 	}
-	private Body flipperBody;
-	private RevoluteJointDef jointDef;
-	private Body anchorBody;
-	private RevoluteJoint joint;
-	private float minangle;
-	private float maxangle;
-	private float upspeed = 40f;
-	private float downspeed = 20f;
-	private float flipperLength;
+	private final Body flipperBody;
+	private final RevoluteJointDef jointDef;
+	private final Body anchorBody;
+	private final RevoluteJoint joint;
+	private final float minangle;
+	private final float maxangle;
+	private final float upspeed = 20f;
+	private final float downspeed = 20f;
+	private final float flipperLength;
 	private boolean engaged;
-	private Type type;
+	private final Type type;
 
 	public Flipper(World world, float cx, float cy, float length, Type type) {
 		
@@ -78,22 +76,22 @@ public class Flipper extends Entity implements IElement {
 		
 		flipperBody = Box2DFactory.createWall(world, cx+ext, cy-0.012f, cx+length, cy+0.012f, 0f);
 		flipperBody.setUserData(this);
-    	flipperBody.setType(BodyType.DynamicBody);
-    	flipperBody.setBullet(true);
-    	for(Fixture f : flipperBody.getFixtureList())
-    		f.setDensity(5.0f);
-    	
-    	jointDef = new RevoluteJointDef();
-    	jointDef.initialize(anchorBody, flipperBody, new Vector2(cx, cy));
-    	jointDef.enableLimit = true;
-    	jointDef.enableMotor = true;
-    	// counterclockwise rotations are positive, so flip angles for flippers extending left
-    	jointDef.lowerAngle = (type == Type.LEFT) ? this.minangle : -this.maxangle;
-    	jointDef.upperAngle = (type == Type.LEFT) ? this.maxangle : -this.minangle;
-    	jointDef.maxMotorTorque = 100f;
-    	
-    	joint = (RevoluteJoint)world.createJoint(jointDef);
-    	setEffectiveMotorSpeed(downspeed);
+  	flipperBody.setType(BodyType.DynamicBody);
+  	flipperBody.setBullet(true);
+  	for(Fixture f : flipperBody.getFixtureList())
+  		f.setDensity(5.0f);
+  	
+  	jointDef = new RevoluteJointDef();
+  	jointDef.initialize(anchorBody, flipperBody, new Vector2(cx, cy));
+  	jointDef.enableLimit = true;
+  	jointDef.enableMotor = true;
+  	// counterclockwise rotations are positive, so flip angles for flippers extending left
+  	jointDef.lowerAngle = (type == Type.LEFT) ? this.minangle : -this.maxangle;
+  	jointDef.upperAngle = (type == Type.LEFT) ? this.maxangle : -this.minangle;
+  	jointDef.maxMotorTorque = 50f;
+  	
+  	joint = (RevoluteJoint)world.createJoint(jointDef);
+  	setEffectiveMotorSpeed(downspeed);
 	}
 	
 	@Override
