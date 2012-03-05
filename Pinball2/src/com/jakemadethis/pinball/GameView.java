@@ -22,8 +22,8 @@ import com.jakemadethis.pinball.views.DrawableVisitor;
 public class GameView extends BaseView {
 
 	
-	private final OrthographicCamera worldCamera;
-	private final OrthographicCamera uiCamera;
+	public final OrthographicCamera worldCamera;
+	public final OrthographicCamera uiCamera;
 
 
 	public int score = 0;
@@ -40,8 +40,12 @@ public class GameView extends BaseView {
 	
 	private final Timer gameOverTimer = new Timer();
 	private final Timer shakeTimer = new Timer();
+	private final Timer slideInTimer = new Timer();
 	private float shakeness = 1f;
 	private ParticleEmitter spawnEffect;
+	private boolean firstBall;
+	private boolean scrolling = true;
+	private float scrollY;
 	
 	
 	public GameView(GameModel model) {
@@ -109,6 +113,9 @@ public class GameView extends BaseView {
 		//circleTexture = new TextureRegion(tex, 0, 0, 0.25f, 0.25f);
 		//textureHandler.add("square", 0.25f, 0.5f, 0, 0.25f);
 		
+		slideInTimer.start(0.5f);
+		firstBall = true;
+		
 		final DrawableVisitor visitor = new DrawableVisitor();
 		
 		// Handlers
@@ -124,13 +131,17 @@ public class GameView extends BaseView {
 		
 		model.newBallHandler.add(new EventHandler.ActionListener() {
 			@Override public void invoke(Object sender, Object args) {
-				newBall();
+
+				// First ball is handled by the slideInTimer
+				if (!firstBall)  {
+					newBallEffect();
+				}
 			}
 		});
 
 	}
 	
-	protected void newBall() {
+	protected void newBallEffect() {
 		spawnEffect.setPosition(model.getBall().getBody().getPosition().x, model.getBall().getBody().getPosition().y);
 		spawnEffect.start();
 	}
@@ -148,8 +159,11 @@ public class GameView extends BaseView {
 		worldCamera.zoom = model.width / (width - 2*margin);
 		float half = (height/2 - margin) * worldCamera.zoom;
 		
-		float y = model.getBall().getBody().getPosition().y;
-		y = Math.min(Math.max(y, half), model.height - half);
+		if (scrolling) {
+			float target = model.getBall().getBody().getPosition().y;
+			target = Math.min(Math.max(target, half), model.height - half);
+			scrollY += (target - scrollY) / 4;
+		}
 		
 		float shakex = 0;
 		float shakey = 0; 
@@ -158,7 +172,15 @@ public class GameView extends BaseView {
 			shakex = r.nextFloat() * t;
 			shakey = r.nextFloat() * t;
 		}
-		worldCamera.position.set(model.width/2 + shakex, y + shakey, 0f);
+		
+		if (slideInTimer.getTimeElapsed() > 0.7f && firstBall) {
+			newBallEffect();
+			firstBall = false;
+		}
+		
+		float slideX = slideInTimer.finished() ? 0 : Interpolator.easeOutQuad(slideInTimer, model.width, 0);
+		
+		worldCamera.position.set(model.width/2 + shakex - slideX, scrollY + shakey, 0f);
 		worldCamera.update();
 		world.setProjectionMatrix(worldCamera.combined);
 
@@ -220,38 +242,45 @@ public class GameView extends BaseView {
 		while(stringBuilder.length() < 5) stringBuilder.insert(0, '0');
 		String scoreText = String.valueOf(model.combo);
 
-		drawTextShadow(ui, scoreFont, stringBuilder.toString(), 20f, 20f);
-		drawTextShadow(ui, scoreFont, String.valueOf(model.balls), 0, 20f, width-20f, HAlignment.RIGHT);
-		drawTextShadow(ui, scoreFont, scoreText, 20f, 45f);
+
+		float textAlpha = slideInTimer.finished() ? 1f : Interpolator.easeOutQuad(slideInTimer, 0f, 1f);
+		
+		drawTextShadow(ui, scoreFont, stringBuilder.toString(), 20f, 20f, textAlpha);
+		drawTextShadow(ui, scoreFont, String.valueOf(model.balls), 0, 20f, width-20f, HAlignment.RIGHT, textAlpha);
+		drawTextShadow(ui, scoreFont, scoreText, 20f, 45f, textAlpha);
 		
 		if (model.gameOver && gameOverTimer.getLength() == 0) {
 			gameOverTimer.start(0.5f);
 		}
 		if (gameOverTimer.getLength() > 0) {
-			float x = Interpolator.easeOutQuad(gameOverTimer, -width, 0);
+			float x = Interpolator.easeOutQuad(gameOverTimer, -width/2, 0);
 			float alpha = Interpolator.easeOutQuad(gameOverTimer, 0, 0.7f);
 			
 			ui.setColor(0f, 0f, 0f, alpha);
-			ui.draw(getSprite("rect"), x, 0, width, height);
+			drawRect(ui, x, 0, width, height);
 			ui.setColor(1f, 1f, 1f, 1f);
-			drawTextShadow(ui, regularFont, "Game", x, 100f, width, HAlignment.CENTER);
-			drawTextShadow(ui, regularFont, "Over", x, 164f, width, HAlignment.CENTER);
-			drawTextShadow(ui, regularFont, String.valueOf(model.getScore()), x, 300f, width, HAlignment.CENTER);
+			drawTextShadow(ui, regularFont, "Game", x, 100f, width, HAlignment.CENTER, 1f);
+			drawTextShadow(ui, regularFont, "Over", x, 164f, width, HAlignment.CENTER, 1f);
+			drawTextShadow(ui, regularFont, String.valueOf(model.getScore()), x, 300f, width, HAlignment.CENTER, 1f);
 		}
 
 		ui.end();
 	}
 
-	private void drawTextShadow(SpriteBatch batch, BitmapFont font, String text, float x, float y) {
-		drawTextShadow(batch, font, text, x, y, width, HAlignment.LEFT);
+	private void drawTextShadow(SpriteBatch batch, BitmapFont font, String text, float x, float y, float alpha) {
+		drawTextShadow(batch, font, text, x, y, width, HAlignment.LEFT, alpha);
 	}
-	private void drawTextShadow(SpriteBatch batch, BitmapFont font, String text, float x, float y, float alignWidth, HAlignment align) {
+	private void drawTextShadow(SpriteBatch batch, BitmapFont font, String text, float x, float y, float alignWidth, HAlignment align, float alpha) {
 
-		font.setColor(0f, 0f, 0f, 0.5f);
+		font.setColor(0f, 0f, 0f, alpha * 0.5f);
 		font.drawMultiLine(batch, text, x-1, y-1, alignWidth, align);
 		
-		font.setColor(1f, 1f, 1f, 1f);
+		font.setColor(1f, 1f, 1f, alpha);
 		font.drawMultiLine(batch, text, x, y, alignWidth, align);
+	}
+
+	public void setScrolling(boolean b) {
+		this.scrolling = b;
 	}
 
 	

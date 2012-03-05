@@ -5,24 +5,32 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.joints.MouseJoint;
+import com.badlogic.gdx.physics.box2d.joints.MouseJointDef;
 import com.jakemadethis.pinball.builder.IBuilder;
 import com.jakemadethis.pinball.builder.PinballFactory;
 import com.jakemadethis.pinball.builder.XMLBuilder;
 
 public class GameController implements InputProcessor {
-	private final boolean running = false;
-  private final int targetFrameRate = 60;
   public static float gameSpeed = 1f;
 	
 	final private GameModel model;
-	final private IView view;
-	private final PinballStateManager stateManager;
+	final private GameView view;
+	private final Pinball pinball;
 	private final Timer gamePausedTimer = new Timer();
 	private final String levelName;
+
+	private boolean dragging;
+
+	private MouseJoint mouseJoint;
 	
-	public GameController(PinballStateManager stateManager, final GameModel model, final IView view, String levelName) {
+	public GameController(Pinball pinball, final GameModel model, final GameView view, String levelName) {
 		
-		this.stateManager = stateManager;
+		this.pinball = pinball;
 		this.model = model;
 		this.view = view;
 		
@@ -74,6 +82,14 @@ public class GameController implements InputProcessor {
 
 	
 	public void run() {
+		
+		if (dragging) {
+			Vector3 mouse = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+			view.worldCamera.unproject(mouse);
+			Vector2 mouse2 = new Vector2(mouse.x, mouse.y);
+			mouseJoint.setTarget(mouse2);
+		}
+		
 		float delta = Gdx.graphics.getDeltaTime();
 		model.think(delta * gameSpeed, 4);
 		view.think(delta * gameSpeed);
@@ -92,7 +108,7 @@ public class GameController implements InputProcessor {
 			return true;
 		}
 		else if (keycode == Keys.BACK || keycode == Keys.BACKSPACE) {
-			stateManager.setMenu();
+			pinball.setMenu();
 		}
 		return false;
 	}
@@ -112,15 +128,41 @@ public class GameController implements InputProcessor {
 	public boolean touchDown(int x, int y, int pointer, int button) {
 		if (model.gameOver) {
 			if(gamePausedTimer.finished())
-				stateManager.setMenu();
+				pinball.setMenu();
 			return true; 
 		}
 		
-		if (model.getBall().isActive()) {
-			model.engageFlipper(true);
+		if (button == 0) {
+			if (model.getBall().isActive()) {
+				model.engageFlipper(true);
+			}
+			else {
+				model.getBall().launch();
+			}
 		}
-		else {
-			model.getBall().launch();
+		else if (button == 1) {
+			if (model.getBall().isActive()) {
+				dragging = true;
+				
+				view.setScrolling(false);
+				Vector3 mouse = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+				view.worldCamera.unproject(mouse);
+				Vector2 mouse2 = new Vector2(mouse.x, mouse.y);
+				
+        BodyDef groundBodyDef = new BodyDef();
+        groundBodyDef.position.set(model.getBall().getBody().getPosition());
+        Body groundBody = model.world.createBody(groundBodyDef);
+        
+				MouseJointDef mjd = new MouseJointDef();
+        mjd.bodyA               = groundBody;
+        mjd.bodyB               = model.getBall().getBody();
+        mjd.dampingRatio        = 1f;
+        mjd.frequencyHz         = 10;
+        mjd.maxForce                    = (200.0f * model.getBall().getBody().getMass());
+        mjd.collideConnected= true;
+        mjd.target.set(model.getBall().getBody().getPosition());
+				mouseJoint = (MouseJoint) model.world.createJoint(mjd);
+			}
 		}
 		return false;
 	}
@@ -128,6 +170,11 @@ public class GameController implements InputProcessor {
 	@Override
 	public boolean touchUp(int x, int y, int pointer, int button) {
 		model.engageFlipper(false);
+		if (dragging) {
+			dragging = false;
+			model.world.destroyJoint(mouseJoint);
+			view.setScrolling(true);
+		}
 		return true;
 	}
 

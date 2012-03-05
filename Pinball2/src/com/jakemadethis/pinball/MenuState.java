@@ -9,11 +9,12 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class MenuState implements IState, InputProcessor {
 
-	private final PinballStateManager stateManager;
+	private final Pinball pinball;
 	private final SpriteBatch spriteBatch;
 	private Texture alphabetTexture;
 	private final ArrayList<String> levels;
@@ -22,9 +23,12 @@ public class MenuState implements IState, InputProcessor {
 	private final TextureManager textureMan;
 	private final int width;
 	private final int height;
+	private final Timer pressTimer = new Timer();
+	private final Timer slideTimer = new Timer();
+	private String playLevel;
 
-	public MenuState(PinballStateManager stateManager) {
-		this.stateManager = stateManager;
+	public MenuState(Pinball pinball) {
+		this.pinball = pinball;
 		
 		Gdx.input.setInputProcessor(this);
 		
@@ -63,21 +67,36 @@ public class MenuState implements IState, InputProcessor {
 
 	@Override
 	public void run() {
-		Gdx.gl20.glClearColor(0f, 0f, 0f, 1f);
+		Gdx.gl20.glClearColor(0.6f, 0.2f, 0.4f, 1f);
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		spriteBatch.begin();
+
+		float slideX = slideTimer.started() ? Interpolator.easeInOutCosine(slideTimer, 0f, -width) : 0f;
+		
 		for (int i = 0; i < levels.size(); i++) {
 			String levelName = levels.get(i);
-			if (press == i) bitmapfont.setColor(0.9f, 0f, 0f, 1f);
-			else bitmapfont.setColor(0.9f, 0.9f, 0.9f, 1f);
+			if (press == i) {
+				float r = Interpolator.easeOutQuad(pressTimer, 1f, 0.9f);
+				bitmapfont.setColor(r, r, r, 1f);
+				float y = Interpolator.easeOutQuad(pressTimer, 0f, 5f);
+				bitmapfont.drawMultiLine(spriteBatch, levelName, slideX, height-i*bitmapfont.getLineHeight()+y, width, HAlignment.CENTER);
 
-			bitmapfont.draw(spriteBatch, levelName, 0, height-i*bitmapfont.getLineHeight());
+			}
+			else {
+				bitmapfont.setColor(1f, 1f, 1f, 1f);
+				bitmapfont.drawMultiLine(spriteBatch, levelName, slideX, height-i*bitmapfont.getLineHeight(), width, HAlignment.CENTER);
+			}
+
 			//font.drawString(spriteBatch, level, 0, i*64f, 64f);
 			
 		}
 		
 		spriteBatch.end();
+		
+		if (slideTimer.finished()) {
+			pinball.setGame(playLevel);
+		}
 	}
 
 
@@ -112,6 +131,7 @@ public class MenuState implements IState, InputProcessor {
 		if (i < levels.size()) {
 			String l = levels.get(i);
 			press = i;
+			pressTimer.start(0.2f);
 			return true;
 		}
 		return false;
@@ -125,10 +145,17 @@ public class MenuState implements IState, InputProcessor {
 		press = -1;
 		if (i < levels.size()) {
 			String l = levels.get(i);
-			stateManager.setGame(l);
+			playGame(l);
 			return true;
 		}
 		return false;
+	}
+
+
+
+	private void playGame(String level) {
+		playLevel = level;
+		slideTimer.start(0.5f);
 	}
 
 

@@ -93,6 +93,8 @@ public class Kicker extends Wall {
 		else
 			normal.set(-normal.y, normal.x);
 		normal.nor();
+		normal.y -= 0.2f;
+		normal.nor();
 		
 		
 		Vector2 mul = normal.cpy().mul(15f);

@@ -5,8 +5,8 @@ import java.util.LinkedList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -20,7 +20,7 @@ public abstract class BaseView implements IView {
 	protected final float width;
 	protected final float height;
 
-	private Texture pixelTexture;
+	private final Texture pixelTexture;
 
 	//protected ShaderProgram flatShader;
 	//protected ShaderProgram textureShader;
@@ -35,8 +35,8 @@ public abstract class BaseView implements IView {
 		drawables = new LinkedList<IDrawable>();
 		
 
-		width = (float) Gdx.graphics.getWidth();
-		height = (float) Gdx.graphics.getHeight();
+		width = Gdx.graphics.getWidth();
+		height = Gdx.graphics.getHeight();
 		
 		Pixmap pixmap = new Pixmap(1, 1, Format.RGB565);
 		pixmap.setColor(1f, 1f, 1f, 1f);
@@ -85,7 +85,7 @@ public abstract class BaseView implements IView {
 	}
 	
 	public void drawRect(SpriteBatch batch, float x, float y, float w, float h) {
-		batch.draw(pixelTexture, x-w/2, y-h/2, w, h);
+		batch.draw(pixelTexture, x, y, w, h);
 	}
 
 	public TextureRegion getSprite(String name) {

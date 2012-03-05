@@ -1,9 +1,22 @@
 package com.jakemadethis.pinball;
 
 import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.Gdx;
 
-public class Pinball extends PinballStateManager implements ApplicationListener {
+public class Pinball implements ApplicationListener {
 
+	private IState current = null;
+	
+	public void setMenu() {
+		current = new MenuState(this);
+	}
+	
+	public void setGame(String levelName) {
+		long s = System.currentTimeMillis();
+		current = new GameState(this, levelName);
+		System.out.println("Started GameState in "+(System.currentTimeMillis()-s)+"ms");
+	}
+	
 
 	@Override
 	public void create() {
@@ -12,7 +25,8 @@ public class Pinball extends PinballStateManager implements ApplicationListener 
 	
 	@Override
 	public void render() {
-		runCurrentState();
+		if (current != null)
+			current.run();
 	}
 
 	@Override
@@ -25,6 +39,8 @@ public class Pinball extends PinballStateManager implements ApplicationListener 
 	public void resize(int arg0, int arg1) {}
 
 	@Override
-	public void resume() {}
+	public void resume() {
+		Gdx.app.log("JAKE", "Sprite height: "+TextureManager.get().sprites.getHeight());
+	}
 
 }
