@@ -1,7 +1,9 @@
-package com.jakemadethis.pinball;
+package com.jakemadethis.pinball.game;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.jakemadethis.pinball.IState;
 
 public class Pinball implements ApplicationListener {
 
@@ -16,7 +18,6 @@ public class Pinball implements ApplicationListener {
 		current = new GameState(this, levelName);
 		System.out.println("Started GameState in "+(System.currentTimeMillis()-s)+"ms");
 	}
-	
 
 	@Override
 	public void create() {
@@ -41,6 +42,8 @@ public class Pinball implements ApplicationListener {
 	@Override
 	public void resume() {
 		Gdx.app.log("JAKE", "Sprite height: "+TextureManager.get().sprites.getHeight());
+		Gdx.app.log("JAKE", TextureManager.get().sprites+"");
+		Gdx.app.log("JAKE", Texture.getManagedStatus());
 	}
 
 }

@@ -6,9 +6,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.jakemadethis.net.IServerProtocol;
 import com.jakemadethis.net.Server;
 import com.jakemadethis.pinball.Entity;
-import com.jakemadethis.pinball.GameModel;
-import com.jakemadethis.pinball.level.WallArc;
+import com.jakemadethis.pinball.game.GameModel;
 import com.jakemadethis.pinball.level.Wall;
+import com.jakemadethis.pinball.level.WallArc;
 
 /**
  * Net protocol

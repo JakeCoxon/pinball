@@ -1,4 +1,4 @@
-package com.jakemadethis.pinball;
+package com.jakemadethis.pinball.game;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
@@ -11,6 +11,8 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.joints.MouseJoint;
 import com.badlogic.gdx.physics.box2d.joints.MouseJointDef;
+import com.jakemadethis.pinball.LevelException;
+import com.jakemadethis.pinball.Timer;
 import com.jakemadethis.pinball.builder.IBuilder;
 import com.jakemadethis.pinball.builder.PinballFactory;
 import com.jakemadethis.pinball.builder.XMLBuilder;
@@ -25,6 +27,8 @@ public class GameController implements InputProcessor {
 	private final String levelName;
 
 	private boolean dragging;
+	final private Vector3 mouse3d = new Vector3();
+	final private Vector2 mouse2d = new Vector2();
 
 	private MouseJoint mouseJoint;
 	
@@ -84,10 +88,10 @@ public class GameController implements InputProcessor {
 	public void run() {
 		
 		if (dragging) {
-			Vector3 mouse = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-			view.worldCamera.unproject(mouse);
-			Vector2 mouse2 = new Vector2(mouse.x, mouse.y);
-			mouseJoint.setTarget(mouse2);
+			mouse3d.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+			view.worldCamera.unproject(mouse3d);
+			mouse2d.set(mouse3d.x, mouse3d.y);
+			mouseJoint.setTarget(mouse2d);
 		}
 		
 		float delta = Gdx.graphics.getDeltaTime();

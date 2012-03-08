@@ -10,10 +10,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.jakemadethis.pinball.BaseModel;
-import com.jakemadethis.pinball.GameModel;
 import com.jakemadethis.pinball.LevelException;
 import com.jakemadethis.pinball.builder.BuilderNode;
 import com.jakemadethis.pinball.builder.FactoryException;
+import com.jakemadethis.pinball.game.GameModel;
 
 public class Kicker extends Wall {
 	public static Wall fromNode(BaseModel model, BuilderNode node) {

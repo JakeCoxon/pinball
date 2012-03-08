@@ -1,13 +1,13 @@
-package com.jakemadethis.pinball.views;
+package com.jakemadethis.pinball.game.views;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
 import com.jakemadethis.pinball.Entity;
-import com.jakemadethis.pinball.GameView;
 import com.jakemadethis.pinball.IDrawable;
 import com.jakemadethis.pinball.MathUtil;
+import com.jakemadethis.pinball.game.GameView;
 import com.jakemadethis.pinball.level.Flipper;
 
 public class FlipperDrawable implements IDrawable {

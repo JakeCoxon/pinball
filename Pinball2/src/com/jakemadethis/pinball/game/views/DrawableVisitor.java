@@ -1,8 +1,8 @@
-package com.jakemadethis.pinball.views;
+package com.jakemadethis.pinball.game.views;
 
 import com.jakemadethis.pinball.Entity;
-import com.jakemadethis.pinball.GameView;
 import com.jakemadethis.pinball.IDrawable;
+import com.jakemadethis.pinball.game.GameView;
 import com.jakemadethis.pinball.level.Ball;
 import com.jakemadethis.pinball.level.Bumper;
 import com.jakemadethis.pinball.level.EntityVisitor;

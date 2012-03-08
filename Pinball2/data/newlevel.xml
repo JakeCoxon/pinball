@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<level name="Basic Level" size="480,1000">
+	<roundedWall radius="100">
+		<point at="0,-130" relativeTo="bottomleft" />
+		<point at="0,0" relativeTo="topleft" />
+		<point at="0,0" relativeTo="topright" />
+		<point at="0,0" relativeTo="bottomright" />
+	</roundedWall>
+	
+	<wall>
+		<point at="0,-130" relativeTo="bottomleft" />
+		<point at="100,-90" relativeTo="bottomleft" />
+	</wall>
+	
+	<wall>
+		<point at="-32,-130" relativeTo="bottomright" />
+		<point at="-130,-85" relativeTo="bottomright" />
+	</wall>
+	
+	<ball at="-15,-15" relativeTo="bottomright" />
+	
+	<!-- ball chute -->
+	<wall>
+		<point at="-32,-500" relativeTo="bottomright" />
+		<point at="-32,0" relativeTo="bottomright" />
+	</wall>
+	
+	<!-- hatch -->
+	<wall name="chuteHatch">
+		<point at="-32,-500" relativeTo="bottomright" />
+		<point at="0,-530" relativeTo="bottomright" />
+	</wall>
+	<sensor at="-15,-550" relativeTo="bottomright" radius="10" name="hatchSensor" />
+	
+	<event for="hatchSensor" when="onSense" target="chuteHatch" action="enable" />
+	<event for="level" when="onReset" target="chuteHatch" action="disable" />
+	
+	<bumper at="130,110" radius="50" />
+	<bumper at="300,150" radius="50" />
+	<bumper at="360,300" radius="64" />
+	
+	<frame>
+		<topLeft at="0,0" relativeTo="topleft" />
+		<bottomRight at="-32,0" relativeTo="bottomright" />
+		<children>
+			<roundedWall radius="8" looped="true">
+				<point at="35,-300" relativeTo="bottomleft" />
+				<point at="35,-170" relativeTo="bottomleft" />
+				<point at="105,-130" relativeTo="bottomleft" />
+			</roundedWall>
+			<kicker>
+				<point at="55,-260" relativeTo="bottomleft" />
+				<point at="100,-150" relativeTo="bottomleft" />
+			</kicker>
+			
+			<roundedWall radius="8" looped="true">
+				<point at="-35,-300" relativeTo="bottomright" />
+				<point at="-35,-170" relativeTo="bottomright" />
+				<point at="-105,-130" relativeTo="bottomright" />
+			</roundedWall>
+			<kicker>
+				<point at="-55,-260" relativeTo="bottomright" />
+				<point at="-100,-150" relativeTo="bottomright" />
+			</kicker>
+		
+			<flipper at="-120,-80" relativeTo="bottomcenter" type="left" length="100" />
+			<flipper at="120,-80" relativeTo="bottomcenter" type="right" length="100" />
+		</children>
+	</frame>
+</level>

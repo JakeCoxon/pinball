@@ -1,9 +1,15 @@
-package com.jakemadethis.pinball;
+package com.jakemadethis.pinball.game;
 
 import java.util.LinkedList;
 
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.jakemadethis.pinball.BaseModel;
+import com.jakemadethis.pinball.Entity;
+import com.jakemadethis.pinball.EventHandler;
+import com.jakemadethis.pinball.IElement;
+import com.jakemadethis.pinball.LevelException;
+import com.jakemadethis.pinball.Timer;
 import com.jakemadethis.pinball.io.OutputHandler;
 import com.jakemadethis.pinball.level.Ball;
 import com.jakemadethis.pinball.level.Flipper;

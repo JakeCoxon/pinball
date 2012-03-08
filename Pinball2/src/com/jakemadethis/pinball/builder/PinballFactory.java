@@ -4,18 +4,22 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
-import org.xml.sax.Attributes;
-
-import com.badlogic.gdx.physics.box2d.World;
 import com.jakemadethis.pinball.BaseModel;
-import com.jakemadethis.pinball.Entity;
-import com.jakemadethis.pinball.GameModel;
 import com.jakemadethis.pinball.LevelException;
-import com.jakemadethis.pinball.Pinball;
-import com.jakemadethis.pinball.builder.BuilderFactory;
-import com.jakemadethis.pinball.builder.BuilderNode;
+import com.jakemadethis.pinball.level.Ball;
+import com.jakemadethis.pinball.level.Bumper;
+import com.jakemadethis.pinball.level.Counter;
+import com.jakemadethis.pinball.level.Event;
 import com.jakemadethis.pinball.level.Flipper;
+import com.jakemadethis.pinball.level.Frame;
+import com.jakemadethis.pinball.level.Kicker;
 import com.jakemadethis.pinball.level.Level;
+import com.jakemadethis.pinball.level.Light;
+import com.jakemadethis.pinball.level.Points;
+import com.jakemadethis.pinball.level.RoundedWall;
+import com.jakemadethis.pinball.level.Sensor;
+import com.jakemadethis.pinball.level.Wall;
+import com.jakemadethis.pinball.level.WallArc;
 
 /**
  * Implementation of BuilderFactory
@@ -32,8 +36,38 @@ import com.jakemadethis.pinball.level.Level;
 public class PinballFactory implements BuilderFactory<Object> {
 
 	private final static String CONSTRUCT_METHOD = "fromNode";
-	private static final String CLASS_PATTERN = "%s.level.%s";
-	private BaseModel model;
+	
+	private final static Class<?>[] types = new Class<?>[] {
+		Ball.class, Bumper.class, Counter.class, Event.class,
+		Flipper.class, Frame.class, Kicker.class, Level.class,
+		Light.class, Points.class, RoundedWall.class, Sensor.class, 
+		Wall.class, WallArc.class
+	};
+	
+	
+	private static HashMap<String, Method> factory;
+	static {
+		factory = new HashMap<String, Method>();
+		for (int i = 0; i < types.length; i++) {
+			Class<?> _class = types[i];
+			String name = _class.getSimpleName();
+			String lname = Character.toLowerCase(name.charAt(0)) + name.substring(1);
+			
+			Method method = null;
+			try {
+				method = _class.getMethod(CONSTRUCT_METHOD, 
+						BaseModel.class, BuilderNode.class);
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				System.err.println("Class '"+name+"' doesn't have a construct method '"+CONSTRUCT_METHOD);
+			}
+			
+			factory.put(lname, method);
+		}
+	}
+	
+	private final BaseModel model;
 	
 	public PinballFactory(BaseModel model) {
 		this.model = model;
@@ -46,8 +80,7 @@ public class PinballFactory implements BuilderFactory<Object> {
 	@Override
 	public Object create(BuilderNode node) {
 		
-		// Upper case the first letter
-		String type = Character.toUpperCase(node.getNodeName().charAt(0)) + node.getNodeName().substring(1);
+		String type = node.getNodeName();
 		
 		Object _return = invokeMethod(type, node, model);
 		node.setValue(_return);
@@ -65,15 +98,11 @@ public class PinballFactory implements BuilderFactory<Object> {
 		try{
 				try {
 			
-				// Find the base package of Pinball
-				// This should be com.jakemadethis.pinball
-				// but I don't want to hard code it
-				String basePackage = Pinball.class.getPackage().getName();
-				
-				String className = String.format(CLASS_PATTERN, basePackage, type);
-				Class<?> c = Class.forName(className);
-				method = c.getMethod(CONSTRUCT_METHOD, BaseModel.class, BuilderNode.class);
-				
+				method = factory.get(type);
+				if (method == null) {
+					System.err.println("'"+type+"' does not have a valid factory.");
+					return null;
+				}
 				return method.invoke(null, model, node);
 				
 			} catch (InvocationTargetException e) {
@@ -84,22 +113,6 @@ public class PinballFactory implements BuilderFactory<Object> {
 		} catch (Exception e) {
 			throw new LevelException("Node '"+node.getNodeName()+"' could not be created", e);
 		}
-		/*} catch (NoSuchMethodException e) {
-			System.err.println("Pinball Factory error");
-			e.printStackTrace();	
-		} catch (IllegalArgumentException e) {
-			System.err.println("Pinball Factory error");
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			System.err.println("Pinball Factory error");
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			System.err.println("Pinball Factory error");
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			System.err.println("Pinball Factory error");
-			e.printStackTrace();
-		}*/
 	}
 
 	

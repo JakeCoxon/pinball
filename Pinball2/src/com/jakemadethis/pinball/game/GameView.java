@@ -1,4 +1,4 @@
-package com.jakemadethis.pinball;
+package com.jakemadethis.pinball.game;
 
 
 import java.io.BufferedReader;
@@ -15,9 +15,16 @@ import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.jakemadethis.pinball.BaseModel;
 import com.jakemadethis.pinball.BaseModel.EntityArgs;
+import com.jakemadethis.pinball.BaseView;
+import com.jakemadethis.pinball.Entity;
+import com.jakemadethis.pinball.EventHandler;
 import com.jakemadethis.pinball.EventHandler.EventListener;
-import com.jakemadethis.pinball.views.DrawableVisitor;
+import com.jakemadethis.pinball.IDrawable;
+import com.jakemadethis.pinball.Interpolator;
+import com.jakemadethis.pinball.Timer;
+import com.jakemadethis.pinball.game.views.DrawableVisitor;
 
 public class GameView extends BaseView {
 
@@ -46,6 +53,7 @@ public class GameView extends BaseView {
 	private boolean firstBall;
 	private boolean scrolling = true;
 	private float scrollY;
+	private final BackgroundRenderer bgRenderer;
 	
 	
 	public GameView(GameModel model) {
@@ -65,6 +73,7 @@ public class GameView extends BaseView {
 		Gdx.gl20.glClearColor(0.6f, 0.2f, 0.4f, 1f);
 
 		TextureManager textureMan = TextureManager.get();
+		textureMan.generate();
 		
 		//scorefont = new Font(textureMan.scorefont, true);
 		//scorefont.setLetterSpacing(-8);
@@ -83,8 +92,10 @@ public class GameView extends BaseView {
 		sprites.put("circle", new TextureRegion(textureMan.sprites, 0, 0, 0.125f, 0.125f));
 		sprites.put("ball", new TextureRegion(textureMan.sprites, 0.25f, 0, 0.5f, 0.25f));
 		sprites.put("line", new TextureRegion(textureMan.sprites, 0.0f, 0.25f, 0.25f, 0.5f));
+		sprites.put("glow", new TextureRegion(textureMan.sprites, 0.0f, 0.5f, 0.25f, 0.75f));
 		sprites.put("rect", new TextureRegion(textureMan.sprites, 0.5f, 0f, 0.75f, 0.25f));
 		sprites.put("donut", new TextureRegion(textureMan.sprites, 0.25f, 0.25f, 0.5f, 0.5f));
+		
 		
 
 		world = new SpriteBatch();
@@ -107,14 +118,13 @@ public class GameView extends BaseView {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		//Texture tex = new Texture(new FileHandle("sprites.png"));
-		
-		//circleTexture = new TextureRegion(tex, 0, 0, 0.25f, 0.25f);
-		//textureHandler.add("square", 0.25f, 0.5f, 0, 0.25f);
 		
 		slideInTimer.start(0.5f);
 		firstBall = true;
+		
+		
+		bgRenderer = new BackgroundRenderer((int)width, (int)height);
+		bgRenderer.generate(width/2, height*2/3, width*1.5f, (width > 400 ? 6 : 4));
 		
 		final DrawableVisitor visitor = new DrawableVisitor();
 		
@@ -150,6 +160,7 @@ public class GameView extends BaseView {
 		if (shakeTimer.running()) shakeness += 0.05f;
 		else shakeness = 0.05f;
 		shakeTimer.start(0.5f);
+		Gdx.input.vibrate(50);  
 	}
 	
 	@Override
@@ -213,12 +224,20 @@ public class GameView extends BaseView {
 
 		Gdx.gl20.glDisable(GL10.GL_CULL_FACE);
 		Gdx.gl20.glDisable(GL10.GL_DEPTH_TEST);
-		//Gdx.gl20.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		
+
+		ui.begin();
+		ui.draw(bgRenderer.getTexture(), 0, 0, width, height);
+		ui.end();
+		
+		world.begin();
+		world.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+
+		//world.draw(bg, (model.width-300 * worldCamera.zoom)/2, scrollY-5, 300 * worldCamera.zoom, 600 * worldCamera.zoom);
 		world.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
 
 		
 		
-		world.begin();
 		synchronized (model) {
 			
 			for (int i = 0; i < drawables.size(); i++) {
@@ -229,6 +248,7 @@ public class GameView extends BaseView {
 		
 		awesomeEffect.draw(world, Gdx.graphics.getDeltaTime());
 		spawnEffect.draw(world, Gdx.graphics.getDeltaTime());
+		
 			
 		world.end();
 
@@ -263,7 +283,7 @@ public class GameView extends BaseView {
 			drawTextShadow(ui, regularFont, "Over", x, 164f, width, HAlignment.CENTER, 1f);
 			drawTextShadow(ui, regularFont, String.valueOf(model.getScore()), x, 300f, width, HAlignment.CENTER, 1f);
 		}
-
+		
 		ui.end();
 	}
 
@@ -282,6 +302,8 @@ public class GameView extends BaseView {
 	public void setScrolling(boolean b) {
 		this.scrolling = b;
 	}
+
+	
 
 	
 	

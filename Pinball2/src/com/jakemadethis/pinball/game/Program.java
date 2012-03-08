@@ -1,4 +1,4 @@
-package com.jakemadethis.pinball;
+package com.jakemadethis.pinball.game;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 

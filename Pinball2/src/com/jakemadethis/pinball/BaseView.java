@@ -74,14 +74,18 @@ public abstract class BaseView implements IView {
 	}
 	
 	public void drawLine(SpriteBatch batch, float x1, float y1, float x2, float y2, float width) {
+		drawLine(batch, sprites.get("line"), x1, y1, x2, y2, width);
+	}
+	
+	public void drawLine(SpriteBatch batch, TextureRegion region, float x1, float y1, float x2, float y2, float width) {
 		float dy = y2 - y1;
 		float dx = x2 - x1;
 		float angle = (float) Math.toDegrees(Math.atan2(dy, dx));
 		float length = (float) Math.sqrt(dx * dx + dy * dy);
-		TextureRegion region = sprites.get("line");
 		if (region == null) throw new RuntimeException("Needs a line texture");
-		batch.draw(region, x1, y1, 0f, width/2, length, width, 1f, 1f, angle);
+		batch.draw(region, x1, y1-width/2, 0f, width/2, length, width, 1f, 1f, angle);
 		//batch.draw(pixelTexture, x1, y1, 0f, width/2, length, width, 1f, 1f, angle, 0, 0, 1, 1, false, false);
+		
 	}
 	
 	public void drawRect(SpriteBatch batch, float x, float y, float w, float h) {

@@ -6,9 +6,9 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.jakemadethis.pinball.BaseModel;
 import com.jakemadethis.pinball.Entity;
 import com.jakemadethis.pinball.IDrawable;
-import com.jakemadethis.pinball.GameModel;
 import com.jakemadethis.pinball.builder.BuilderNode;
 import com.jakemadethis.pinball.builder.FactoryUtil;
+import com.jakemadethis.pinball.game.GameModel;
 import com.jakemadethis.pinball.io.OutputHandler;
 
 public class Sensor extends Entity {

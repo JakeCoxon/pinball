@@ -1,6 +1,7 @@
 package com.jakemadethis.pinball;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
+import com.jakemadethis.pinball.game.Pinball;
 
 import android.os.Bundle;
 

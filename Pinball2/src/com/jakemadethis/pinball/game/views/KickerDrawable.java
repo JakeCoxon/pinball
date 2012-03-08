@@ -1,4 +1,4 @@
-package com.jakemadethis.pinball.views;
+package com.jakemadethis.pinball.game.views;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -6,9 +6,9 @@ import java.util.Random;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.jakemadethis.pinball.Entity;
-import com.jakemadethis.pinball.GameView;
 import com.jakemadethis.pinball.IDrawable;
 import com.jakemadethis.pinball.Timer;
+import com.jakemadethis.pinball.game.GameView;
 import com.jakemadethis.pinball.level.Kicker;
 
 public class KickerDrawable implements IDrawable {

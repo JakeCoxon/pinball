@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
+import com.jakemadethis.pinball.game.GameModel;
 import com.jakemadethis.pinball.io.Connection;
 import com.jakemadethis.pinball.io.Input.EventArgs;
 import com.jakemadethis.pinball.io.InputHandler;

@@ -1,5 +1,7 @@
 package com.jakemadethis.pinball;
 
+import com.jakemadethis.pinball.game.GameController;
+
 /**
  * A timer class that interpolates between two values over time
  * @author Jake

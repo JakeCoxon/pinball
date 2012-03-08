@@ -1,4 +1,4 @@
-package com.jakemadethis.pinball;
+package com.jakemadethis.pinball.game;
 
 import java.util.ArrayList;
 
@@ -11,6 +11,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.jakemadethis.pinball.IState;
+import com.jakemadethis.pinball.Interpolator;
+import com.jakemadethis.pinball.Timer;
 
 public class MenuState implements IState, InputProcessor {
 
@@ -26,6 +29,7 @@ public class MenuState implements IState, InputProcessor {
 	private final Timer pressTimer = new Timer();
 	private final Timer slideTimer = new Timer();
 	private String playLevel;
+	private final boolean startLoading;
 
 	public MenuState(Pinball pinball) {
 		this.pinball = pinball;
@@ -61,12 +65,18 @@ public class MenuState implements IState, InputProcessor {
 		
 		Gdx.input.setCatchBackKey(false);
 		
+		startLoading = true;
+		
 	}
 	
 	
 
 	@Override
 	public void run() {
+		
+		
+		textureMan.getAssMan().update();
+		
 		Gdx.gl20.glClearColor(0.6f, 0.2f, 0.4f, 1f);
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
@@ -91,12 +101,17 @@ public class MenuState implements IState, InputProcessor {
 			//font.drawString(spriteBatch, level, 0, i*64f, 64f);
 			
 		}
-		
+		float progress = textureMan.getAssMan().getProgress();
+
+		bitmapfont.setColor(1f, 1f, 1f, 1f);
+		bitmapfont.draw(spriteBatch, "Loading "+progress, 0, 40f);
 		spriteBatch.end();
 		
 		if (slideTimer.finished()) {
 			pinball.setGame(playLevel);
 		}
+		
+		
 	}
 
 

@@ -1,6 +1,7 @@
-package com.jakemadethis.pinball;
+package com.jakemadethis.pinball.game;
 
 import com.badlogic.gdx.Gdx;
+import com.jakemadethis.pinball.IState;
 
 public class GameState implements IState {
 

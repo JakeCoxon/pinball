@@ -1,12 +1,12 @@
-package com.jakemadethis.pinball.views;
+package com.jakemadethis.pinball.game.views;
 
 import java.util.LinkedList;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.jakemadethis.pinball.Entity;
-import com.jakemadethis.pinball.GameView;
 import com.jakemadethis.pinball.IDrawable;
+import com.jakemadethis.pinball.game.GameView;
 import com.jakemadethis.pinball.level.Ball;
 
 public class BallDrawable implements IDrawable {

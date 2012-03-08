@@ -11,10 +11,10 @@ import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.jakemadethis.pinball.BaseModel;
 import com.jakemadethis.pinball.Entity;
-import com.jakemadethis.pinball.GameModel;
 import com.jakemadethis.pinball.IElement;
 import com.jakemadethis.pinball.builder.BuilderNode;
 import com.jakemadethis.pinball.builder.FactoryUtil;
+import com.jakemadethis.pinball.game.GameModel;
 
 public class Flipper extends Entity implements IElement {
 
