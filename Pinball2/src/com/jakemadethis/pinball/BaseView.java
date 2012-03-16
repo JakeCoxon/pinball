@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
@@ -12,6 +13,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public abstract class BaseView implements IView {
+	
+	public enum BlendMode {
+		Normal, Additive;
+	}
+	
 	public EventHandler<Object> initGameHandler = new EventHandler<Object>();
 
 	public BaseModel model;
@@ -71,6 +77,13 @@ public abstract class BaseView implements IView {
 	
 	public void addDrawable(IDrawable d) {
 		drawables.add(d);
+	}
+	
+	public static void setBlendMode(SpriteBatch batch, BlendMode mode) {
+		if (mode == BlendMode.Additive)
+			batch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
+		else
+			batch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 	}
 	
 	public void drawLine(SpriteBatch batch, float x1, float y1, float x2, float y2, float width) {

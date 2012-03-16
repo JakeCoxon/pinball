@@ -1,14 +1,16 @@
-Notes
------
-
-Result = Source * BlendSource + Dest * BlendDest
-
 Todo
 ----
-Convert levels to xml
-Finish IO system
-
-think about networked level editor ??
+load level for menu screen
+sounds
+new level with:
+	lights rotator
+	more lights
+	worm holes
+fix sprites merging edges
+highscores
+better menu
+event wait
+fix sensors
 
 Game ideas
 ----------
@@ -37,17 +39,8 @@ BOMB
 cool startup logo
 pipes
 paralax
-Kickersssss !!!
 More targets
 sounds sounds sounds sounds
-
-Code
----
-xml parser
-entity io like source
-ui slide animations
-timer class, sequence class
-
 
 Fun things
 ----

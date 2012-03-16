@@ -12,9 +12,10 @@ import com.jakemadethis.pinball.level.Ball;
 public class BallDrawable implements IDrawable {
 
 	LinkedList<Vector2> trail = new LinkedList<Vector2>();
-	private GameView view;
-	private Color color = new Color(1f, 0.9f, 1f, 0.5f);
-	private Ball ball;
+	private final GameView view;
+	private final Color color = new Color(0.8f, 0.4f, 0.6f, 1f);
+	private final Ball ball;
+	
 	public BallDrawable(Ball ball, GameView view) {
 		this.ball = ball;
 		this.view = view;
@@ -29,19 +30,19 @@ public class BallDrawable implements IDrawable {
 	public void draw() {
 		Vector2 pos = ball.getBody().getPosition();
 		float radius = ball.getRadius();
-		/*trail.add(pos.cpy());
-		if (trail.size() > 10) trail.remove();
-		int i = 0;
-		for (Vector2 p : trail) {
-			float alpha = i/10f * 1f;
-			color[3] = alpha;
-			view.world.drawTexture(p.x, p.y, radius*2, radius*2, view.getSprite("ball"), color);
-			i++;
-		}*/
+		
+		
+		// Outer ring
+		if (view.model.awesomeMode) {
+
+			view.world.setColor(1f, 1f, 1f, 0.5f);
+			view.world.draw(view.getSprite("ball"), pos.x - radius*1.5f, pos.y - radius*1.5f, radius*2*1.5f, radius*2*1.5f);
+		}
+		
 		view.world.setColor(color);
 		view.world.draw(view.getSprite("ball"), pos.x - radius, pos.y - radius, radius*2, radius*2);
 		//view.world.drawTexture(pos.x, pos.y, radius*2, radius*2, view.getSprite("ball"), color);
-		
+
 		
 	}
 

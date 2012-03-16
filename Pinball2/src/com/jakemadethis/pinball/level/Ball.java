@@ -8,7 +8,6 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.jakemadethis.pinball.BaseModel;
 import com.jakemadethis.pinball.Entity;
-import com.jakemadethis.pinball.IDrawable;
 import com.jakemadethis.pinball.builder.BuilderNode;
 import com.jakemadethis.pinball.builder.FactoryUtil;
 import com.jakemadethis.pinball.game.GameModel;
@@ -23,10 +22,10 @@ public class Ball extends Entity {
 		return model.addBall(pos[0], pos[1], BALL_RADIUS);
 	}
 	
-	private Body body;
-	private float radius;
-	private Vector2 initial;
-	private Random random;
+	private final Body body;
+	private final float radius;
+	private final Vector2 initial;
+	private final Random random;
 	
 	public Ball(World world, float x, float y, float radius) {
 		this.radius = radius;
@@ -57,6 +56,9 @@ public class Ball extends Entity {
 	}
 	public boolean isActive() {
 		return body.isActive();
+	}
+	public Vector2 getInitialPos() {
+		return initial;
 	}
 
 	public void launch() {

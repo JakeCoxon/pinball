@@ -8,9 +8,9 @@ import com.jakemadethis.pinball.level.Light;
 
 public class LightDrawable implements IDrawable {
 
-	private Light light;
-	private GameView view;
-	private Color offColor = new Color(1f, 1f, 1f, 0.1f);
+	private final Light light;
+	private final GameView view;
+	private final Color offColor = new Color(1f, 1f, 1f, 0.1f);
 
 	public LightDrawable(Light light, GameView view) {
 		this.light = light;
@@ -26,16 +26,27 @@ public class LightDrawable implements IDrawable {
 	public void draw() {
 		float x = light.getX(), y = light.getY();
 		float w = light.getWidth(), h = light.getHeight();
-		Color color = offColor;
+		
+		boolean on = light.isEnabled();
 		if (light.isFlashing()) {
-			if (((int)(light.getFlashTimer().getTimeElapsed()*4) & 1) == 1) {
-				color = light.getColor();
-			}
-		}
-		else if (light.isEnabled()) {
-			color = light.getColor();
+			on = ((int)(light.getFlashTimer().getTimeElapsed()*4) & 1) == 1;
 		}
 
+		Color color = null;
+		if (on) {
+			color = light.getColor();
+			w *= 1.1f;
+			h *= 1.1f;
+			color.a = 2f;
+			//view.world.setColor(0.6f, 0.6f, 0.6f, 0.2f);
+			//view.world.draw(view.getSprite("bumper"), x-w/2*1.5f, y-h/2*1.5f, w*1.5f, h*1.5f);
+		}
+		else {
+			color = offColor;
+		}
+
+		
+		
 		view.world.setColor(color);
 		view.world.draw(view.getSprite("bumper"), x-w/2, y-h/2, w, h);
 	}

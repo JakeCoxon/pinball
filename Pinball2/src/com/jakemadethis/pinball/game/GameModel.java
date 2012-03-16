@@ -26,8 +26,9 @@ public class GameModel extends BaseModel {
 	private Ball ball;
 	private final LinkedList<Flipper> flipperLeft = new LinkedList<Flipper>();
 	private final LinkedList<Flipper> flipperRight = new LinkedList<Flipper>();
-	
+
 	public EventHandler<Object> newBallHandler = new EventHandler<Object>();
+	public EventHandler<Object> gameOverHandler = new EventHandler<Object>();
 	public int combo = 0;
 	public int balls = 3;
 	
@@ -159,6 +160,7 @@ public class GameModel extends BaseModel {
 		reset();
 		if (balls == 0) {
 			gameOver = true;
+			gameOverHandler.invoke(this, null);
 		}
 	}
 

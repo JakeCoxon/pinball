@@ -1,8 +1,6 @@
 package com.jakemadethis.pinball.game;
 
 import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.jakemadethis.pinball.IState;
 
 public class Pinball implements ApplicationListener {
@@ -10,7 +8,7 @@ public class Pinball implements ApplicationListener {
 	private IState current = null;
 	
 	public void setMenu() {
-		current = new MenuState(this);
+		current = new MainMenu(this);
 	}
 	
 	public void setGame(String levelName) {
@@ -21,6 +19,7 @@ public class Pinball implements ApplicationListener {
 
 	@Override
 	public void create() {
+		PinballAssets.get();
 		setMenu();
 	}
 	
@@ -40,10 +39,6 @@ public class Pinball implements ApplicationListener {
 	public void resize(int arg0, int arg1) {}
 
 	@Override
-	public void resume() {
-		Gdx.app.log("JAKE", "Sprite height: "+TextureManager.get().sprites.getHeight());
-		Gdx.app.log("JAKE", TextureManager.get().sprites+"");
-		Gdx.app.log("JAKE", Texture.getManagedStatus());
-	}
+	public void resume() {}
 
 }

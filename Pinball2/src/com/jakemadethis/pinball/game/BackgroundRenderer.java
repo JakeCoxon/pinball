@@ -3,13 +3,14 @@ package com.jakemadethis.pinball.game;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.jakemadethis.pinball.AssetLoadingTask;
 
-public class BackgroundRenderer {
+public class BackgroundRenderer extends AssetLoadingTask<Texture> {
 	final String vertexShader = 
   	"attribute vec4 a_position;    \n" + 
   	"void main()                  \n" + 
@@ -41,14 +42,30 @@ public class BackgroundRenderer {
 		"  }\n" +
 		"  gl_FragColor = color;\n" +
   	"}";
-	private final ShaderProgram bgShader;
-	private final Mesh mesh;
-	private final FrameBuffer fbo;
-	private TextureRegion texture;
+	private ShaderProgram bgShader;
+	private Mesh mesh;
+	private FrameBuffer fbo;
+	private final float midx;
+	private final float midy;
+	private final float radius;
+	private final float thickness;
+	private final int width;
+	private final int height;
   
-  public BackgroundRenderer(int width, int height) {
+  public BackgroundRenderer(int width, int height, float midx, float midy, float radius, float thickness) {
+		this.width = width;
+		this.height = height;
+		this.midx = midx;
+		this.midy = midy;
+		this.radius = radius;
+		this.thickness = thickness;
 		
-		
+	  
+  }
+  
+	@Override
+	public Texture syncLoad() {
+
 		bgShader = new ShaderProgram(vertexShader, fragmentShader);
 	
 		if(!bgShader.isCompiled())
@@ -66,10 +83,8 @@ public class BackgroundRenderer {
 			1f, -1f, 0, } );	
 		
 		fbo = new FrameBuffer(Format.RGB565, width, height, false);
-	  
-  }
-  public void generate(float midx, float midy, float radius, float thickness) {
-  	fbo.begin();
+		
+		fbo.begin();
 		  bgShader.begin();
 				bgShader.setUniformf("u_mid", midx, midy);
 				bgShader.setUniformf("u_radius", radius);
@@ -77,11 +92,7 @@ public class BackgroundRenderer {
 			  mesh.render(bgShader, GL10.GL_TRIANGLES);
 		  bgShader.end();
 	  fbo.end();
-		texture = new TextureRegion(fbo.getColorBufferTexture());
-		texture.flip(false, false);
-  }
-  
-  public TextureRegion getTexture() {
-		return texture;
+	  
+		return fbo.getColorBufferTexture();
 	}
 }

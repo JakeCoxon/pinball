@@ -7,8 +7,8 @@ import com.jakemadethis.pinball.level.Sensor;
 
 public class SensorDrawable implements IDrawable {
 
-	private Sensor sensor;
-	private GameView view;
+	private final Sensor sensor;
+	private final GameView view;
 
 	public SensorDrawable(Sensor sensor, GameView view) {
 		this.sensor = sensor;
@@ -25,8 +25,8 @@ public class SensorDrawable implements IDrawable {
 		float x = sensor.getX(), y = sensor.getY();
 		float r = sensor.getRadius();
 		
-		view.world.setColor(1f, 1f, 1f, 0.1f);
-		view.world.draw(view.getSprite("bumper"), x-r, y-r, r*2, r*2);
+		//view.world.setColor(1f, 1f, 1f, 0.1f);
+		//view.world.draw(view.getSprite("bumper"), x-r, y-r, r*2, r*2);
 		
 	}
 
