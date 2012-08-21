@@ -30,7 +30,11 @@ public class BallDrawable implements IDrawable {
 	public void draw() {
 		Vector2 pos = ball.getBody().getPosition();
 		float radius = ball.getRadius();
-		
+
+		view.world.setColor(1f, 1f, 1f, 0.05f);
+		float r = 1f;
+		view.world.draw(view.getSprite("gradient"), pos.x - r, pos.y - r, r*2, r*2);
+		view.world.draw(view.getSprite("gradient"), pos.x - r, pos.y - r, r*2, r*2);
 		
 		// Outer ring
 		if (view.model.awesomeMode) {

@@ -38,8 +38,9 @@ public class LightDrawable implements IDrawable {
 			w *= 1.1f;
 			h *= 1.1f;
 			color.a = 2f;
-			//view.world.setColor(0.6f, 0.6f, 0.6f, 0.2f);
-			//view.world.draw(view.getSprite("bumper"), x-w/2*1.5f, y-h/2*1.5f, w*1.5f, h*1.5f);
+			view.world.setColor(1f, 0f, 0f, 0.5f);
+			float r = 0.4f;
+			view.world.draw(view.getSprite("gradient"), x-r, y-r, 2*r, 2*r);
 		}
 		else {
 			color = offColor;

@@ -28,6 +28,8 @@ public class BackgroundRenderer extends AssetLoadingTask<Texture> {
   	"{"+ 
   	"  float x = gl_FragCoord.x;\n" +
 		"  float len = length(gl_FragCoord.xy - u_mid);\n" +
+		//"  vec4 a = vec4 ( 0.0, 0.0, 0.0, 1.0 );\n" +
+		//"  vec4 b = vec4 ( 0.2, 0.2, 0.2, 1.0 );\n" +
 		"  vec4 a = vec4 ( 0.6, 0.2, 0.4, 1.0 );\n" +
 		"  vec4 b = vec4 ( 0.8, 0.4, 0.6, 1.0 );\n" +
 		"  vec4 color;\n" +

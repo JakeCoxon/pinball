@@ -38,7 +38,7 @@ public class BumperDrawable implements IDrawable {
 		// of hits on the model to the one we store on the view
 		if (bumper.getHits() > hits) {
 			hits ++;
-			timer.start(0.2f, true);
+			timer.start(0.4f, true);
 			view.shake();
 		}
 		
@@ -57,9 +57,10 @@ public class BumperDrawable implements IDrawable {
 			view.world.setColor(blendColor);
 
 			float a = timer.value(1f, 0f);
+			float ra = 0.2f;
 			for (int i = 0; i < 20; i+=2) {
-				float x = a * (r.nextFloat() * 0.4f - 0.2f);
-				float y = a * (r.nextFloat() * 0.4f - 0.2f);
+				float x = a * (r.nextFloat() * ra * 2 - ra);
+				float y = a * (r.nextFloat() * ra * 2 - ra);
 
 
 				view.world.draw(view.getSprite("bumper"), cx - radius + x, cy - radius + y, radius*2, radius*2);

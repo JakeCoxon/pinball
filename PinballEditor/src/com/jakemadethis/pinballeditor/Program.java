@@ -10,6 +10,5 @@ public class Program {
 	public Program() {
 		LwjglApplication app = 
 			new LwjglApplication(new PinballEditor(), "Editor", 400, 500, true);
-		
 	}
 }

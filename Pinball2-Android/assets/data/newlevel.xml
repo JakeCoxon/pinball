@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<level name="Basic Level" size="480,1000">
+<level name="New Level" size="480,1000">
 	<roundedWall radius="100">
 		<point at="0,-130" relativeTo="bottomleft" />
 		<point at="0,0" relativeTo="topleft" />

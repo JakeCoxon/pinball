@@ -5,19 +5,15 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.utils.Logger;
 import com.jakemadethis.pinball.AssetLoader.OnLoadedListener;
 import com.jakemadethis.pinball.IState;
@@ -33,14 +29,12 @@ public class MainMenu implements IState, ClickListener, OnLoadedListener {
 	private final SpriteBatch spriteBatch;
 	private final ArrayList<String> levels;
 	private final int press = -1;
-	private BitmapFont bitmapfont;
 	private final int width;
 	private final int height;
 	private final Timer pressTimer = new Timer();
 	private final Timer slideTimer = new Timer();
 	private String playLevel;
 	private final Stage stage;
-	private TextButtonStyle buttonStyle;
 	private final Group group;
 	private Texture big;
 	private final Texture loading;
@@ -96,10 +90,7 @@ public class MainMenu implements IState, ClickListener, OnLoadedListener {
 		
 		Gdx.app.setLogLevel(Logger.DEBUG);
 		Gdx.app.debug("JAKE", "asdasdsad "+big);	
-		bitmapfont = new BitmapFont(Gdx.files.internal("data/regular.fnt"), true);
 
-		buttonStyle = new TextButtonStyle(null, null, null, 1f, 1f, 0f, 0f, bitmapfont, Color.WHITE, Color.WHITE, Color.WHITE);
-		
 
 		
 		// Android needs this for SAX
@@ -128,7 +119,7 @@ public class MainMenu implements IState, ClickListener, OnLoadedListener {
 			levels.add(file.nameWithoutExtension());
 			
 			int id = levels.size()-1;
-			TextButton textButton = new TextButton(levelName, buttonStyle);
+			TextButton textButton = new TextButton(levelName);
 			textButton.setClickListener(new ClickListener() {
 				@Override public void click(Actor actor, float x, float y) {
 					playGame(file.nameWithoutExtension());

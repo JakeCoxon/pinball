@@ -15,7 +15,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public abstract class BaseView implements IView {
 	
 	public enum BlendMode {
-		Normal, Additive;
+		Normal, Additive, Premultiplied;
 	}
 	
 	public EventHandler<Object> initGameHandler = new EventHandler<Object>();
@@ -82,6 +82,8 @@ public abstract class BaseView implements IView {
 	public static void setBlendMode(SpriteBatch batch, BlendMode mode) {
 		if (mode == BlendMode.Additive)
 			batch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
+		else if (mode == BlendMode.Premultiplied)
+			batch.setBlendFunction(GL10.GL_ONE, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		else
 			batch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 	}

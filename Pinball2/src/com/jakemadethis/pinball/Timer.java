@@ -27,11 +27,11 @@ public class Timer {
 	}
 	
 	/**
-	 * Starts the timer without taking in to account the game speed
+	 * Starts the timer and taking in to account the game speed
 	 * @param lengthSeconds Length in seconds the timer should run for
 	 */
 	public void start(float lengthSeconds) {
-		start(lengthSeconds, false);
+		start(lengthSeconds, true);
 	}
 	
 	/**
@@ -39,6 +39,14 @@ public class Timer {
 	 */
 	public float value() {
 		return Math.min((float)(System.nanoTime() - startTime) / length, 1);
+	}
+	
+	/**
+	 * Overrides the value by shifting the start time
+	 * @param value
+	 */
+	public void setValue(float value) {
+		startTime = System.nanoTime() - (long) (value * length);
 	}
 	
 	/**

@@ -10,13 +10,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.TextureData;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.jakemadethis.pinball.AssetLoader.OnLoadedListener;
 import com.jakemadethis.pinball.BaseModel;
@@ -45,8 +49,6 @@ public class GameView extends BaseView implements OnLoadedListener {
 
 	private final Random r;
 	public GameModel model;
-	private BitmapFont regularFont;
-	private BitmapFont scoreFont;
 	StringBuilder stringBuilder = new StringBuilder();
 	
 	private final Timer gameOverTimer = new Timer();
@@ -57,12 +59,12 @@ public class GameView extends BaseView implements OnLoadedListener {
 	private boolean firstBall;
 	private boolean scrolling = true;
 	private float scrollY;
-	private BackgroundRenderer bgRenderer;
 	private Stage stage;
 	private boolean instantScroll;
 	public Texture spritesTexture;
 	
 	private GameOverScreen gameOverScreen;
+	private FrameBuffer fgFrameBuffer;
 	
 	public GameView(GameModel model) {
 		super(model);
@@ -90,9 +92,6 @@ public class GameView extends BaseView implements OnLoadedListener {
 
 		//regularFont = new Font(textureMan.regularfont, true);
 
-		regularFont = new BitmapFont(Gdx.files.internal("data/regular.fnt"), true);
-		scoreFont = new BitmapFont(Gdx.files.internal("data/scorefont.fnt"), true);
-		scoreFont.setFixedWidthGlyphs("0123456789");
 		
 		//ui.getTextureRenderer().setTexture(0, numbersTexture);
 		//world.getTextureRenderer().setTexture(0, spritesTexture);
@@ -105,7 +104,7 @@ public class GameView extends BaseView implements OnLoadedListener {
 		sprites.put("glow", new TextureRegion(PinballAssets.sprites, 0.0f, 0.5f, 0.25f, 0.75f));
 		sprites.put("rect", new TextureRegion(PinballAssets.sprites, 0.5f, 0f, 0.75f, 0.25f));
 		sprites.put("donut", new TextureRegion(PinballAssets.sprites, 0.25f, 0.25f, 0.5f, 0.5f));
-		
+		sprites.put("gradient", new TextureRegion(PinballAssets.sprites, 0.25f, 0.5f, 0.5f, 0.75f));
 		
 
 		world = new SpriteBatch();
@@ -113,10 +112,13 @@ public class GameView extends BaseView implements OnLoadedListener {
 		ui.setProjectionMatrix(uiCamera.combined);
 
 		stage = new Stage(width, height, false, ui);
+		((OrthographicCamera)stage.getCamera()).setToOrtho(true);
 		
-		gameOverScreen = new GameOverScreen();
+		gameOverScreen = new GameOverScreen(this, width, height);
 		gameOverScreen.visible = false;
 		stage.addActor(gameOverScreen);
+		
+		
 		
 		try {
 			awesomeEffect = new ParticleEmitter( new BufferedReader(new InputStreamReader(Gdx.files.internal("data/particle").read())));
@@ -185,6 +187,9 @@ public class GameView extends BaseView implements OnLoadedListener {
 	
 	private void gameOver() {
 		gameOverScreen.visible = true;
+		gameOverScreen.prevInputProcessor = Gdx.input.getInputProcessor();
+		gameOverScreen.setScore(model.getScore());
+		Gdx.input.setInputProcessor(stage);
 	}
 
 	protected void newBallEffect() {
@@ -267,7 +272,7 @@ public class GameView extends BaseView implements OnLoadedListener {
 			
 			return;
 		}
-		Gdx.gl20.glClearColor(0.6f, 0.2f, 0.4f, 1f);
+		Gdx.gl20.glClearColor(0f, 0f, 0f, 1f);
 		Gdx.gl20.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		Gdx.gl20.glEnable(GL10.GL_BLEND);
 		Gdx.gl20.glEnable(GL10.GL_LINE_SMOOTH);
@@ -278,9 +283,15 @@ public class GameView extends BaseView implements OnLoadedListener {
 		
 
 		ui.begin();
+		ui.setColor(1f, 1f, 1f, 1f);
 		ui.draw(PinballAssets.background, 0, 0, width, height);
 		ui.end();
-		
+
+		if (fgFrameBuffer == null)
+			fgFrameBuffer = new FrameBuffer(Format.RGBA8888, (int)width, (int)height, false);
+		fgFrameBuffer.begin();
+		Gdx.gl20.glClearColor(0f, 0f, 0f, 0f);
+		Gdx.gl20.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		world.begin();
 		
 		setBlendMode(world, BlendMode.Additive);
@@ -300,12 +311,39 @@ public class GameView extends BaseView implements OnLoadedListener {
 		
 			
 		world.end();
+		fgFrameBuffer.end();
+		
+
+		TextureData t = fgFrameBuffer.getColorBufferTexture().getTextureData();
+		Pixmap pix = t.consumePixmap();
+		//a: for (int i = 0; i < t.getWidth(); i++) {
+			//for (int j = 0; j < t.getHeight(); j++) {
+		//System.out.println(pix.getWidth()+" "+pix.getHeight());
+		//int i = 50, j = 50;
+			//	int p = pix.getPixel(i, j);
+				/*int a = p & 0xFF;
+				int b = (p >> 8) & 0xFF;
+				int g = (p >> 16) & 0xFF;
+				int r = (p >> 24) & 0xFF;
+				//if ((a & 0xFF) == 0) {
+					System.out.println(i+" "+j+" "+Integer.toHexString(p)+" "+r+" "+g+" "+b+" "+a);*/
+					//break a;
+				//}
+			//}
+		//}
+		
+		ui.begin();
+		ui.setBlendFunction(GL10.GL_ONE, GL10.GL_ONE);
+		ui.draw(fgFrameBuffer.getColorBufferTexture(), 0, 0, width, height);
+		ui.end();
+		
 
 		drawUI();
 	}
 	
 	private void drawUI() {
 		ui.begin();
+		setBlendMode(ui, BlendMode.Normal);
 		stringBuilder.setLength(0);
 		stringBuilder.append(score);
 		while(stringBuilder.length() < 5) stringBuilder.insert(0, '0');
@@ -314,9 +352,9 @@ public class GameView extends BaseView implements OnLoadedListener {
 
 		float textAlpha = slideInTimer.finished() ? 1f : Interpolator.easeOutQuad(slideInTimer, 0f, 1f);
 		
-		drawTextShadow(ui, scoreFont, stringBuilder.toString(), 20f, 20f, textAlpha);
-		drawTextShadow(ui, scoreFont, String.valueOf(model.balls), 0, 20f, width-20f, HAlignment.RIGHT, textAlpha);
-		drawTextShadow(ui, scoreFont, scoreText, 20f, 45f, textAlpha);
+		drawTextShadow(ui, PinballAssets.scorefont, stringBuilder.toString(), 20f, 20f, textAlpha);
+		drawTextShadow(ui, PinballAssets.scorefont, String.valueOf(model.balls), 0, 20f, width-20f, HAlignment.RIGHT, textAlpha);
+		drawTextShadow(ui, PinballAssets.scorefont, scoreText, 20f, 45f, textAlpha);
 		
 		/*if (model.gameOver && gameOverTimer.getLength() == 0) {
 			gameOverTimer.start(0.5f);
@@ -334,6 +372,8 @@ public class GameView extends BaseView implements OnLoadedListener {
 		}*/
 		
 		ui.end();
+		
+		stage.draw();
 	}
 
 	private void drawTextShadow(SpriteBatch batch, BitmapFont font, String text, float x, float y, float alpha) {
