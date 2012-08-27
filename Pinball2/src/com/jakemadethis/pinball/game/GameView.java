@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -22,7 +23,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.jakemadethis.pinball.AssetLoader.OnLoadedListener;
 import com.jakemadethis.pinball.BaseModel;
 import com.jakemadethis.pinball.BaseModel.EntityArgs;
 import com.jakemadethis.pinball.BaseView;
@@ -34,7 +34,7 @@ import com.jakemadethis.pinball.Interpolator;
 import com.jakemadethis.pinball.Timer;
 import com.jakemadethis.pinball.game.views.DrawableVisitor;
 
-public class GameView extends BaseView implements OnLoadedListener {
+public class GameView extends BaseView implements InputProcessor {
 
 	
 	public final OrthographicCamera worldCamera;
@@ -71,7 +71,6 @@ public class GameView extends BaseView implements OnLoadedListener {
 
 		this.model = model;
 		r = new Random();
-		PinballAssets.get().setOnLoadedListener(this);
 		
 		worldCamera = new OrthographicCamera(width, height);
 		worldCamera.setToOrtho(true);
@@ -83,10 +82,7 @@ public class GameView extends BaseView implements OnLoadedListener {
 	
 		//assets = PinballAssetManager.get();
 		//assets.loadGameAssets();
-	}
-	@Override
-	public void onLoaded() {
-		
+
 		//scorefont = new Font(textureMan.scorefont, true);
 		//scorefont.setLetterSpacing(-8);
 
@@ -167,6 +163,18 @@ public class GameView extends BaseView implements OnLoadedListener {
 				if (drawable != null) drawables.add(drawable);
 			}
 		});
+		model.entityRemovedHandler.add(new EventListener<BaseModel.EntityArgs>() {
+			@Override
+			public void invoke(Object sender, EntityArgs args) {
+				Entity entity = args.getEntity();
+				for (int i = 0; i < drawables.size(); i++) {
+					if (drawables.get(i).getEntity() == entity) {
+						drawables.remove(i);
+						i--;
+					}
+				}
+			}
+		});
 		
 		model.newBallHandler.add(new EventHandler.ActionListener() {
 			@Override public void invoke(Object sender, Object args) {
@@ -182,8 +190,9 @@ public class GameView extends BaseView implements OnLoadedListener {
 				gameOver();
 			}
 		});
-
 	}
+
+
 	
 	private void gameOver() {
 		gameOverScreen.visible = true;
@@ -206,8 +215,6 @@ public class GameView extends BaseView implements OnLoadedListener {
 	
 	@Override
 	public void think(float timestep) {
-		
-		if (!PinballAssets.get().update()) return;
 		
 		final float margin = 15f;
 		
@@ -264,14 +271,6 @@ public class GameView extends BaseView implements OnLoadedListener {
 	
 	@Override
 	public void render() {
-
-		if (!PinballAssets.get().isCompleted()) {
-
-			Gdx.gl20.glClearColor(0f, 0f, 0f, 1f);
-			Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
-			
-			return;
-		}
 		Gdx.gl20.glClearColor(0f, 0f, 0f, 1f);
 		Gdx.gl20.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		Gdx.gl20.glEnable(GL10.GL_BLEND);
@@ -390,6 +389,79 @@ public class GameView extends BaseView implements OnLoadedListener {
 
 	public void setScrolling(boolean b) {
 		this.scrolling = b;
+	}
+
+
+
+	@Override
+	public boolean keyDown(int keycode) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+	@Override
+	public boolean keyUp(int keycode) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+	@Override
+	public boolean keyTyped(char character) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+	@Override
+	public boolean touchDown(int x, int y, int pointer, int button) {
+		if (gameOverScreen.visible) {
+			gameOverScreen.touchDown(x, y, pointer);
+			return true;
+		}
+		return false;
+	}
+
+
+
+	@Override
+	public boolean touchUp(int x, int y, int pointer, int button) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+	@Override
+	public boolean touchDragged(int x, int y, int pointer) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+	@Override
+	public boolean touchMoved(int x, int y) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+	@Override
+	public boolean scrolled(int amount) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+	public void endGame() {
+		Pinball.setMenu();
 	}
 
 	

@@ -46,8 +46,8 @@ public class Input {
 	public void add(Connection connection) {
 		connections.add(connection);
 	}
-	public void invoke(Connection connection) {
-		handler.invoke(this, new EventArgs(connection.getInput().getName(), connection.getArgs()));
+	public void invokeFromConnection(Connection connection) {
+		handler.invokeFromInput(this, new EventArgs(connection.getInput().getName(), connection.getArgs()));
 	}
 	
 }

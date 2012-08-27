@@ -14,6 +14,7 @@ import com.jakemadethis.pinball.io.OutputHandler;
 import com.jakemadethis.pinball.level.Ball;
 import com.jakemadethis.pinball.level.Flipper;
 import com.jakemadethis.pinball.level.Flipper.Type;
+import com.jakemadethis.pinball.level.Gem;
 
 /**
  * Model for the game world
@@ -41,14 +42,18 @@ public class GameModel extends BaseModel {
 	
 	public GameModel() {
 		ioManager.add("level", null, outputs);
+		
+		add(new Gem(2f, 4f));
 	}
 	
 	
 	
 	
-	public void engageFlipper(boolean active) {		
+	public void engageLeftFlippers(boolean active) {		
 		for (Flipper f : flipperLeft) 
 			f.setFlipperEngaged(active);
+	}
+	public void engageRightFlippers(boolean active) {
 		for (Flipper f : flipperRight)
 			f.setFlipperEngaged(active);
 	}

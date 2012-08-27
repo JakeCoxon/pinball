@@ -5,7 +5,7 @@ package com.jakemadethis.pinball;
  * @author Jake
  *
  */
-public class PPTimer extends Timer {
+public class PingPong extends Timer {
 	private boolean forward = false;
 	
 	public void forward(float seconds) {

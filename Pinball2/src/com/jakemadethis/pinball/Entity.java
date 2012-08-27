@@ -73,6 +73,6 @@ public abstract class Entity {
 	 * @param action
 	 */
 	public void invokeInput(String action) {
-		inputs.invoke(this, new EventArgs(action));
+		inputs.invokeFromInput(this, new EventArgs(action));
 	}
 }

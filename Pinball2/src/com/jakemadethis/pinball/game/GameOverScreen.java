@@ -38,8 +38,8 @@ public class GameOverScreen extends Group {
 	@Override
 	public boolean touchDown(float x, float y, int pointer) {
 		this.visible = false;
-		Gdx.input.setInputProcessor(prevInputProcessor);
-		return super.touchDown(x, y, pointer);
+		gameView.endGame();
+		return true;
 	}
 	
 	public void setScore(int score) {

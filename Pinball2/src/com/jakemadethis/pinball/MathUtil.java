@@ -14,4 +14,10 @@ public class MathUtil {
 	public static float interp(float t, float min, float max) {
 		return min*(1-t)+max*t;
 	}
+	
+	public static float timeSine(float scale, float min, float max) {
+		double s = Math.sin(System.currentTimeMillis() / 1000d * (2 * Math.PI) * scale);
+		s = (s*0.5d)+0.5d;
+		return interp((float)s, min, max);
+	}
 }

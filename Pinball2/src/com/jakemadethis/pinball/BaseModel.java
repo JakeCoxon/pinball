@@ -62,7 +62,7 @@ public class BaseModel implements ContactListener {
 				remove(entities.getLast());
 			}
 		}
-		world = new World(new Vector2(0, 8f), true);
+		world = new World(new Vector2(0, 6f), true);
 		world.setContactListener(this);
 		ioManager = new IOManager();
 	}

@@ -2,11 +2,11 @@ package com.jakemadethis.pinball.game;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.jakemadethis.pinball.PPTimer;
+import com.jakemadethis.pinball.PingPong;
 
 public class TextButton extends com.badlogic.gdx.scenes.scene2d.ui.TextButton {
 
-	private final PPTimer timer = new PPTimer();
+	private final PingPong timer = new PingPong();
 	private final static float TIME_DOWN = 0.2f;
 	private final static float TIME_UP = 0.2f;
 	

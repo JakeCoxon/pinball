@@ -5,22 +5,25 @@ import com.jakemadethis.pinball.IState;
 
 public class Pinball implements ApplicationListener {
 
-	private IState current = null;
+	private static IState current = null;
 	
-	public void setMenu() {
-		current = new MainMenu(this);
+	public static void setMenu() {
+		current = new MainMenu();
 	}
 	
-	public void setGame(String levelName) {
+	public static void setGame(String levelName) {
 		long s = System.currentTimeMillis();
-		current = new GameState(this, levelName);
+		current = new GameState(levelName);
 		System.out.println("Started GameState in "+(System.currentTimeMillis()-s)+"ms");
+	}
+	
+	public static void setLoading() {
+		current = new LoadingScreen();
 	}
 
 	@Override
 	public void create() {
-		PinballAssets.get();
-		setMenu();
+		setLoading();
 	}
 	
 	@Override
@@ -39,6 +42,8 @@ public class Pinball implements ApplicationListener {
 	public void resize(int arg0, int arg1) {}
 
 	@Override
-	public void resume() {}
+	public void resume() {
+		setLoading();
+	}
 
 }

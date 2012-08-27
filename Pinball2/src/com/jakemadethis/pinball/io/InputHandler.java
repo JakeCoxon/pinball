@@ -21,7 +21,7 @@ public class InputHandler {
 		return inputs.get(inputName);
 	}
 	
-	public void invoke(Object sender, EventArgs args) {
+	public void invokeFromInput(Object sender, EventArgs args) {
 		listener.invoke(sender, args);
 	}
 

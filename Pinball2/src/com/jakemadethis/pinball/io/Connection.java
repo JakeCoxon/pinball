@@ -39,6 +39,6 @@ public class Connection {
 	}
 
 	public void invoke() {
-		input.invoke(this);
+		input.invokeFromConnection(this);
 	}
 }

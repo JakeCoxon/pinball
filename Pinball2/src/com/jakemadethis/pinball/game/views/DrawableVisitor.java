@@ -7,6 +7,7 @@ import com.jakemadethis.pinball.level.Ball;
 import com.jakemadethis.pinball.level.Bumper;
 import com.jakemadethis.pinball.level.EntityVisitor;
 import com.jakemadethis.pinball.level.Flipper;
+import com.jakemadethis.pinball.level.Gem;
 import com.jakemadethis.pinball.level.Kicker;
 import com.jakemadethis.pinball.level.Light;
 import com.jakemadethis.pinball.level.Sensor;
@@ -52,6 +53,11 @@ public class DrawableVisitor implements EntityVisitor<IDrawable, GameView> {
 	@Override
 	public IDrawable visit(Kicker kicker, GameView view) {
 		return new KickerDrawable(kicker, view);
+	}
+	
+	@Override
+	public IDrawable visit(Gem gem, GameView view) {
+		return new GemDrawable(gem, view);
 	}
 	
 

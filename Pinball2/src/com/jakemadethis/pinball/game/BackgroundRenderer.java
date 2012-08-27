@@ -1,5 +1,6 @@
 package com.jakemadethis.pinball.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -8,9 +9,9 @@ import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.jakemadethis.pinball.AssetLoadingTask;
+import com.jakemadethis.pinball.AssetGenerator;
 
-public class BackgroundRenderer extends AssetLoadingTask<Texture> {
+public class BackgroundRenderer extends AssetGenerator<Texture> {
 	final String vertexShader = 
   	"attribute vec4 a_position;    \n" + 
   	"void main()                  \n" + 
@@ -64,9 +65,17 @@ public class BackgroundRenderer extends AssetLoadingTask<Texture> {
 		
 	  
   }
+  public BackgroundRenderer() {
+  	this.width = Gdx.graphics.getWidth();
+		this.height = Gdx.graphics.getHeight();
+		this.midx = width/2;
+		this.midy = height*2/3;
+		this.radius = width*1.5f;
+		this.thickness = (width > 400 ? 6 : 4);
+  }
   
-	@Override
-	public Texture syncLoad() {
+  @Override
+	public Texture generate() {
 
 		bgShader = new ShaderProgram(vertexShader, fragmentShader);
 	

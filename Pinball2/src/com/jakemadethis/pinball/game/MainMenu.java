@@ -15,17 +15,16 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ClickListener;
 import com.badlogic.gdx.utils.Logger;
-import com.jakemadethis.pinball.AssetLoader.OnLoadedListener;
 import com.jakemadethis.pinball.IState;
+import com.jakemadethis.pinball.IView;
 import com.jakemadethis.pinball.Interpolator;
 import com.jakemadethis.pinball.LevelException;
 import com.jakemadethis.pinball.Timer;
 import com.jakemadethis.pinball.builder.LevelNameFactory;
 import com.jakemadethis.pinball.builder.XMLBuilder;
 
-public class MainMenu implements IState, ClickListener, OnLoadedListener {
+public class MainMenu implements IState, ClickListener, IView {
 
-	private final Pinball pinball;
 	private final SpriteBatch spriteBatch;
 	private final ArrayList<String> levels;
 	private final int press = -1;
@@ -41,10 +40,8 @@ public class MainMenu implements IState, ClickListener, OnLoadedListener {
 	
 
 
-	public MainMenu(Pinball pinball) {
-		this.pinball = pinball;
+	public MainMenu() {
 		
-		PinballAssets.get().setOnLoadedListener(this);
 		//assets.setOnLoadedListener(this);
 		
 		spriteBatch = new SpriteBatch();
@@ -83,10 +80,6 @@ public class MainMenu implements IState, ClickListener, OnLoadedListener {
 		
 		
 		Gdx.input.setCatchBackKey(false);
-	}
-	
-	@Override
-	public void onLoaded() {
 		
 		Gdx.app.setLogLevel(Logger.DEBUG);
 		Gdx.app.debug("JAKE", "asdasdsad "+big);	
@@ -104,10 +97,8 @@ public class MainMenu implements IState, ClickListener, OnLoadedListener {
 				addLevel(f);
 			}
 		}
-		
-		
-		
 	}
+	
 	
 	
 
@@ -140,18 +131,6 @@ public class MainMenu implements IState, ClickListener, OnLoadedListener {
 
 	@Override
 	public void run() {
-		if (!PinballAssets.get().update()) {
-
-			Gdx.gl20.glClearColor(0f, 0f, 0f, 1f);
-			Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
-			
-			spriteBatch.begin();
-			
-			spriteBatch.draw(loading, width/2-32, height/2-32, 32, 32, 64, 64, 1, 1, 0, 0, 0, 64, 64, false, true);
-			spriteBatch.end();
-			
-			return;
-		}
 		
 		
 		Gdx.gl20.glClearColor(0.6f, 0.2f, 0.4f, 1f);
@@ -193,7 +172,7 @@ public class MainMenu implements IState, ClickListener, OnLoadedListener {
 		
 		
 		if (slideTimer.finished()) {
-			pinball.setGame(playLevel);
+			Pinball.setGame(playLevel);
 		}
 		
 		
@@ -211,6 +190,21 @@ public class MainMenu implements IState, ClickListener, OnLoadedListener {
 
 	@Override
 	public void click(Actor actor, float x, float y) {
+	}
+
+
+	@Override
+	public void render() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+	@Override
+	public void think(float timeStep) {
+		// TODO Auto-generated method stub
 	}
 
 }

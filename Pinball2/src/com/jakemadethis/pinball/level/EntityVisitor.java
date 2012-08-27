@@ -11,6 +11,7 @@ import com.jakemadethis.pinball.Entity;
  */
 public interface EntityVisitor <R, A> {
 	R visit(Entity entity, A arg);
+	R visit(Gem gem, A arg);
 	R visit(Wall wallPath, A arg);
 	R visit(Ball ball, A arg);
 	R visit(Bumper bumper, A arg);

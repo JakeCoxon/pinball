@@ -22,7 +22,6 @@ public class GameController implements InputProcessor {
 	
 	final private GameModel model;
 	final private GameView view;
-	private final Pinball pinball;
 	private final Timer gamePausedTimer = new Timer();
 	private final String levelName;
 
@@ -32,9 +31,7 @@ public class GameController implements InputProcessor {
 
 	private MouseJoint mouseJoint;
 	
-	public GameController(Pinball pinball, final GameModel model, final GameView view, String levelName) {
-		
-		this.pinball = pinball;
+	public GameController(final GameModel model, final GameView view, String levelName) {
 		this.model = model;
 		this.view = view;
 		
@@ -112,7 +109,21 @@ public class GameController implements InputProcessor {
 			return true;
 		}
 		else if (keycode == Keys.BACK || keycode == Keys.BACKSPACE) {
-			pinball.setMenu();
+			Pinball.setMenu();
+			return true;
+		}
+		else if (keycode == Keys.SPACE) {
+			if (!model.getBall().isActive()) {
+				model.getBall().launch();
+			}
+		}
+		else if (keycode == Keys.LEFT) {
+			model.engageLeftFlippers(true);
+			return true;
+		}
+		else if (keycode == Keys.RIGHT) {
+			model.engageRightFlippers(true);
+			return true;
 		}
 		return false;
 	}
@@ -120,6 +131,14 @@ public class GameController implements InputProcessor {
 
 	@Override
 	public boolean keyUp(int keycode) {
+		if (keycode == Keys.LEFT) {
+			model.engageLeftFlippers(false);
+			return true;
+		}
+		else if (keycode == Keys.RIGHT) {
+			model.engageRightFlippers(false);
+			return true;
+		}
 		return false;
 	}
 
@@ -130,15 +149,21 @@ public class GameController implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int x, int y, int pointer, int button) {
+		
+		if (view.touchDown(x, y, pointer, button)) {
+			return true;
+		}
+		
 		if (model.gameOver) {
 			if(gamePausedTimer.finished())
-				pinball.setMenu();
+				Pinball.setMenu();
 			return true; 
 		}
 		
 		if (button == 0) {
 			if (model.getBall().isActive()) {
-				model.engageFlipper(true);
+				model.engageLeftFlippers(true);
+				model.engageRightFlippers(true);
 			}
 			else {
 				model.getBall().launch();
@@ -173,7 +198,8 @@ public class GameController implements InputProcessor {
 
 	@Override
 	public boolean touchUp(int x, int y, int pointer, int button) {
-		model.engageFlipper(false);
+		model.engageLeftFlippers(false);
+		model.engageRightFlippers(false);
 		if (dragging) {
 			dragging = false;
 			model.world.destroyJoint(mouseJoint);
