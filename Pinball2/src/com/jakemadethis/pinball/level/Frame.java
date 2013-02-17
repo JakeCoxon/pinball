@@ -70,6 +70,10 @@ public class Frame extends Attachable {
 				bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1]);
 	}
 	
+	public Frame(Attachable rel_to) {
+		super(rel_to);
+	}
+	
 	public Frame(float x, float y, float width, float height) {
 		super(x, y, width, height);
 	}

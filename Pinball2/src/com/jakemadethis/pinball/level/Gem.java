@@ -1,6 +1,7 @@
 package com.jakemadethis.pinball.level;
 
 import com.badlogic.gdx.physics.box2d.Body;
+import com.jakemadethis.pinball.BaseModel;
 import com.jakemadethis.pinball.Entity;
 import com.jakemadethis.pinball.game.GameModel;
 
@@ -10,9 +11,10 @@ public class Gem extends Entity {
 	private final float y;
 	private float radius = 0.1f;
 
-	public Gem(float x, float y) {
+	public Gem(BaseModel model, float x, float y) {
 		this.x = x;
 		this.y = y;
+		model.add(this);
 	}
 	
 	public float getX() {

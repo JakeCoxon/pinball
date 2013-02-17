@@ -6,9 +6,9 @@ import com.jakemadethis.pinball.BaseModel;
 import com.jakemadethis.pinball.EventHandler.EventListener;
 import com.jakemadethis.pinball.builder.BuilderNode;
 import com.jakemadethis.pinball.builder.FactoryUtil;
-import com.jakemadethis.pinball.io.Input.EventArgs;
-import com.jakemadethis.pinball.io.InputHandler;
-import com.jakemadethis.pinball.io.OutputHandler;
+import com.jakemadethis.pinball.io.Slot.EventArgs;
+import com.jakemadethis.pinball.io.SlotHandler;
+import com.jakemadethis.pinball.io.SignalHandler;
 
 public class Counter implements EventListener<EventArgs> {
 	
@@ -25,21 +25,21 @@ public class Counter implements EventListener<EventArgs> {
 	
 	private int max;
 	private int count;
-	private InputHandler inputHandler;
-	private OutputHandler outputHandler;
+	private SlotHandler inputHandler;
+	private SignalHandler outputHandler;
 	
 
 	public Counter(int max) {
 		this.max = max;
 		this.count = 0;
-		this.inputHandler = new InputHandler(this, "increment", "reset");
-		this.outputHandler = new OutputHandler("onMax");
+		this.inputHandler = new SlotHandler(this, "increment", "reset");
+		this.outputHandler = new SignalHandler("onMax");
 	}
 
 
 	@Override
 	public void invoke(Object sender, EventArgs args) {
-		String event = args.getInputName();
+		String event = args.getSlotName();
 		if (event.equals("increment")) {
 			increment();
 		}

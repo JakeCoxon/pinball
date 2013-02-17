@@ -1,0 +1,57 @@
+<level name="New Cool Level" size="480,1000">
+  <!-- bounds -->
+  <wall>
+    <point at="0,-130 bottomleft" />
+    <arc at="0,0 topleft" radius="100" />
+    <arc at="0,0 topright" radius="100" />
+    <point at="0,0 bottomright" />
+  </wall>
+
+  <!-- from top left to bottom left -->
+  <wall>
+    <point at="0,-130 bottomleft" />
+    <point at="100,-85 bottomleft" />
+  </wall>
+
+  <!-- slide to the right of the flipper -->
+  <wall>
+    <point at="-32,-130 bottomright" />
+    <point at="-130,-85 bottomright" />
+  </wall>
+
+
+  <!-- ball chute on the right -->
+  <wall>
+    <point at="-32,-400 bottomright" />
+    <point at="-32,0 bottomright" />
+  </wall>
+  
+  <!-- ball hatch over the chute -->
+  <wall name="chuteHatch">
+    <point at="-32,-400 bottomright" />
+    <point at="0,-430 bottomright" />
+  </wall>
+  
+  <!-- triangle on left -->
+  <wall>
+    <point at="0,300 topleft" />
+    <point at="90,370 topleft" />
+    <point at="0,520 topleft" />
+  </wall>
+  
+  <!-- bumpers -->
+  <bumper at="130,110" radius="50" name="bumpers-0" />
+  <bumper at="300,150" radius="50" name="bumpers-1" />
+  <bumper at="360,300" radius="64" name="bumpers-2" />
+
+
+  <left-flipper at="200,200" length="200" />
+
+  <light-group score="100" color="primary">
+    <light at="100,400" radius="20" />
+    <light at="70,450" radius="20" />
+    <light at="40,500" radius="20" />
+  </light-group>
+
+  <ball-start at="-200,-200 bottomright" />
+</level>

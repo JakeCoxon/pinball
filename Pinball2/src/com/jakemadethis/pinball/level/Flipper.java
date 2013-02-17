@@ -18,31 +18,6 @@ import com.jakemadethis.pinball.game.GameModel;
 
 public class Flipper extends Entity implements IElement {
 
-	/**
-	 * Creates flipper from attributes: at,length,type[,name]
-	 * @param model
-	 * @param atts
-	 * @return
-	 */
-	public static Flipper fromNode(BaseModel model, BuilderNode node) {
-
-		HashMap<String, String> atts = node.getAttributes();
-		
-		
-		float[] at = FactoryUtil.getAbsolutePosition(node.getParent().getValue(), atts);
-		float length =        Float.valueOf( FactoryUtil.expected(atts, "length") );
-		String stype = 						 FactoryUtil.expected(atts, "type");
-		String name = 						 FactoryUtil.optional(atts, "name", "");
-		
-		Flipper.Type type = Flipper.Type.LEFT;
-		if (stype.equals("right"))
-			type = Flipper.Type.RIGHT;
-	
-		Flipper entity = model.addFlipper(at[0], at[1], length, type);
-		model.setName(name, entity);
-		
-		return entity;
-	}
 	
 	public enum Type {
 		LEFT, RIGHT;
@@ -59,10 +34,10 @@ public class Flipper extends Entity implements IElement {
 	private boolean engaged;
 	private final Type type;
 
-	public Flipper(World world, float cx, float cy, float length, Type type) {
+	public Flipper(BaseModel model, float cx, float cy, float length, Type type) {
 		
 		this.type = type;
-    	anchorBody = Box2DFactory.createCircle(world, cx, cy, 0.005f, true);
+    	anchorBody = Box2DFactory.createCircle(model.world, cx, cy, 0.005f, true);
     	anchorBody.setUserData(this);
     	
     	minangle = (float) (-Math.PI/8);
@@ -74,7 +49,7 @@ public class Flipper extends Entity implements IElement {
     	
 		float ext = 0;//(length > 0) ? -0.05f : +0.05f;
 		
-		flipperBody = Box2DFactory.createWall(world, cx+ext, cy-0.012f, cx+length, cy+0.012f, 0f);
+		flipperBody = Box2DFactory.createWall(model.world, cx+ext, cy-0.012f, cx+length, cy+0.012f, 0f);
 		flipperBody.setUserData(this);
   	flipperBody.setType(BodyType.DynamicBody);
   	flipperBody.setBullet(true);
@@ -90,8 +65,10 @@ public class Flipper extends Entity implements IElement {
   	jointDef.upperAngle = (type == Type.LEFT) ? this.maxangle : -this.minangle;
   	jointDef.maxMotorTorque = 50f;
   	
-  	joint = (RevoluteJoint)world.createJoint(jointDef);
+  	joint = (RevoluteJoint)model.world.createJoint(jointDef);
   	setEffectiveMotorSpeed(downspeed);
+  	
+  	model.add(this);
 	}
 	
 	@Override

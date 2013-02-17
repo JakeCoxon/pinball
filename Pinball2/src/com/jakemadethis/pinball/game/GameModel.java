@@ -1,7 +1,9 @@
 package com.jakemadethis.pinball.game;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.jakemadethis.pinball.BaseModel;
@@ -10,7 +12,7 @@ import com.jakemadethis.pinball.EventHandler;
 import com.jakemadethis.pinball.IElement;
 import com.jakemadethis.pinball.LevelException;
 import com.jakemadethis.pinball.Timer;
-import com.jakemadethis.pinball.io.OutputHandler;
+import com.jakemadethis.pinball.io.SignalHandler;
 import com.jakemadethis.pinball.level.Ball;
 import com.jakemadethis.pinball.level.Flipper;
 import com.jakemadethis.pinball.level.Flipper.Type;
@@ -24,6 +26,7 @@ import com.jakemadethis.pinball.level.Gem;
 public class GameModel extends BaseModel {
 
 	
+	private static final float BALL_RADIUS = 0.15f;
 	private Ball ball;
 	private final LinkedList<Flipper> flipperLeft = new LinkedList<Flipper>();
 	private final LinkedList<Flipper> flipperRight = new LinkedList<Flipper>();
@@ -36,14 +39,16 @@ public class GameModel extends BaseModel {
 	private final Timer comboTimer = new Timer();
 	private final Timer awesomeTimer = new Timer();
 	public boolean awesomeMode = false;
-	private final OutputHandler outputs = new OutputHandler("onReset");
+	private final SignalHandler outputs = new SignalHandler("onReset");
 	public boolean gameOver;
+	private Vector2 initialBallPos;
 	
 	
 	public GameModel() {
 		ioManager.add("level", null, outputs);
 		
-		add(new Gem(2f, 4f));
+		
+		new Gem(this, 2f, 4f);
 	}
 	
 	
@@ -62,21 +67,21 @@ public class GameModel extends BaseModel {
 		return ball;
 	}
 	
-	@Override
-	public synchronized Flipper addFlipper(float cx, float cy, float length,
-			Type type) {
-		Flipper f = super.addFlipper(cx, cy, length, type);
-		if (type == Type.LEFT) flipperLeft.add(f);
-		else if (type == Type.RIGHT) flipperRight.add(f);
-		return f;
+	public void addBallPos(float x, float y) {
+		initialBallPos = new Vector2(x, y);
 	}
 	
-	@Override
-	public synchronized Ball addBall(float cx, float cy, float radius) {
-		if (ball != null) throw new LevelException("Only 1 ball currently allowed");
-		Ball b = super.addBall(cx, cy, radius);
-		ball = b;
-		return b;
+	
+	public <T extends Entity> T add(T entity) {
+		entity = super.add(entity);
+		if (entity instanceof Ball) {
+			ball = (Ball) entity;
+		} else if (entity instanceof Flipper) {
+			Flipper flipper = (Flipper) entity;
+			if (flipper.getType() == Type.LEFT) flipperLeft.add(flipper);
+			else if (flipper.getType() == Type.RIGHT) flipperRight.add(flipper);
+		}
+		return entity;
 	}
 	
 	/**
@@ -87,7 +92,7 @@ public class GameModel extends BaseModel {
 		
 		//width = 480f;
 		//height = 1000f;
-		scale = 100f;
+		//scale = 100f;
 		
 		ioManager.debugPrint();
 		
@@ -95,9 +100,9 @@ public class GameModel extends BaseModel {
 		
 		reset();
 		
-		scale = 1f;
-		width /= 100f;
-		height /= 100f;
+		//scale = 1f;
+		//width /= 100f;
+		//height /= 100f;
 	}
 	
 	
@@ -120,12 +125,16 @@ public class GameModel extends BaseModel {
 		if (awesomeMode) score *= 2;
 		
 		super.addScore(score);
-		
 	}
 	
 
 	public synchronized void reset() {
-		getBall().reset();
+		if(ball == null) 
+			ball = add(new Ball(this, initialBallPos.x, initialBallPos.y, BALL_RADIUS));
+		
+		ball.reset();
+		ball.setPos(initialBallPos);
+		
 		awesomeMode = false;
 		combo = 0;
 		if (balls > 0) {

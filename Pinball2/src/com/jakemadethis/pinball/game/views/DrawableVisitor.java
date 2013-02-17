@@ -17,7 +17,7 @@ public class DrawableVisitor implements EntityVisitor<IDrawable, GameView> {
 
 	@Override
 	public IDrawable visit(Entity entity, GameView arg) {
-		return entity.accept(this, arg);
+		return null;
 	}
 	
 	@Override

@@ -9,32 +9,23 @@ import com.jakemadethis.pinball.IDrawable;
 import com.jakemadethis.pinball.builder.BuilderNode;
 import com.jakemadethis.pinball.builder.FactoryUtil;
 import com.jakemadethis.pinball.game.GameModel;
-import com.jakemadethis.pinball.io.OutputHandler;
+import com.jakemadethis.pinball.io.SignalHandler;
 
 public class Sensor extends Entity {
-
-	public static Sensor fromNode(BaseModel model, BuilderNode node) {
-		HashMap<String, String> atts = node.getAttributes();
-		float[] pos = FactoryUtil.getAbsolutePosition(node.getParent().getValue(), atts);
-		float radius = 			 Float.valueOf( FactoryUtil.expected(atts, "radius") );
-		String name = FactoryUtil.optional(atts, "name", "");
-		
-		Sensor s = model.addSensor(pos[0], pos[1], radius);
-		model.setName(name, s);
-		return s;
-	}
 	
 	private float x;
 	private float y;
 	private float radius;
 	private boolean sense = false;
 
-	public Sensor(float x, float y, float radius) {
+	public Sensor(BaseModel model, float x, float y, float radius) {
 		this.x = x;
 		this.y = y;
 		this.radius = radius;
 		
-		outputs = new OutputHandler("onSense", "onUnSense");
+		signals = new SignalHandler("onSense", "onUnSense");
+		
+		model.add(this);
 	}
 	
 	@Override
@@ -62,13 +53,13 @@ public class Sensor extends Entity {
 		if (test(model.getBall())) {
 			if(!sense) {
 				sense = true;
-				outputs.invoke("onSense");
+				signals.invoke("onSense");
 			}
 		}
 		else {
 			if (sense) {
 				sense = false;
-				outputs.invoke("onUnSense");
+				signals.invoke("onUnSense");
 			}
 		}
 	}

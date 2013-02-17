@@ -8,16 +8,29 @@ package com.jakemadethis.pinball;
 public class PingPong extends Timer {
 	private boolean forward = false;
 	
+	@Override
+	public void start(float lengthSeconds) {
+	  forward(lengthSeconds);
+	}
+	
+	private void oldStart(float seconds, boolean gameSpeed) {
+	  this.length = (long) (seconds * 1000000000L);
+    if (gameSpeed) length /= GAME_SPEED;
+    startTime = System.nanoTime();
+	}
+	
+	
 	public void forward(float seconds) {
 		forward = true;
 		float v = super.value();
-		start(seconds);
+		oldStart(seconds, true);
 		setValue(1-v);
 	}
+	
 	public void backward(float seconds) {
 		forward = false;
 		float v = super.value();
-		start(seconds);
+		oldStart(seconds, true);
 		setValue(1-v);
 	}
 	

@@ -26,7 +26,7 @@ public class LightDrawable implements IDrawable {
 	@Override
 	public void draw() {
 		float x = light.getX(), y = light.getY();
-		float w = light.getWidth(), h = light.getHeight();
+		float r = light.getRadius();
 		
 		boolean on = light.isEnabled();
 		if (light.isFlashing()) {
@@ -36,12 +36,11 @@ public class LightDrawable implements IDrawable {
 		Color color = null;
 		if (on) {
 			color = light.getColor();
-			w *= 1.1f;
-			h *= 1.1f;
+			r *= 1.1f;
 			color.a = 2f;
 			view.world.setColor(1f, 0f, 0f, MathUtil.timeSine(1f, 0.5f, 0.6f));
-			float r = MathUtil.timeSine(1f, 0.4f, 0.41f);
-			view.world.draw(view.getSprite("gradient"), x-r, y-r, 2*r, 2*r);
+			float rs = MathUtil.timeSine(1f, 0.4f, 0.41f);
+			view.world.draw(view.getSprite("gradient"), x-rs, y-rs, 2*rs, 2*rs);
 		}
 		else {
 			color = offColor;
@@ -50,7 +49,7 @@ public class LightDrawable implements IDrawable {
 		
 		
 		view.world.setColor(color);
-		view.world.draw(view.getSprite("bumper"), x-w/2, y-h/2, w, h);
+		view.world.draw(view.getSprite("bumper"), x-r/2, y-r/2, r, r);
 	}
 
 }

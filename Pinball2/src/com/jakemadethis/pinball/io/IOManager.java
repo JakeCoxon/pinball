@@ -8,12 +8,12 @@ import com.jakemadethis.pinball.Entity;
 public class IOManager {
 		
 	
-	private HashMap<String, ArrayList<InputHandler>> inputsMap;
-	private HashMap<String, ArrayList<OutputHandler>> outputsMap;
+	private HashMap<String, ArrayList<SlotHandler>> inputsMap;
+	private HashMap<String, ArrayList<SignalHandler>> outputsMap;
 	
 	public IOManager() {
-		inputsMap = new HashMap<String, ArrayList<InputHandler>>();
-		outputsMap = new HashMap<String, ArrayList<OutputHandler>>();
+		inputsMap = new HashMap<String, ArrayList<SlotHandler>>();
+		outputsMap = new HashMap<String, ArrayList<SignalHandler>>();
 	}
 
 	/**
@@ -22,7 +22,7 @@ public class IOManager {
 	 * @param entity
 	 */
 	public void add(String fullName, Entity entity) {
-		add(fullName, entity.inputs, entity.outputs);
+		add(fullName, entity.getSlots(), entity.getSignals());
 	}
 	
 	/**
@@ -31,7 +31,7 @@ public class IOManager {
 	 * @param inputHandler
 	 * @param outputHandler
 	 */
-	public void add(String fullName, InputHandler inputHandler, OutputHandler outputHandler) {
+	public void add(String fullName, SlotHandler inputHandler, SignalHandler outputHandler) {
 		
 		Integer id = null;
 		try { id = Pattern.matchID(fullName); }
@@ -40,9 +40,9 @@ public class IOManager {
 		String name = Pattern.matchName(fullName);
 		
 		if (inputHandler != null) {
-			ArrayList<InputHandler> inputs;
+			ArrayList<SlotHandler> inputs;
 			if (!inputsMap.containsKey(name))
-				inputsMap.put(name, inputs = new ArrayList<InputHandler>());
+				inputsMap.put(name, inputs = new ArrayList<SlotHandler>());
 			else
 				inputs = inputsMap.get(name);
 			
@@ -50,15 +50,15 @@ public class IOManager {
 		}
 		
 		if (outputHandler != null) {
-			ArrayList<OutputHandler> outputs;
+			ArrayList<SignalHandler> outputs;
 			if (!outputsMap.containsKey(name))
-				outputsMap.put(name, outputs = new ArrayList<OutputHandler>());
+				outputsMap.put(name, outputs = new ArrayList<SignalHandler>());
 			else
 				outputs = outputsMap.get(name);
 			
 			set(outputs, id, outputHandler);
 			
-			outputHandler.setRelatedInputHandler(inputHandler);
+			outputHandler.setRelatedSlotHandler(inputHandler);
 		}
 	}
 	
@@ -72,7 +72,7 @@ public class IOManager {
 	}
 	
 	public void addEvent(String forName, String eventName, String targetName, String actionString) {
-		ArrayList<OutputHandler> collection = getOutput(forName);
+		ArrayList<SignalHandler> collection = getOutput(forName);
 		if (collection == null) 
 			throw new IOException("Couldn't find any entities matching '"+forName+"'");
 		System.out.println("Found "+collection.size()+" OutputHandlers for "+forName);
@@ -80,22 +80,22 @@ public class IOManager {
 		boolean self = targetName.equals("#self");
 		
 		for (int i = 0; i < collection.size(); i++) {
-			OutputHandler outputHandler = collection.get(i);
+			SignalHandler outputHandler = collection.get(i);
 			
 			if (self) {
-				addEvent(outputHandler, eventName, outputHandler.getRelatedInputHandler(), actionString);
+				addEvent(outputHandler, eventName, outputHandler.getRelatedSlotHandler(), actionString);
 			}
 			else {
-				ArrayList<InputHandler> targets = getInputReplaced(targetName, i);
+				ArrayList<SlotHandler> targets = getInputReplaced(targetName, i);
 				if (targets == null) {
 					throw new IOException("Couldn't find any entities matching '"+targetName+"'");
 				}
-				for (InputHandler target : targets)
+				for (SlotHandler target : targets)
 					addEvent(outputHandler, eventName, target, actionString);
 			}
 		}
 	}
-	private static void addEvent(OutputHandler output, String eventName, InputHandler target, String actionString) {
+	private static void addEvent(SignalHandler output, String eventName, SlotHandler target, String actionString) {
 		System.out.println("Add event "+eventName+" -> "+actionString);
 		String[] split = actionString.split(",");
 		String action = split[0];
@@ -109,10 +109,10 @@ public class IOManager {
 	}
 	
 	
-	public HashMap<String, ArrayList<InputHandler>> getAllInputs() {
+	public HashMap<String, ArrayList<SlotHandler>> getAllInputs() {
 		return inputsMap;
 	}
-	public HashMap<String, ArrayList<OutputHandler>> getAllOutputs() {
+	public HashMap<String, ArrayList<SignalHandler>> getAllOutputs() {
 		return outputsMap;
 	}
 	
@@ -121,7 +121,7 @@ public class IOManager {
 	 * @param fullName
 	 * @return
 	 */
-	public ArrayList<InputHandler> getInput(String fullName) {
+	public ArrayList<SlotHandler> getInput(String fullName) {
 		return Pattern.match(inputsMap, fullName);
 	}
 	
@@ -131,7 +131,7 @@ public class IOManager {
 	 * @param number
 	 * @return ArrayList of InputHandler's - Note there may be gaps in the array
 	 */
-	public ArrayList<InputHandler> getInputReplaced(String fullName, int number) {
+	public ArrayList<SlotHandler> getInputReplaced(String fullName, int number) {
 		return getInput(fullName.replace("#", String.valueOf(number)));
 	}
 	
@@ -142,7 +142,7 @@ public class IOManager {
 	 * @param groupName
 	 * @return
 	 */
-	public ArrayList<InputHandler> getInputGroup(String groupName) {
+	public ArrayList<SlotHandler> getInputGroup(String groupName) {
 		return inputsMap.get(groupName);
 	}
 	
@@ -151,7 +151,7 @@ public class IOManager {
 	 * @param fullName
 	 * @return
 	 */
-	public ArrayList<OutputHandler> getOutput(String fullName) {
+	public ArrayList<SignalHandler> getOutput(String fullName) {
 		return Pattern.match(outputsMap, fullName);
 	}
 	
@@ -160,7 +160,7 @@ public class IOManager {
 	 * @param groupName
 	 * @return
 	 */
-	public ArrayList<OutputHandler> getOutputGroup(String groupName) {
+	public ArrayList<SignalHandler> getOutputGroup(String groupName) {
 		return outputsMap.get(groupName);
 	}
 
@@ -168,7 +168,7 @@ public class IOManager {
 		System.out.println("Inputs");
 		for (String str : inputsMap.keySet()) {
 			//System.out.println(" "+str);
-			ArrayList<InputHandler> list = inputsMap.get(str);
+			ArrayList<SlotHandler> list = inputsMap.get(str);
 			for (int i = 0; i < list.size(); i++) {
 				if (list.get(i) != null)
 					System.out.println(" "+str+"-"+i);
@@ -177,7 +177,7 @@ public class IOManager {
 		System.out.println("Outputs");
 		for (String str : outputsMap.keySet()) {
 			//System.out.println(" "+str);
-			ArrayList<OutputHandler> list = outputsMap.get(str);
+			ArrayList<SignalHandler> list = outputsMap.get(str);
 			for (int i = 0; i < list.size(); i++) {
 				if (list.get(i) != null)
 					System.out.println(" "+str+"-"+i);
@@ -186,8 +186,8 @@ public class IOManager {
 	}
 
 	public void testAdd() {
-		InputHandler input = new InputHandler(null);
-		OutputHandler output = new OutputHandler();
+		SlotHandler input = new SlotHandler(null);
+		SignalHandler output = new SignalHandler();
 		add("test", input, output);
 		add("test", input, output);
 		add("test", input, output);

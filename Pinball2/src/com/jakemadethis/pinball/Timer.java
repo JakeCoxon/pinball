@@ -1,6 +1,5 @@
 package com.jakemadethis.pinball;
 
-import com.jakemadethis.pinball.game.GameController;
 
 /**
  * A timer class that interpolates between two values over time
@@ -9,8 +8,13 @@ import com.jakemadethis.pinball.game.GameController;
  */
 public class Timer {
 	
-	private long length = 0;
-	private long startTime = 0;
+	public final static float GAME_SPEED = 1;//0.1f;
+	
+	protected long length = 0;
+	protected long startTime = 0;
+
+	private float a;
+
 	public Timer() {
 		
 	}
@@ -22,7 +26,7 @@ public class Timer {
 	 */
 	public void start(float lengthSeconds, boolean gameSpeed) {
 		this.length = (long) (lengthSeconds * 1000000000L);
-		if (gameSpeed) length /= GameController.gameSpeed;
+		if (gameSpeed) length /= GAME_SPEED;
 		startTime = System.nanoTime();
 	}
 	
@@ -38,7 +42,7 @@ public class Timer {
 	 * @return the value of the timer between 0 and 1
 	 */
 	public float value() {
-		return Math.min((float)(System.nanoTime() - startTime) / length, 1);
+		return a = Math.min((float)(System.nanoTime() - startTime) / length, 1);
 	}
 	
 	/**

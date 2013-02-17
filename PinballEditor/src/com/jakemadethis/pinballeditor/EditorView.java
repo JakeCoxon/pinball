@@ -97,10 +97,10 @@ public class EditorView extends BaseView {
 		worldCamera.position.set(model.width/2, model.height/2, 0f);
 		worldCamera.zoom = model.height / (height - 20f);
 	}
-
+	
 	@Override
-	public void think(float timeStep) {
-		
+	public void act(float timestep) {
+
 		//worldCamera.position.set(0f, 0f, 0f);
 		//worldCamera.position.add(0.1f, 0.1f, 0f);
 		int dx = (Gdx.input.isKeyPressed(Keys.RIGHT) ? 1 : 0) - (Gdx.input.isKeyPressed(Keys.LEFT) ? 1 : 0);
@@ -113,9 +113,7 @@ public class EditorView extends BaseView {
 		world.setProjectionMatrix(worldCamera.combined);
 	}
 	
-	
-	@Override
-	public void render() {
+	public void renderWorld() {
 
 		Gdx.gl20.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		Gdx.gl20.glEnable(GL10.GL_BLEND);

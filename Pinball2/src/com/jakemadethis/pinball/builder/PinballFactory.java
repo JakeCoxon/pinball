@@ -16,10 +16,8 @@ import com.jakemadethis.pinball.level.Kicker;
 import com.jakemadethis.pinball.level.Level;
 import com.jakemadethis.pinball.level.Light;
 import com.jakemadethis.pinball.level.Points;
-import com.jakemadethis.pinball.level.RoundedWall;
 import com.jakemadethis.pinball.level.Sensor;
 import com.jakemadethis.pinball.level.Wall;
-import com.jakemadethis.pinball.level.WallArc;
 
 /**
  * Implementation of BuilderFactory
@@ -40,8 +38,8 @@ public class PinballFactory implements BuilderFactory<Object> {
 	private final static Class<?>[] types = new Class<?>[] {
 		Ball.class, Bumper.class, Counter.class, Event.class,
 		Flipper.class, Frame.class, Kicker.class, Level.class,
-		Light.class, Points.class, RoundedWall.class, Sensor.class, 
-		Wall.class, WallArc.class
+		Light.class, Points.class, Sensor.class, 
+		Wall.class
 	};
 	
 	

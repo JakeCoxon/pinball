@@ -11,8 +11,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 
-public abstract class BaseView implements IView {
+public abstract class BaseView {
 	
 	public enum BlendMode {
 		Normal, Additive, Premultiplied;
@@ -23,14 +25,17 @@ public abstract class BaseView implements IView {
 	public BaseModel model;
 	protected LinkedList<IDrawable> drawables;
 
-	protected final float width;
-	protected final float height;
+	//protected final float width;
+	//protected final float height;
 
 	private final Texture pixelTexture;
 
 	//protected ShaderProgram flatShader;
 	//protected ShaderProgram textureShader;
 	protected HashMap<String, TextureRegion> sprites;
+
+	protected final int width;
+	protected final int height;
 
 	//public Layer ui;
 	//public Layer world;
@@ -75,6 +80,8 @@ public abstract class BaseView implements IView {
 
 	}
 	
+	public abstract void think(float timestep);
+	
 	public void addDrawable(IDrawable d) {
 		drawables.add(d);
 	}
@@ -110,4 +117,7 @@ public abstract class BaseView implements IView {
 	public TextureRegion getSprite(String name) {
 		return sprites.get(name);
 	}
+
+	public abstract void draw(SpriteBatch batch, float parentAlpha);
+	
 }

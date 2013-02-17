@@ -10,13 +10,13 @@ import org.junit.Test;
 public class IOManagerTest {
 	
 	IOManager manager;
-	InputHandler[] handlers = new InputHandler[10];
+	SlotHandler[] handlers = new SlotHandler[10];
 	
 	@Before
 	public void setUp() {
 		manager = new IOManager();
 		for (int i = 0; i < handlers.length; i++)
-			handlers[i] = new InputHandler(null);
+			handlers[i] = new SlotHandler(null);
 	}
 	
 	@Test
@@ -26,7 +26,7 @@ public class IOManagerTest {
 		assertEquals(1, manager.getInputGroup("test").size());
 
 		manager.add("test", handlers[1], null);
-		ArrayList<InputHandler> inputGroup = manager.getInputGroup("test");
+		ArrayList<SlotHandler> inputGroup = manager.getInputGroup("test");
 		assertEquals(handlers[0], inputGroup.get(0));
 		assertEquals(handlers[1], inputGroup.get(1));
 		assertEquals(2, inputGroup.size());
@@ -44,7 +44,7 @@ public class IOManagerTest {
 		
 		// size should be 5 but [0] and [3] will be null
 		
-		ArrayList<InputHandler> inputGroup = manager.getInputGroup("test");
+		ArrayList<SlotHandler> inputGroup = manager.getInputGroup("test");
 
 		assertEquals(5, inputGroup.size());
 

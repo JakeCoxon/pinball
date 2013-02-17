@@ -1,0 +1,56 @@
+; yahhh
+
+(scope "triple-lights"
+
+  (counter "counter" max 3)
+  (points "number" number 100)
+
+  (macro makelight
+    (light at #at size (20 20) color primary name "light-#id")
+    (sensor at #at radius 10 name "sensor-#id"))
+
+  (makelight id 0 at (100 400 topleft))
+  (makelight id 1 at (70 450 topleft))
+  (makelight id 2 at (400 500 topleft))
+
+  (on sensor triggered
+    (disable light-all))
+
+  (on level reset
+    (enable light-all)
+    (reset counter))
+
+  (on light-all disabled
+    (inc counter))
+
+  (on counter triggered
+    (increment points)
+    (enable light-all)
+    (flash light-all 5)
+    (reset counter))
+
+)
+
+
+<!-- before: -->
+
+  <event for="lightsensor" when="onSense" target="light-#" action="disable" />
+  <event for="level" when="onReset" target="light" action="enable" />
+  <event for="level" when="onReset" target="lightcounter" action="reset" />
+  <event for="light" when="onDisable" target="lightcounter" action="increment" />
+  <event for="lightcounter" when="onMax" target="lightspoints" action="increment" />
+  <event for="lightcounter" when="onMax" target="light" action="enable" />
+  <event for="lightcounter" when="onMax" target="light" action="flash,5" />
+  <event for="lightcounter" when="onMax" target="lightcounter" action="reset" />
+
+  <counter max="3" name="lightcounter" />
+  <points name="lightspoints" number="100" />
+  
+  <event for="lightsensor" when="onSense" target="light-#" action="disable" />
+  <event for="level" when="onReset" target="light" action="enable" />
+  <event for="level" when="onReset" target="lightcounter" action="reset" />
+  <event for="light" when="onDisable" target="lightcounter" action="increment" />
+  <event for="lightcounter" when="onMax" target="lightspoints" action="increment" />
+  <event for="lightcounter" when="onMax" target="light" action="enable" />
+  <event for="lightcounter" when="onMax" target="light" action="flash,5" />
+  <event for="lightcounter" when="onMax" target="lightcounter" action="reset" />

@@ -12,10 +12,12 @@ import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.files.FileHandle;
 import com.jakemadethis.pinball.LevelException;
 import com.jakemadethis.pinball.builder.IBuilder;
 import com.jakemadethis.pinball.builder.PinballFactory;
+import com.jakemadethis.pinball.builder.PinballNewFactory;
 import com.jakemadethis.pinball.builder.XMLBuilder;
 import com.jakemadethis.pinballeditor.FileMonitor.FileChangedListener;
 
@@ -69,6 +71,8 @@ public class EditorController implements InputProcessor {
  
     	reload();
     	monitor.addFile(currentFile);
+    	
+    	((LwjglApplication)Gdx.app).getGraphics().setTitle("Editor - "+currentFile.getName());
     }
 
 	}
@@ -76,7 +80,6 @@ public class EditorController implements InputProcessor {
 	public void reload() {
 
 		model.clear();
-		model.scale = 100f;
 		
 
 		try {
@@ -87,7 +90,7 @@ public class EditorController implements InputProcessor {
 			FileHandle file = Gdx.files.internal(currentFile.getAbsolutePath());
 			IBuilder b = XMLBuilder.fromStream(file.read());
 			
-			PinballFactory factory = new PinballFactory(model);
+			PinballNewFactory factory = new PinballNewFactory(model);
 			b.create(factory);
 		}
 		catch (LevelException e) {
@@ -115,8 +118,8 @@ public class EditorController implements InputProcessor {
 	
 	public void run() {
 		model.think(0.01f, 4);
-		view.think(0.01f);
-		view.render();
+		view.act(0.01f);
+		view.renderWorld();
 	}
 
 	@Override

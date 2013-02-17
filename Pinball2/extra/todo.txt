@@ -1,6 +1,14 @@
 Todo
 ----
-load level for menu screen
+wait timer when you start a game, maybe 3,2,1 then start
+  call onStart after transition finishes
+  same with onEnd
+  
+hit wall effects
+update level xml scheme 
+fill walls using triangulation
+
+flick ball to start - show an arrow to notify player
 sounds
 new level with:
 	lights rotator
@@ -8,9 +16,18 @@ new level with:
 	worm holes
 fix sprites merging edges
 highscores
-better menu
+better menu - dialogue for end game screen with buttons.
 event wait
-fix sensors
+fix sensors - ball=bullet?
+combo number shows in the middle when >= 2
+score numbers bounce bigger when score increases
+undo sceneui stuff.
+level select should be in a grid
+bigger menu buttons
+lights should be a different color
+kickers fill-in colour: trianglization
+menu transitions: i want 3d 'stack' of panels + swipe like windows phone
+
 
 Game ideas
 ----------

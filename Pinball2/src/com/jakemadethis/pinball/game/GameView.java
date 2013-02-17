@@ -22,19 +22,21 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.jakemadethis.pinball.BaseModel;
 import com.jakemadethis.pinball.BaseModel.EntityArgs;
 import com.jakemadethis.pinball.BaseView;
 import com.jakemadethis.pinball.Entity;
 import com.jakemadethis.pinball.EventHandler;
+import com.jakemadethis.pinball.ScreenTransition;
 import com.jakemadethis.pinball.EventHandler.EventListener;
 import com.jakemadethis.pinball.IDrawable;
 import com.jakemadethis.pinball.Interpolator;
 import com.jakemadethis.pinball.Timer;
 import com.jakemadethis.pinball.game.views.DrawableVisitor;
 
-public class GameView extends BaseView implements InputProcessor {
+public class GameView extends BaseView {
 
 	
 	public final OrthographicCamera worldCamera;
@@ -59,15 +61,17 @@ public class GameView extends BaseView implements InputProcessor {
 	private boolean firstBall;
 	private boolean scrolling = true;
 	private float scrollY;
-	private Stage stage;
 	private boolean instantScroll;
 	public Texture spritesTexture;
 	
 	private GameOverScreen gameOverScreen;
 	private FrameBuffer fgFrameBuffer;
+	private SpriteBatch batch;
 	
-	public GameView(GameModel model) {
+	public GameView(GameModel model, Stage stage) {
 		super(model);
+		
+		batch = stage.getSpriteBatch();
 
 		this.model = model;
 		r = new Random();
@@ -106,13 +110,11 @@ public class GameView extends BaseView implements InputProcessor {
 		world = new SpriteBatch();
 		ui = new SpriteBatch();
 		ui.setProjectionMatrix(uiCamera.combined);
-
-		stage = new Stage(width, height, false, ui);
-		((OrthographicCamera)stage.getCamera()).setToOrtho(true);
 		
 		gameOverScreen = new GameOverScreen(this, width, height);
 		gameOverScreen.visible = false;
 		stage.addActor(gameOverScreen);
+		
 		
 		
 		
@@ -196,13 +198,13 @@ public class GameView extends BaseView implements InputProcessor {
 	
 	private void gameOver() {
 		gameOverScreen.visible = true;
-		gameOverScreen.prevInputProcessor = Gdx.input.getInputProcessor();
+		//gameOverScreen.prevInputProcessor = Gdx.input.getInputProcessor();
 		gameOverScreen.setScore(model.getScore());
-		Gdx.input.setInputProcessor(stage);
+		//Gdx.input.setInputProcessor(stage);
 	}
 
 	protected void newBallEffect() {
-		spawnEffect.setPosition(model.getBall().getInitialPos().x, model.getBall().getInitialPos().y);
+		spawnEffect.setPosition(model.getBall().getPos().x, model.getBall().getPos().y);
 		spawnEffect.start();
 	}
 
@@ -247,7 +249,7 @@ public class GameView extends BaseView implements InputProcessor {
 		
 		float slideX = slideInTimer.finished() ? 0 : Interpolator.easeOutQuad(slideInTimer, model.width, 0);
 		
-		worldCamera.position.set(model.width/2 + shakex - slideX, scrollY + shakey, 0f);
+		worldCamera.position.set(model.width/2 + shakex, scrollY + shakey, 0f);
 		worldCamera.update();
 		world.setProjectionMatrix(worldCamera.combined);
 
@@ -266,31 +268,18 @@ public class GameView extends BaseView implements InputProcessor {
 		} else {
 			awesomeEffect.allowCompletion();
 		}
-	}
-	
-	
-	@Override
-	public void render() {
-		Gdx.gl20.glClearColor(0f, 0f, 0f, 1f);
-		Gdx.gl20.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		Gdx.gl20.glEnable(GL10.GL_BLEND);
-		Gdx.gl20.glEnable(GL10.GL_LINE_SMOOTH);
-		Gdx.gl20.glLineWidth(1f);
-
-		Gdx.gl20.glDisable(GL10.GL_CULL_FACE);
-		Gdx.gl20.glDisable(GL10.GL_DEPTH_TEST);
 		
-
-		ui.begin();
-		ui.setColor(1f, 1f, 1f, 1f);
-		ui.draw(PinballAssets.background, 0, 0, width, height);
-		ui.end();
-
+		
+		
+		
+		
+		// RENDER
 		if (fgFrameBuffer == null)
 			fgFrameBuffer = new FrameBuffer(Format.RGBA8888, (int)width, (int)height, false);
 		fgFrameBuffer.begin();
 		Gdx.gl20.glClearColor(0f, 0f, 0f, 0f);
 		Gdx.gl20.glClear(GL10.GL_COLOR_BUFFER_BIT);
+		
 		world.begin();
 		
 		setBlendMode(world, BlendMode.Additive);
@@ -311,10 +300,30 @@ public class GameView extends BaseView implements InputProcessor {
 			
 		world.end();
 		fgFrameBuffer.end();
+	}
+	
+	
+	@Override
+	public void draw(SpriteBatch batch, float parentAlpha) {
+		//Gdx.gl20.glClearColor(0f, 0f, 0f, 1f);
+		//Gdx.gl20.glClear(GL10.GL_COLOR_BUFFER_BIT);
+		Gdx.gl20.glEnable(GL10.GL_BLEND);
+		Gdx.gl20.glEnable(GL10.GL_LINE_SMOOTH);
+		Gdx.gl20.glLineWidth(1f);
+
+		Gdx.gl20.glDisable(GL10.GL_CULL_FACE);
+		Gdx.gl20.glDisable(GL10.GL_DEPTH_TEST);
+		//ui = batch;
+
+		//ui.begin();
+		batch.setColor(1f, 1f, 1f, 1f);
+		//ui.end();
+		ui = batch;
+		
 		
 
-		TextureData t = fgFrameBuffer.getColorBufferTexture().getTextureData();
-		Pixmap pix = t.consumePixmap();
+		//TextureData t = fgFrameBuffer.getColorBufferTexture().getTextureData();
+		//Pixmap pix = t.consumePixmap();
 		//a: for (int i = 0; i < t.getWidth(); i++) {
 			//for (int j = 0; j < t.getHeight(); j++) {
 		//System.out.println(pix.getWidth()+" "+pix.getHeight());
@@ -331,17 +340,22 @@ public class GameView extends BaseView implements InputProcessor {
 			//}
 		//}
 		
-		ui.begin();
-		ui.setBlendFunction(GL10.GL_ONE, GL10.GL_ONE);
-		ui.draw(fgFrameBuffer.getColorBufferTexture(), 0, 0, width, height);
-		ui.end();
+		//ui.begin();
+		
+		batch.setBlendFunction(GL10.GL_ONE, GL10.GL_ONE);
+		batch.setColor(1f, 1f, 1f, parentAlpha);
+		batch.draw(fgFrameBuffer.getColorBufferTexture(), 0, 0, width, height);
+		//ui.end();
 		
 
-		drawUI();
+		drawUI(batch, parentAlpha);
+		
+
 	}
 	
-	private void drawUI() {
-		ui.begin();
+	private void drawUI(SpriteBatch ui, float parentAlpha) {
+		//ui.begin();
+		
 		setBlendMode(ui, BlendMode.Normal);
 		stringBuilder.setLength(0);
 		stringBuilder.append(score);
@@ -349,7 +363,7 @@ public class GameView extends BaseView implements InputProcessor {
 		String scoreText = String.valueOf(model.combo);
 
 
-		float textAlpha = slideInTimer.finished() ? 1f : Interpolator.easeOutQuad(slideInTimer, 0f, 1f);
+		float textAlpha = parentAlpha * (slideInTimer.finished() ? 1f : Interpolator.easeOutQuad(slideInTimer, 0f, 1f));
 		
 		drawTextShadow(ui, PinballAssets.scorefont, stringBuilder.toString(), 20f, 20f, textAlpha);
 		drawTextShadow(ui, PinballAssets.scorefont, String.valueOf(model.balls), 0, 20f, width-20f, HAlignment.RIGHT, textAlpha);
@@ -369,10 +383,11 @@ public class GameView extends BaseView implements InputProcessor {
 			drawTextShadow(ui, regularFont, "Over", x, 164f, width, HAlignment.CENTER, 1f);
 			drawTextShadow(ui, regularFont, String.valueOf(model.getScore()), x, 300f, width, HAlignment.CENTER, 1f);
 		}*/
+
+		//ui.setBlendFunction(GL10.GL_ONE, GL10.GL_ONE);
+		//ui.end();
 		
-		ui.end();
-		
-		stage.draw();
+		//stage.draw();
 	}
 
 	private void drawTextShadow(SpriteBatch batch, BitmapFont font, String text, float x, float y, float alpha) {
@@ -393,76 +408,16 @@ public class GameView extends BaseView implements InputProcessor {
 
 
 
-	@Override
-	public boolean keyDown(int keycode) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-
-
-	@Override
-	public boolean keyUp(int keycode) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-
-
-	@Override
-	public boolean keyTyped(char character) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-
-
-	@Override
-	public boolean touchDown(int x, int y, int pointer, int button) {
-		if (gameOverScreen.visible) {
-			gameOverScreen.touchDown(x, y, pointer);
-			return true;
-		}
-		return false;
-	}
-
-
-
-	@Override
-	public boolean touchUp(int x, int y, int pointer, int button) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-
-
-	@Override
-	public boolean touchDragged(int x, int y, int pointer) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-
-
-	@Override
-	public boolean touchMoved(int x, int y) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-
-
-	@Override
-	public boolean scrolled(int amount) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-
 
 	public void endGame() {
-		Pinball.setMenu();
+		Pinball.setScreen(MainMenu.getFactory(), new ScreenTransition.SlideBackward());
 	}
+
+
+
+	
+
+
 
 	
 

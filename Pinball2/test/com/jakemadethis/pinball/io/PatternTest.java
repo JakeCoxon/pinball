@@ -10,12 +10,12 @@ import org.junit.Test;
 public class PatternTest {
 	
 	private IOManager manager;
-	InputHandler[] handlers = new InputHandler[10];
+	SlotHandler[] handlers = new SlotHandler[10];
 	
 	@Before
 	public void setUp() {
 		for (int i = 0; i < handlers.length; i++)
-			handlers[i] = new InputHandler(null);
+			handlers[i] = new SlotHandler(null);
 	
 		manager = new IOManager();
 	}
@@ -24,7 +24,7 @@ public class PatternTest {
 	public void testGroupPattern() {
 		manager.add("test", handlers[0], null);
 		manager.add("test", handlers[1], null);
-		ArrayList<InputHandler> match = 
+		ArrayList<SlotHandler> match = 
 			Pattern.match(manager.getAllInputs(), "test");
 		
 		assertEquals(2, match.size());
@@ -34,7 +34,7 @@ public class PatternTest {
 	public void testHashPattern() {
 		manager.add("test", handlers[0], null);
 		manager.add("test", handlers[1], null);
-		ArrayList<InputHandler> match = 
+		ArrayList<SlotHandler> match = 
 			Pattern.match(manager.getAllInputs(), "test-#");
 		
 		assertEquals(2, match.size());
@@ -47,7 +47,7 @@ public class PatternTest {
 		manager.add("test-4", handlers[4], null);
 		manager.add("test-2", handlers[2], null);
 		
-		ArrayList<InputHandler> match = 
+		ArrayList<SlotHandler> match = 
 			Pattern.match(manager.getAllInputs(), "test");
 		
 		assertEquals(5, match.size());
@@ -65,7 +65,7 @@ public class PatternTest {
 	public void testSinglePattern() {
 		manager.add("test", handlers[0], null);
 		manager.add("test", handlers[1], null);
-		ArrayList<InputHandler> match = 
+		ArrayList<SlotHandler> match = 
 			Pattern.match(manager.getAllInputs(), "test-0");
 		
 		assertEquals(1, match.size());

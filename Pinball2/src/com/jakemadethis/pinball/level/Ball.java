@@ -16,25 +16,19 @@ public class Ball extends Entity {
 	
 	public static final float BALL_RADIUS = 15f;
 	
-	public static Ball fromNode(BaseModel model, BuilderNode node) {
-		HashMap<String, String> atts = node.getAttributes();
-		float[] pos = FactoryUtil.getAbsolutePosition(node.getParent().getValue(), atts);
-		return model.addBall(pos[0], pos[1], BALL_RADIUS);
-	}
-	
 	private final Body body;
 	private final float radius;
-	private final Vector2 initial;
 	private final Random random;
 	
-	public Ball(World world, float x, float y, float radius) {
+	public Ball(BaseModel model, float x, float y, float radius) {
 		this.radius = radius;
-		initial = new Vector2(x, y);
-		body = Box2DFactory.createCircle(world, x, y, radius, false);
+		body = Box2DFactory.createCircle(model.world, x, y, radius, false);
 		body.setUserData(this);
 		
 		body.setActive(false);
 		random = new Random();
+		
+		model.add(this);
 	}
 	
 	@Override
@@ -57,9 +51,6 @@ public class Ball extends Entity {
 	public boolean isActive() {
 		return body.isActive();
 	}
-	public Vector2 getInitialPos() {
-		return initial;
-	}
 
 	public void launch() {
 		body.setActive(true);
@@ -68,8 +59,15 @@ public class Ball extends Entity {
 		body.applyLinearImpulse(new Vector2(0, -2f-s), body.getWorldCenter());
 	}
 	
+	public void setPos(Vector2 pos) {
+		body.setTransform(pos, 0f);
+	}
+	public Vector2 getPos() {
+		return body.getPosition();
+	}
+	
 	public void reset() {
-		body.setTransform(initial, 0f);
+		//body.setTransform(initial, 0f);
 		body.setLinearVelocity(new Vector2(0,0));
 		body.setActive(false);
 	}

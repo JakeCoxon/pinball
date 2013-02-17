@@ -10,8 +10,8 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.jakemadethis.pinball.io.IOManager;
-import com.jakemadethis.pinball.io.InputHandler;
-import com.jakemadethis.pinball.io.OutputHandler;
+import com.jakemadethis.pinball.io.SlotHandler;
+import com.jakemadethis.pinball.io.SignalHandler;
 import com.jakemadethis.pinball.level.Ball;
 import com.jakemadethis.pinball.level.Bumper;
 import com.jakemadethis.pinball.level.Flipper;
@@ -19,7 +19,6 @@ import com.jakemadethis.pinball.level.Kicker;
 import com.jakemadethis.pinball.level.Light;
 import com.jakemadethis.pinball.level.Sensor;
 import com.jakemadethis.pinball.level.Wall;
-import com.jakemadethis.pinball.level.WallArc;
 
 /**
  * The base that holds the Box2d world, entities, physics listeners,
@@ -40,8 +39,6 @@ public class BaseModel implements ContactListener {
 	protected IOManager ioManager;
 	public World world;
 	
-	// Scale is used when creating entities
-	public float scale = 1f;
 	private int score = 0;
 	
 	public EventHandler<EntityArgs> entityAddedHandler = new EventHandler<EntityArgs>();
@@ -55,6 +52,8 @@ public class BaseModel implements ContactListener {
 		clear();
 		
 	}
+	
+	
 
 	public void clear() {
 		if (entities != null) {
@@ -62,7 +61,7 @@ public class BaseModel implements ContactListener {
 				remove(entities.getLast());
 			}
 		}
-		world = new World(new Vector2(0, 6f), true);
+		world = new World(new Vector2(0, 5f), true);
 		world.setContactListener(this);
 		ioManager = new IOManager();
 	}
@@ -114,7 +113,7 @@ public class BaseModel implements ContactListener {
 	 * @param inputHandler
 	 * @param outputHandler
 	 */
-	public void setName(String name, InputHandler inputHandler, OutputHandler outputHandler) {
+	public void setName(String name, SlotHandler inputHandler, SignalHandler outputHandler) {
 		if (name.length() == 0) return;
 		ioManager.add(name, inputHandler, outputHandler);
 	}
@@ -148,40 +147,6 @@ public class BaseModel implements ContactListener {
 		entityRemovedHandler.invoke(this, new EntityArgs(entity));
 	}
 	
-	public synchronized Sensor addSensor(float x, float y, float r) {
-		return add(new Sensor(x / scale, y / scale, r / scale));
-	}
-
-	public synchronized Ball addBall(float cx, float cy, float radius) {
-		return add(new Ball(world, cx / scale, cy / scale, radius / scale));
-	}
-	
-	public synchronized Bumper addBumper(float cx, float cy, float radius) {
-		return add(new Bumper(world, cx / scale, cy / scale, radius / scale));
-	}
-	
-	public synchronized Flipper addFlipper(float cx, float cy, float length, Flipper.Type type) {
-		return add(new Flipper(world, cx / scale, cy / scale, length / scale, type));
-	}
-	
-	public synchronized Wall addWall(float x0, float y0, float x1, float y1, float restitution) {
-		return add(new Wall(world, x0 / scale, y0 / scale, x1 / scale, y1 / scale, restitution));
-	}
-	public synchronized Wall addWallPath(float[] path, float restitution) {
-		for (int i=0; i < path.length; i++) path[i] = path[i]/scale;
-		return add(new Wall(world, path, restitution));
-	}
-	public synchronized WallArc addWallArc(float cx, float cy, float xradius, float yradius, float minangle, float maxangle, int numSegments) {
-		return add(new WallArc(world, cx/scale, cy/scale, xradius/scale, yradius/scale, minangle, maxangle, numSegments));
-	}
-	public Light addLight(float x, float y, float w, float h, Color color) {
-		return add(new Light(x/scale, y/scale, w/scale, h/scale, color));
-	}
-
-	public synchronized Kicker addKicker(float[] path, float restitution) {
-		for (int i=0; i < path.length; i++) path[i] = path[i]/scale;
-		return add(new Kicker(world, path, restitution));
-	}
 
 	@Override
 	public void beginContact(Contact contact) {

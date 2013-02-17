@@ -3,7 +3,7 @@ package com.jakemadethis.pinball.io;
 import org.junit.Test;
 
 import com.jakemadethis.pinball.EventHandler.EventListener;
-import com.jakemadethis.pinball.io.Input.EventArgs;
+import com.jakemadethis.pinball.io.Slot.EventArgs;
 
 
 public class EventsTest {
@@ -14,16 +14,16 @@ public class EventsTest {
 	private EventListener<EventArgs> successArgs;
 	
 	public EventsTest() {
-		success = new EventListener<Input.EventArgs>() {
+		success = new EventListener<Slot.EventArgs>() {
 			@Override public void invoke(Object sender, EventArgs args) {
-				if (args.getInputName().equals("test"))
+				if (args.getSlotName().equals("test"))
 					throw new SuccessException();
 			}
 		};
-		successArgs = new EventListener<Input.EventArgs>() {
+		successArgs = new EventListener<Slot.EventArgs>() {
 			@Override public void invoke(Object sender, EventArgs args) {
 				System.out.println(args.getArgs().length);
-				if (args.getInputName().equals("test") && args.getArgs()[0].equals("arg"))
+				if (args.getSlotName().equals("test") && args.getArgs()[0].equals("arg"))
 					throw new SuccessException();
 			}
 		};
@@ -33,8 +33,8 @@ public class EventsTest {
 	@Test(expected=SuccessException.class)
 	public void testBasicEvent() {
 		
-		InputHandler inputHandler = new InputHandler(success, "test");
-		OutputHandler outputHandler = new OutputHandler("onInvokeTest");
+		SlotHandler inputHandler = new SlotHandler(success, "test");
+		SignalHandler outputHandler = new SignalHandler("onInvokeTest");
 		
 		IOManager man = new IOManager();
 		man.add("testReceive", inputHandler, null);
@@ -49,8 +49,8 @@ public class EventsTest {
 	@Test(expected=SuccessException.class)
 	public void testArgsEvent() {
 		
-		InputHandler inputHandler = new InputHandler(successArgs, "test");
-		OutputHandler outputHandler = new OutputHandler("onInvokeTest");
+		SlotHandler inputHandler = new SlotHandler(successArgs, "test");
+		SignalHandler outputHandler = new SignalHandler("onInvokeTest");
 		
 		IOManager man = new IOManager();
 		man.add("testReceive", inputHandler, null);

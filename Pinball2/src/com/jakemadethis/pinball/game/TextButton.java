@@ -14,11 +14,12 @@ public class TextButton extends com.badlogic.gdx.scenes.scene2d.ui.TextButton {
 		return new TextButtonStyle(null, null, null, 
 				1f, 1f, 0f, 0f, 
 				PinballAssets.regularfont, 
-				Color.WHITE, Color.WHITE, Color.WHITE);
+				Color.BLACK, Color.BLACK, Color.BLACK);
 	}
 	
 	public TextButton(String text) {
 		super(text, createStyle());
+		this.height = 50f;
 	}
 	
 	@Override
@@ -39,8 +40,8 @@ public class TextButton extends com.badlogic.gdx.scenes.scene2d.ui.TextButton {
 	
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
-		float r = timer.value(0f, 1f);
-		batch.setColor(r, 0f, 0f, 1f);
+		float r = timer.value(1f, 0.5f);
+		batch.setColor(1f, r, 1f, parentAlpha);
 		batch.draw(PinballAssets.pixel, x, y, width, height);
 		super.draw(batch, parentAlpha);
 	}

@@ -65,6 +65,13 @@ public abstract class Attachable {
 		this.height = height;
 	}
 	
+	public Attachable(Attachable other) {
+		this.x = other.getLeft();
+		this.y = other.getTop();
+		this.width = other.getWidth();
+		this.height = other.getHeight();
+	}
+
 	/**
 	 * Get absolute point from a relative position and a corner
 	 * @param x the relative x position

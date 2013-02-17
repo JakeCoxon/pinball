@@ -3,8 +3,8 @@ package com.jakemadethis.pinball.io;
 import java.util.LinkedList;
 
 /**
- * An input is something that is invoked as a result 
- * of an output firing an event
+ * A slot is something that is invoked as a result 
+ * of an signal firing an event
  * 
  * For example, "toggle" or "turnOff" are inputs
  * 
@@ -14,18 +14,18 @@ import java.util.LinkedList;
  * @author Jake
  *
  */
-public class Input {
+public class Slot {
 	
 	public static class EventArgs {
-		private String inputName;
+		private String slotName;
 		private String[] args;
 
-		public EventArgs(String inputName, String... args) {
-			this.inputName = inputName;
+		public EventArgs(String slotName, String... args) {
+			this.slotName = slotName;
 			this.args = args;
 		}
-		public String getInputName() {
-			return inputName;
+		public String getSlotName() {
+			return slotName;
 		}
 		public String[] getArgs() {
 			return args;
@@ -33,9 +33,9 @@ public class Input {
 	}
 	private LinkedList<Connection> connections;
 	private String name;
-	private InputHandler handler;
+	private SlotHandler handler;
 
-	public Input(InputHandler handler, String name) {
+	public Slot(SlotHandler handler, String name) {
 		this.name = name;
 		this.handler = handler;
 		this.connections = new LinkedList<Connection>();
@@ -47,7 +47,7 @@ public class Input {
 		connections.add(connection);
 	}
 	public void invokeFromConnection(Connection connection) {
-		handler.invokeFromInput(this, new EventArgs(connection.getInput().getName(), connection.getArgs()));
+		handler.invokeFromSignal(this, new EventArgs(connection.getInput().getName(), connection.getArgs()));
 	}
 	
 }

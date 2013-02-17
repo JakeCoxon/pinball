@@ -3,6 +3,8 @@ package com.jakemadethis.pinball.game;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.BitmapFontLoader;
 import com.badlogic.gdx.assets.loaders.BitmapFontLoader.BitmapFontParameter;
+import com.badlogic.gdx.assets.loaders.TextureLoader;
+import com.badlogic.gdx.assets.loaders.TextureLoader.TextureParameter;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -23,7 +25,9 @@ public class PinballAssets {
 	private static boolean loaded = false;
 
 	public static void loadAssets() {
-		assets = new AssetManager();
+		if (assets == null) assets = new AssetManager();
+		
+		System.out.println("SETUP LOADASSETS");
 		assets.load("data/sprites.png", Texture.class);
 		assets.load("data/ui.png", Texture.class);
 		BitmapFontParameter a = new BitmapFontLoader.BitmapFontParameter();
@@ -31,13 +35,14 @@ public class PinballAssets {
 		assets.load("data/regular.fnt", BitmapFont.class, a);
 		assets.load("data/scorefont.fnt", BitmapFont.class, a);
 		
-		generators = new GeneratorManager();
+		if (generators == null) generators = new GeneratorManager();
 		generators.load("background", new BackgroundRenderer(), Texture.class);
 		generators.load("pixel", new PixelGenerator(), Texture.class);
 	}
 	
 	public static boolean update() {
-		if (assets == null) loadAssets();
+		if (assets == null || assets.getLoadedAssets() == 0) 
+			loadAssets();
 		if (assets.update() && generators.update()) {
 			if (!loaded) {
 				onComplete(); loaded = true;
@@ -45,6 +50,13 @@ public class PinballAssets {
 			return true;
 		}
 		return false;
+	}
+	
+	public static void dispose() {
+		loaded = false;
+		assets.clear();
+		//assets.dispose();
+		//generators.dispose();
 	}
 	
 	public static float getProgress() {

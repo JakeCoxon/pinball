@@ -1,19 +1,16 @@
 package com.jakemadethis.pinball.builder;
 
-import static com.jakemadethis.pinball.builder.FactoryUtil.expected;
-import static com.jakemadethis.pinball.builder.FactoryUtil.optional;
-import static com.jakemadethis.pinball.builder.FactoryUtil.toFloatList;
-
 import java.util.HashMap;
-
-import org.xml.sax.Attributes;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.jakemadethis.pinball.Attachable;
-import com.jakemadethis.pinball.Entity;
 import com.jakemadethis.pinball.LevelException;
 
 public class FactoryUtil {
-	
+
+	private static Pattern pattern = 
+			Pattern.compile("^(\\-?[0-9]+(?:\\.[0-9]+)?),(\\-?[0-9]+(?:\\.[0-9]+)?)(?: (.+))?$");
 	/**
 	 * Returns the value of the attribute if it exists, throws an exception
 	 * otherwise
@@ -36,26 +33,32 @@ public class FactoryUtil {
 		if (s == null) s = defaultValue;
 		return s;
 	}
-	public static float[] toPosition(String str) {
-		String[] strs = str.split(",");
-		return new float[] { Float.valueOf(strs[0]), Float.valueOf(strs[1]) };
+	public static float[] toPosition(String str, Attachable parent, float scale) {
+		Matcher matcher = pattern.matcher(str);
+		if (matcher.find()) {
+			float x = toLength(matcher.group(1), scale), y = toLength(matcher.group(2), scale);
+			int corner = matcher.group(3) == null ? 
+					(Attachable.TOP | Attachable.LEFT) : Attachable.getCornerFromString(matcher.group(3));
+					
+			return parent.getAbsolutePoint(x, y, corner);
+		}
+		return null;
 	}
+	public static float[] toSize(String str, float scale) {
+		String[] strs = str.split(",");
+		return new float[] { toLength(strs[0], scale), toLength(strs[1], scale) };
+	}
+	
 	public static float[] toFloatList(String str) {
 		String[] strs = str.split(",");
 		float[] floats = new float[strs.length];
 		for (int i = 0; i < strs.length; i++) floats[i] = Float.valueOf(strs[i]);
 		return floats;
 	}
-	public static float realFloat(String str) {
-		return Float.intBitsToFloat(Integer.parseInt(str, 16));
+	public static float toLength(String str, float scale) {
+		return Float.valueOf(str) / scale;
 	}
-	public static float[] toFloatListReal(String str) {
-		String[] strs = str.split(",");
-		float[] floats = new float[strs.length];
-		for (int i = 0; i < strs.length; i++) 
-			floats[i] = realFloat(strs[i]);
-		return floats;
-	}
+	
 	
 	public static float[] getAbsolutePosition(Object parent, HashMap<String, String> atts) {
 		if (parent == null) 
@@ -80,5 +83,9 @@ public class FactoryUtil {
 	 */
 	public static String[] toStringList(String str) {
 		return str.split(",");
+	}
+
+	public static int toInteger(String str) {
+		return Integer.valueOf(str);
 	}
 }

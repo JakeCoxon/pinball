@@ -7,9 +7,11 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.jakemadethis.pinball.game.GameModel;
 import com.jakemadethis.pinball.io.Connection;
-import com.jakemadethis.pinball.io.Input.EventArgs;
-import com.jakemadethis.pinball.io.InputHandler;
-import com.jakemadethis.pinball.io.OutputHandler;
+import com.jakemadethis.pinball.io.Slot;
+import com.jakemadethis.pinball.io.Slot.EventArgs;
+import com.jakemadethis.pinball.io.SlotHandler;
+import com.jakemadethis.pinball.io.Signal;
+import com.jakemadethis.pinball.io.SignalHandler;
 import com.jakemadethis.pinball.level.Ball;
 import com.jakemadethis.pinball.level.EntityVisitor;
 import com.jakemadethis.pinball.level.Level;
@@ -24,11 +26,31 @@ import com.jakemadethis.pinball.level.Level;
 public abstract class Entity {
 
 	public int ID;
-	public InputHandler inputs;
-	public OutputHandler outputs;
+	protected SlotHandler slots;
+	protected SignalHandler signals;
 	
 	public void setID(int id) {
 		this.ID = id;
+	}
+	
+	public Slot getSlot(String name) {
+		return slots.get(name);
+	}
+	
+	public Signal getSignal(String name) {
+		return signals.get(name);
+	}
+	
+	public SlotHandler getSlots() {
+		return slots;
+	}
+	
+	public SignalHandler getSignals() {
+		return signals;
+	}
+	
+	public Connection addConnection(String signalName, Entity target, String slotName) {
+		return addConnection(this, signalName, target, slotName);
 	}
 	
 	/**
@@ -59,20 +81,20 @@ public abstract class Entity {
 	/**
 	 * Adds a connection between two entities
 	 * @param entity
-	 * @param outputName
+	 * @param signalName
 	 * @param target
-	 * @param inputName
+	 * @param slotName
 	 * @return
 	 */
-	public static Connection addConnection(Entity entity, String outputName, Entity target, String inputName) {
-		return Connection.add(entity.outputs, outputName, target.inputs, inputName);
+	public static Connection addConnection(Entity entity, String signalName, Entity target, String slotName) {
+		return Connection.add(entity.signals, signalName, target.slots, slotName);
 	}
 	
 	/**
 	 * Invokes an input on an entity
 	 * @param action
 	 */
-	public void invokeInput(String action) {
-		inputs.invokeFromInput(this, new EventArgs(action));
+	protected void invokeSignal(String action) {
+		slots.invokeFromSignal(this, new EventArgs(action));
 	}
 }

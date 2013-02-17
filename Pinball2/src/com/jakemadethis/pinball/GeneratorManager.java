@@ -47,12 +47,17 @@ public class GeneratorManager {
 	 * @return Whether it has finished loading all generators
 	 */
 	public boolean update() {
-		next();
+		if (queue.size() > 0) next();
 		return queue.size() == 0;
 	}
 
 	public float getProgress() {
 		return 1; // TODO: Calculate this
+	}
+
+	public void dispose() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
